@@ -15,7 +15,7 @@ This set of scripts is meant to allow you to easily install a new JON demo consi
 # GETTING STARTED: #
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
-## STARTING OFF ## 
+## FIRST STEPS ##
 
 To get started:
 
@@ -28,7 +28,7 @@ It will also inform you of all the pre-requisites that are required before the s
 One of the necessary modifications is to the user-defined variables file (./data/demo-config.properties) which is created at the first run of the script:
 
 + REQUIRED  
-	- JAVA_HOME:			Update to the appropriate value on your system
+	- JAVA_HOME:			Update to the appropriate value on your system  
 	
 + OPTIONAL  
 	- INSTALL_LOCATION:		If you have a preference, you can modify the base install location (default: /opt/).  This location will have the JD_FOLDER variable (configurable via the script) appended to it.
@@ -88,32 +88,31 @@ To add a new version of JON, the suggested steps would be as follows:
 There are other menus provided, some for managing the JON environment, and others that were mostly used for debugging or some repeated tasks that were required during development but may prove beneficial.
 
 #### Create/Delete bundles menu: ####
-	Allows for the creations and deletion of bundles depending on the availability of a jboss-eap-5.x ZIP file and the presence of ANT on the system.  The bundles can be used as part of the JON demo or can be used separately from the JON demo script.
+  Allows for the creations and deletion of bundles depending on the availability of a jboss-eap-5.x ZIP file and the presence of ANT on the system.  The bundles can be used as part of the JON demo or can be used separately from the JON demo script.
 	
 #### (Coming soon) Server/Service management menu: ####
-	A menu that will provide management capabilities to all the different services and servers deployed by the demo.
-	
-    
+  A menu that will provide management capabilities to all the different services and servers deployed by the demo.   
 
 #### Install menu: ####
-	##### Install Product #####
-		This allows for the script to extract the zips available in the "products" section of the project to the demo location
+  ##### Install Product #####
+    This allows for the script to extract the zips available in the "products" section of the project to the demo location
 		
 #### Delete menu: ####
-	##### Delete JON server and database #####
-		Will delete the JON server and the database, but this can be better achieved by using the Delete Jon Demo (JD) option
-	##### Delete Postgres DB #####
-		This allows for the deletion of any Postgres databases... in case of the creation of an incorrect DB or the failure of the install/deletion, you can remove the unused DB.
-	##### Delete JON Demo data #####
-		Will prompt the user regarding the deletion of all the bundles, demo environment and all the contents of the data folder. Otherwise, will prompt for the deletion of just the script specific data.
+  ##### Delete JON server and database #####
+    Will delete the JON server and the database, but this can be better achieved by using the Delete Jon Demo (JD) option
+  ##### Delete Postgres DB #####
+    This allows for the deletion of any Postgres databases... in case of the creation of an incorrect DB or the failure of the install/deletion, you can remove the unused DB.
+  ##### Delete JON Demo data #####
+    Will prompt the user regarding the deletion of all the bundles, demo environment and all the contents of the data folder. Otherwise, will prompt for the deletion of just the script specific data.
 		
 #### Start/Stop Jon Server menu: ####
-	Depending on the status of the server, it'll allow you to start/stop it via the script.  It will only show when a JON demo environment is installed.
+  Depending on the status of the server, it'll allow you to start/stop it via the script.  It will only show when a JON demo environment is installed.
 	
 #### Start/Stop Postres service menu: ####
-	Depending on the status of the service, it'll allow you to start/stop it via the script
+  Depending on the status of the service, it'll allow you to start/stop it via the script
+  
 #### Install/Uninstall Postres service menu: ####
-	Depending on if the service is installed, it'll allow you to install/un-install it via the script
+  Depending on if the service is installed, it'll allow you to install/un-install it via the script
 		
 *Note: None of these extra options will be elaborated in the future as the aim is to generate a more user friendly GUI.*
 
@@ -128,19 +127,19 @@ This will output more debug information that would help in troubleshooting the i
 All debug menus (as defined below) on the main menu will only be visible when LOG_LEVEL is set to 1 except for the "Change Log Level option"
 
 #### Reload scripts menu: ####
-	If you were to make any changes to any of the scripts while you have the process running, you can invoke the "r" option to "Reload scripts" so as not to have to quit and restart the process.  This does not tend to work for changes in the "main.sh" script as it does not reload itself.
+  If you were to make any changes to any of the scripts while you have the process running, you can invoke the "r" option to "Reload scripts" so as not to have to quit and restart the process.  This does not tend to work for changes in the "main.sh" script as it does not reload itself.
 #### Run test function menu: ####
-	There is a "function testFunction ()" available in the debug.sh file.  You can call any function from it's body passing in the appropriate parameters and be able to invoke that function repeatedly from the Main Menu by using the "t" option to run the test function.
+  There is a "function testFunction ()" available in the debug.sh file.  You can call any function from it's body passing in the appropriate parameters and be able to invoke that function repeatedly from the Main Menu by using the "t" option to run the test function.
 #### List all functions menu: ####
-	This will list all the functions defined in all the "*.sh" files in this project providing the description of the functions as defined in each file.
+  This will list all the functions defined in all the "*.sh" files in this project providing the description of the functions as defined in each file.
 #### Invoke function menu: ####
-	Allows you to invoke one of the functions from the list above.  This is an alternative to the test function menu above, although you'll have more flexibility with the test function menu.
+  Allows you to invoke one of the functions from the list above.  This is an alternative to the test function menu above, although you'll have more flexibility with the test function menu.
 #### CLI Commands menu: ####
-	CLI Scripts menu:
-		All the CLI scripts used in this demo are available to be tested out separately.  A description of the script and the parameters that need to be passed will be displayed (these are pulled in from the first two lines of the JS script, where a very specific pattern is required).  Then you can invoke the script and you will be asked for each parameter.
+  CLI Scripts menu:
+    All the CLI scripts used in this demo are available to be tested out separately.  A description of the script and the parameters that need to be passed will be displayed (these are pulled in from the first two lines of the JS script, where a very specific pattern is required).  Then you can invoke the script and you will be asked for each parameter.
 
 #### Change Log Level: ####
-	Changes the log level in the debug.sh file allowing for more or less outputs from functions.
+  Changes the log level in the debug.sh file allowing for more or less outputs from functions.
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
