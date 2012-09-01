@@ -94,15 +94,15 @@ There are other menus provided, some for managing the JON environment, and other
   A menu that will provide management capabilities to all the different services and servers deployed by the demo.   
 
 ### Install menu: ###
-  #### Install Product ####
+#### Install Product ####
     This allows for the script to extract the zips available in the "products" section of the project to the demo location
 		
 ### Delete menu: ###
-  #### Delete JON server and database ####
+#### Delete JON server and database ####
     Will delete the JON server and the database, but this can be better achieved by using the Delete Jon Demo (JD) option
-  #### Delete Postgres DB ####
+#### Delete Postgres DB ####
     This allows for the deletion of any Postgres databases... in case of the creation of an incorrect DB or the failure of the install/deletion, you can remove the unused DB.
-  #### Delete JON Demo data ####
+#### Delete JON Demo data ####
     Will prompt the user regarding the deletion of all the bundles, demo environment and all the contents of the data folder. Otherwise, will prompt for the deletion of just the script specific data.
 		
 ### Start/Stop Jon Server menu: ###
@@ -135,7 +135,7 @@ All debug menus (as defined below) on the main menu will only be visible when LO
 ### Invoke function menu: ###
   Allows you to invoke one of the functions from the list above.  This is an alternative to the test function menu above, although you'll have more flexibility with the test function menu.
 ### CLI Commands menu: ###
-  CLI Scripts menu:
+#### CLI Scripts menu: ####
     All the CLI scripts used in this demo are available to be tested out separately.  A description of the script and the parameters that need to be passed will be displayed (these are pulled in from the first two lines of the JS script, where a very specific pattern is required).  Then you can invoke the script and you will be asked for each parameter.
 
 ### Change Log Level: ###
