@@ -1,0 +1,126 @@
+TESTS:
+- test creation of data/jon/jon-server dir...
+- test log on vanilla, and log change and output 
+- test update latest jon version
+	update readme, that it'll create the new structure for you
+- test a new version of jon
+- test script in vanilla rhel vm
+- on machine restart does jboss start up? if so demo start fails? or eap managed?
+- test bug of checking, then un-checking wipe directory... does it still wipe?
+- test ownership of data folder change after adding local_user, afterwards
+
+TODO:
+- set input to lowercase for other check functions/ input
+- get rid of postgres jdbc dependency ?? in conf/jon/jon-server.x.x.x 
+	ANSWER=`lowercase $ANSWER`
+- where are start/stop jon server
+	shift into manage server option
+- waitFor(s) not functioning properly (known issue, remove from readme on fix)
+	Waiting for availability report to be sent to server from agent
+	Waiting to find "RuntimeDiscoveryExecutor)- Scanned platform and"
+		Awaiting server detection in JON
+	Waiting 45s, giving ant bundle time to be available for deployment
+
+- change warning text to debug (known issue, remove from readme on fix)
+	[WARNING] Server with pattern: ec-default100 not found...
+	[WARNING] Server with port 100 not found in JON, moving on...
+	
+- overload the installJONSilently method with a version that takes the variables pre-defined and calls the original method quitely... in prep for java bash caller
+	
+- re-organise functions logically
+	string utils
+	output / display utils
+	jon server install
+	jon server management
+	jboss server install
+	jboss server management
+	cli specific
+	bundle mgmt
+	postgresql
+	variable utils
+	
+	- once this is done, set cli_commands.sh to load the takeInput outputLog scripts and test if it works separately
+	
+- Switch to GitHub
+- Record video of demo
+- Add PPT specifying all the features installed in the demo
+- Email emea-presales
+- upload CLI scripts separately into my project / and pilhuhn's git project
+
+FEATURES TO ADD:
+- add sub-project menu?
+	create bundle
+	cli commands
+
+- install jon and agent as services -- is this necessary? do i want to change the chkconfig for jboss to not restart?
+- add "manage server/service" option (for postgres, jon, agent, each jboss and all jboss, all demo)
+
+Add server (move from DB project)
+Create addServer script
+Called with server name
+Instead of using auto import, it imports just that server
+Adds it to temp group
+Runs provision on that group
+Moves server to new group
+
+BUGS:
+- sometimes - JBoss service won't start up from bundle (most likely resolved)
+
+TO GET TO:
+JON FEATURES
+- Setup alerts and notifications via CLI
+- Setup drift managements as per demo video
+	http://mazz.fedorapeople.org/demos/drift/drift-basics.ogv
+	http://mazz.fedorapeople.org/demos/drift/drift-pinning.ogv
+	http://mazz.fedorapeople.org/demos/drift/drift-templates.ogv
+	http://mazz.fedorapeople.org/demos/drift/drift-pinned-template.ogv
+- set up log event processing
+- Create users and roles with readonly, bundle manager, container manager, super admin (rhqadmin)
+- RSS repos to show apps/platforms being updated via JON
+- Setup SNMP trap listener, display traps received from JON
+- Setup mail server and show emails sent via JON
+
+DEMO ENHANCEMENTS
+- export postgres db with monitoring info and option to reimport
+- is there a way to have rhq property offer dropdown options (can you customise the form?)
+- Generate bundle for basic Hello World war I created
+- Increase load and show how JON can deploy more bundles/nodes into the cluster
+- Setup bundle for EWS, ensure to turn on appropriate JMX properties in startup.sh for JON access
+- Bundle all other JBoss products to deploy via JON
+- Create proper load generating app that runs separately
+	- Create bundle and deploy from JON
+	- http://jakarta.apache.org/jmeter/ maybe
+		(some JMeter references: http://www.softslate.com/blog/2011/08/functional-and-regression-testing-with-jmeter.html)
+
+GUI
+- Start a web interface that calls a scripter Java class?
+- allow for installing more JBoss servers from the Install Menu
+	provide a port (script should tell you what's installed, and not allow for re-installation or any lower port installs)
+	provide number of servers
+- provide a list of available applications to deploy... and the ones that are chosen, create bundles and deploy to local server
+	(idea is to allow the deployment of dvd-store, the hello-world load generator, and potentially others later)
+
+OTHER
+- deal with all TODOs / Fixme / future
+- test "statusall" in jboss_init_redhat.sh, if it works, copy to Resources/resources and Documents/Extra
+
+TO TRY OUT
+- Can you use targets?  Try with successful recipe to see if it breaks
+- On "delete" targets?
+- Can you add ant-contrib.jar to JON's ant bundle, and then use IFs?
+	http://stackoverflow.com/questions/1163998/do-i-have-any-way-to-check-the-existence-of-a-directory-in-ant-not-a-file
+	Second example
+
+BUNDLE CREATOR PROJECT
+	http://pilhuhn.blogspot.com/2010/07/simple-bundle-generator-for-rhq.html
+
+MULTI-SERVER ENVIRONMENT
+- (Possibility -- dead project?) Use boxgrinder to generate image with latest code
+- Deploy from JON to separate servers (or into VMs), tell demo installer
+	- single server env
+	or
+	- provide server ips/hostnames?
+- Allow to pass in the IP/port for the JON server
+	- If that is done, pass those into the initialSetup function for the jonAgent and replace them into the agent-configuration.xml file
+- When installing agents, have a forked script that uses SSH and installs to a list of user provided servers, this would allow for installing to the agent to remote servers that can then be monitored (good for a VM scenario)
+- Setup properties files to be used by bundle manager, to load properties and deploy EAP according to "environment"

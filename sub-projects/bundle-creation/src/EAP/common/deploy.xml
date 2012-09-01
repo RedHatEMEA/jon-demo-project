@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<project name="eap-5.1.0-common" default="main" xmlns:rhq="antlib:org.rhq.bundle">
+
+	
+    <rhq:bundle name="eap-5.1.0-common" version="1.1" description="EAP 5.1.0 common">
+
+    	<rhq:deployment-unit name="appserver"  postinstallTarget="postinstall">
+	       <rhq:archive name="data.zip" ></rhq:archive>
+        </rhq:deployment-unit>
+
+    </rhq:bundle>
+
+	
+    <target name="main" />
+
+	
+    <target name="postinstall">
+    	<property name="jboss-user" value="jboss"/>
+        <chmod dir="${rhq.deploy.dir}/bin" perm="750"  includes="*.sh"/>
+    	
+    	<chgrp group="${jboss-user}" type="both">
+		  <fileset dir="${rhq.deploy.dir}" />
+		</chgrp>
+		
+		<chown owner="${jboss-user}" type="both">
+		  <fileset dir="${rhq.deploy.dir}" />
+		</chown>
+    	
+		<exec executable="sh">
+			<arg line="-c ${rhq.deploy.dir}/bin/addHostname.sh"/>
+		</exec>
+    	    	
+        <property name="postinstallTargetExecuted" value="true"/>
+    </target>
+	
+	
+</project> 

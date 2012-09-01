@@ -1,0 +1,27 @@
+<project name="bundles" default="dist" basedir=".">
+    <description>Creates all bundles</description>
+
+	<target name="dist" depends="clean">
+		
+		<property name="test.failure" value="true" />
+		<ant antfile="src/EAP/build.xml" target="dist"/>
+		<ant antfile="src/seam/build.xml" target="dist" />
+		<antcall target="clean-up" />
+				
+	</target>
+	
+	<target name="clean-up">
+		<delete dir="./default" />
+		<delete dir="./common" />
+		<delete dir="./seam-dvdstore" />
+	</target>
+
+	<target name="clean">
+		<delete>
+			<fileset dir="${dist.dir}">
+				<include name="*"/>
+			</fileset>
+		</delete>
+	</target>
+</project>
+ 

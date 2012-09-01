@@ -1,0 +1,126 @@
+<?xml version="1.0"?>
+<project name="eap-5.1.0-default" default="main" 
+    xmlns:rhq="antlib:org.rhq.bundle"  xmlns:ac="antlib:net.sf.antcontrib">
+
+<!--	
+	@@JBOSS_HOME@@
+	@@JBOSS_USER@@
+	@@JBOSS_CONF_BASE@@ => @@JBOSS_CONF@@
+	@@JBOSS_PORTS_OFFSET@@ => @@PORTS_OFFSET@@
+	@@JAVA_HOME@@
+	@@JAVA_XMS@@
+	@@JAVA_XMX@@
+	-->
+    <rhq:bundle name="eap-5.1.0-default" version="1.0" description="EAP 5.1.0 default">
+		<!-- properties -->
+		<rhq:input-property name="JBOSS_HOME" type="string" required="true"
+			description="JBoss Home directory. It's where the EAP-5.1.0-common bundle is deployed (ex.: /opt/jboss/common)"
+			defaultValue="/opt/jboss/common" />    	
+		<rhq:input-property name="JBOSS_USER" type="string" required="true"
+			description="Operating System account used to launch JBoss AS (ex.: jboss)"
+			defaultValue="jboss" />    	
+		<rhq:input-property name="JBOSS_CONF_BASE" type="string" required="true"
+			description="Base for the names of the JBoss configurations you want to create (ex.: default)"
+			defaultValue="default" />    	
+		<rhq:input-property name="JBOSS_PORTS_OFFSET" type="string" required="true"
+			description="offset to use for configurations creation (ex: 100,200,300)"
+			defaultValue="100" />    	
+		<rhq:input-property name="JAVA_HOME" type="string" required="true"
+			description="Where to find Java (ex.: /opt/java)"
+			defaultValue="/opt/java" />    	
+		<rhq:input-property name="JAVA_XMS" type="string" required="false"
+			description="Min heap allocated for the JVM in MBytes (ex.: 200)"
+			defaultValue="200" />    	
+		<rhq:input-property name="JAVA_XMX" type="string" required="false"
+			description="Max heap allocated for the JVM in MBytes (ex.: 1300)"
+			defaultValue="1300" />    	
+
+    	<!-- deployment unit -->
+        <rhq:deployment-unit name="appserver" postinstallTarget="postinstall">
+		  <rhq:archive name="data.zip">
+		  	 <rhq:replace>
+                <rhq:fileset>
+                    <include name="*.*"/>
+                </rhq:fileset>
+            </rhq:replace>
+		  </rhq:archive>
+        </rhq:deployment-unit>
+    	
+    </rhq:bundle>
+
+	
+	
+    <target name="main" />
+
+		
+	
+    <target name="postinstall">
+	<mkdir dir="${rhq.deploy.dir}/${JBOSS_CONF_BASE}${JBOSS_PORTS_OFFSET}"/>
+
+	<move todir="${rhq.deploy.dir}/${JBOSS_CONF_BASE}${JBOSS_PORTS_OFFSET}">
+		<fileset dir="${rhq.deploy.dir}">
+			<include name="**/*"/>
+			<exclude name="${JBOSS_CONF_BASE}${JBOSS_PORTS_OFFSET}"/>
+			<exclude name="jboss-service.sh"/>
+			<exclude name="run.conf"/>
+			<exclude name="bindings-jboss-beans.xml"/>
+		</fileset>
+   	</move>
+
+	<move todir="${rhq.deploy.dir}/${JBOSS_CONF_BASE}${JBOSS_PORTS_OFFSET}" filtering="true">
+		<fileset dir="${rhq.deploy.dir}">
+			<include name="jboss-service.sh"/>
+			<include name="run.conf"/>
+		</fileset>
+		<filterset>
+			<filter token="JBOSS_CONF" value="${JBOSS_CONF_BASE}${JBOSS_PORTS_OFFSET}"/>
+			<filter token="PORTS_OFFSET" value="${JBOSS_PORTS_OFFSET}"/>
+		</filterset>
+   	</move>
+
+	<move todir="${rhq.deploy.dir}/${JBOSS_CONF_BASE}${JBOSS_PORTS_OFFSET}/conf/bindingservice.beans/META-INF" filtering="true">
+		<fileset dir="${rhq.deploy.dir}">
+			<include name="bindings-jboss-beans.xml"/>
+		</fileset>
+		<filterset>
+			<filter token="JBOSS_CONF" value="${JBOSS_CONF_BASE}${JBOSS_PORTS_OFFSET}"/>
+			<filter token="PORTS_OFFSET" value="${JBOSS_PORTS_OFFSET}"/>
+		</filterset>
+    	</move>
+
+	<chmod dir="${rhq.deploy.dir}/${JBOSS_CONF_BASE}${JBOSS_PORTS_OFFSET}" perm="750"  includes="*.sh"/>
+
+	<exec executable="ln">
+		<arg value="-s"/>
+		<arg value="${rhq.deploy.dir}/${JBOSS_CONF_BASE}${JBOSS_PORTS_OFFSET}"/>
+		<arg value="${JBOSS_HOME}/server/${JBOSS_CONF_BASE}${JBOSS_PORTS_OFFSET}"/>
+	</exec>
+	
+	<exec executable="ln">
+		<arg value="-s"/>
+		<arg value="${rhq.deploy.dir}/${JBOSS_CONF_BASE}${JBOSS_PORTS_OFFSET}/jboss-service.sh"/>
+		<arg value="/etc/init.d/jboss-${JBOSS_CONF_BASE}${JBOSS_PORTS_OFFSET}"/>
+	</exec>
+
+	<chgrp group="${JBOSS_USER}" type="both">
+		<fileset dir="${rhq.deploy.dir}" />
+		<fileset dir="${JBOSS_HOME}/server/${JBOSS_CONF_BASE}${JBOSS_PORTS_OFFSET}" />
+	</chgrp>
+
+	<chown owner="${JBOSS_USER}" type="both">
+		<fileset dir="${rhq.deploy.dir}" />
+		<fileset dir="${JBOSS_HOME}/server/${JBOSS_CONF_BASE}${JBOSS_PORTS_OFFSET}" />
+	</chown>
+
+	<exec dir="/sbin" executable="chkconfig">
+		<arg value="--add"/>
+		<arg value="jboss-${JBOSS_CONF_BASE}${JBOSS_PORTS_OFFSET}"/>
+	</exec>
+
+	<exec dir="${JBOSS_HOME}/bin" executable="service">
+		<arg value="jboss-${JBOSS_CONF_BASE}${JBOSS_PORTS_OFFSET}"/>
+		<arg value="start"/>
+	</exec>
+    </target>
+
+</project> 

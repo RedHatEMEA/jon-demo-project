@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<project name="tomcat-loadtest-application" default="main" xmlns:rhq="antlib:org.rhq.bundle">
+	<rhq:bundle name="tomcat-loadtest-application" version="3.0" description="A simple load test application">	
+		<rhq:deployment-unit name="webapplication"
+			preinstallTarget="preinstall" postinstallTarget="postinstall">
+			<rhq:file name="hello.world.servlet-0.0.1-SNAPSHOT.war" destinationFile="hello.world.servlet.war" />
+		</rhq:deployment-unit>
+	</rhq:bundle>
+	
+	<target name="main" />
+	<target name="preinstall">
+		<echo>Deploying tomcat load test application to ${rhq.deploy.dir}</echo>
+		<property name="preinstallTargetExecuted" value="true" />
+	</target>
+	<target name="postinstall">
+		<echo>Done deploying tomcat load test application to ${rhq.deploy.dir}.</echo>	
+		<property name="postinstallTargetExecuted" value="true" />
+	</target>
+</project>

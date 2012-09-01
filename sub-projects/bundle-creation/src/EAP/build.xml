@@ -1,0 +1,44 @@
+<project name="EAP" default="dist" basedir=".">
+    <description>EAP</description>
+	
+	  <target name="dist" depends="common,default" description="generate the bundles" >
+	  	<move todir="${dist.dir}" overwrite="true">
+	  		<fileset dir="./">
+	  			<include name="*.zip"/>
+	  		</fileset>
+		</move>
+	  	<echo>EAP distributions created</echo>
+	  </target>
+
+	  <target name="common" description="generate the common bundle" >
+	    <zip destfile="./common/data.zip">
+	    	<fileset dir="${common.dir}">
+			<include name="**"/>
+			</fileset>
+	    </zip>
+	  	<copy todir="./common" file="src/EAP/common/deploy.xml" overwrite="yes" />
+	    <zip destfile="./EAP-common.zip">
+	    	<fileset dir="./common">
+	    		<include name="data.zip"/>
+	    		<include name="*.xml"/>
+			</fileset>
+	    </zip>
+	  </target>
+
+	<target name="default" description="generate the default bundle" >
+	    <zip destfile="./default/data.zip">
+	    	<fileset dir="${default.dir}">
+	    		<include name="**"/>
+			</fileset>
+	    </zip>
+		<copy todir="./default" file="src/EAP/default/deploy.xml" overwrite="yes" />
+		<zip destfile="./EAP-default.zip">
+	    	<fileset dir="./default">
+	    		<include name="data.zip"/>
+	    		<include name="*.xml"/>
+			</fileset>
+	    </zip>
+	  </target>
+
+</project>
+ 
