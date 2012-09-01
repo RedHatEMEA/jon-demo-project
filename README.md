@@ -1,21 +1,21 @@
-*************************************************************************************************
-AN INTERNET CONNECTION IS REQUIRED FOR AN INITIAL INSTALL WITH NO POSTGRESQL DB INSTALLED LOCALLY
+****************************************************************************************************************************************
+*AN INTERNET CONNECTION IS REQUIRED FOR AN INITIAL INSTALL WITH NO POSTGRESQL DB INSTALLED LOCALLY*
 
-IT IS BEST NOT TO MODIFY ANY OF THE SCRIPT FILES BY HAND AND TO USE THE SCRIPT WHERE NECESSARY TO MAKE CHANGES TO THE DEMO ENVIRONMENT
-*************************************************************************************************
+*IT IS BEST NOT TO MODIFY ANY OF THE SCRIPT FILES BY HAND AND TO USE THE SCRIPT WHERE NECESSARY TO MAKE CHANGES TO THE DEMO ENVIRONMENT*
+****************************************************************************************************************************************
 
-************
+
 DESCRIPTION:
-************
+============
 This set of scripts is meant to allow you to easily install a new JON demo consisting of a JON server (of your choice, depending on what you have provided in the ./data/jon folder), agent, and jboss servers.
 
-****************
-GETTING STARTED:
-****************
 
-/////////////
+GETTING STARTED:
+================
+
+
 STARTING OFF
-/////////////
+------------
 
 To start off:
 
@@ -64,11 +64,10 @@ Note: If you already installed an rhq database, it will prompt you to create a n
 Note: For demo purposes, all the scan periods on the agent are set to occur every 30 seconds to ensure changes made during the demo are picked up quickly.
 Note: JON 2.x required a license, it will need to be manually added and has not been tested with the latest version of the script.
 
------------------------------------------------------------------
+******************************************************************************
 
-////////////////
 NEW JON VERSIONS
-////////////////
+----------------
 
 As is to be expected, there will be new versions of JON that will come along and it will be desirable to be able to just drop them into the demo script builder and have it work...  
 
@@ -83,11 +82,10 @@ To add a new version of JON, the suggested steps would be as follows:
 - Delete the older version's plug-in ZIPs from the sub-directory called "plug-ins" and drop in the new files for the new version (**Do NOT leave old plug-ins with newer versions of JON, they are incompatible)
 - Voila!  Start up the script, and it should offer up the new version as an option to install
 
------------------------------------------------------------------
+*********************************************************************************
 
-/////////////
 OTHER OPTIONS
-/////////////
+-------------
 
 There are other menus provided, some for managing the JON environment, and others that were mostly used for debugging or some repeated tasks that were required during development but may prove beneficial.
 
@@ -97,7 +95,7 @@ Create/Delete bundles menu:
 (Coming soon) Server/Service management menu:
 	A menu that will provide management capabilities to all the different services and servers deployed by the demo.
 	
----------------
+    
 
 Install menu:
 	Install Product
@@ -121,9 +119,8 @@ Install/Uninstall Postres service menu:
 		
 Note: None of these extra options will be elaborated in the future as the aim is to generate a more user friendly GUI.
 
-/////
 DEBUG
-/////
+-----
 
 There is a file ../script/debug.sh that is provided for debugging and logging purposes.  It allows for changing the amount of log to be displayed.  If you are having any issues with the script, set:
 	LOG_LEVEL=1
@@ -146,17 +143,19 @@ CLI Commands menu:
 Change Log Level:
 	Changes the log level in the debug.sh file allowing for more or less outputs from functions.
 
-*************
+**********************************************************************************
+
 Demo Details:
-*************
+=============
+
 For more information regarding how to use the installed demo and what features come with it, please refer to the attached recording:
 	./documentation/intro_video.avi
 	
------------------------------------------------------------------------------------
 FEATURES
+--------
 
-JON
----
+*JON*
+
 - Auto installs the JON server with all the necessary configuration
 - Auto installs the JON agent with all the necessary configuration and faster scan periods for demo purposes
 - Auto imports the local resources into JON
@@ -164,8 +163,8 @@ JON
 - Allows for creations of bundles via the script and in JON
 - Allows for deployment of any number of JBoss servers via bundles from JON
 
-JBOSS
------
+*JBOSS*
+
 - Option to create/delete the bundles
 - Currently ONLY supports JBoss EAP v5.x
 - Creates a dvd-store bundle as well and deploys it to each JBoss instance
@@ -173,35 +172,35 @@ JBOSS
 - Can un-deploy multiple instances of EAP from JON 
 - Sets the JBoss instance up as a service
 
-POSTGRESQL
-----------
+*POSTGRESQL*
+
 - Option to install/delete
 - Option to delete specific databases
 - Creates an "rhqadmin" postgres user and "rhq" database
 - Asks for new database to create if one called "rhq" already exists
------------------------------------------------------------------------------------
 
 Gotchas to be aware of:
 - If you plan to manually deploy a JBoss server via the bundles uploaded into the JON demo, please ensure that you set up the destination for the ec-default instance correctly; otherwise, you're deployment will fail.
 - If you accidentally set the destination to be something like "/opt/jon-demo/", ensure NOT to click the "Clean deployment" check-box; otherwise, it will wipe you're entire jon-demo folder.
 
-*************
+***********************************************************************************
+
 Known Issues:
-*************
+=============
 - If a server is deployed (with port 200), only server's with higher increments should be installed.  Installing (port 300) is fine whereas installing (port 100), will re-deploy the base and has varying behaviour - it either breaks the (port 200) build by removing the symbolic link from ../common/server or leaves it intact.
 	- Recommendation is to always install servers with incrementally higher ports
-- If you use "Start JON Demo" option, all the components start up fine, but the text displayed suggests it timed out waiting for "server and agent to be ready..."
+- If you use "Start JON Demo" menu option, all the components start up fine, but the text displayed suggests it timed out waiting for "server and agent to be ready..."
 - jon cli warnings on delete when looking for servers to remove, fix log level and info displayed
 
-*************
 CONTRIBUTING:
-*************
+=============
+
 Following the spirit at Red Hat, this project is Open Source, so please feel free to contribute using pull requests.
 One comment on contributing code, it's probably best that after confirming your changes work local, revert your project to a vanilla state (deleting any JON demos and bundles) and ensure not to commit "build" files or local customisations to configuration or variables... 
 
-****************
 FUTURE PLANNING:
-****************
+================
+
 This project is done on my own time, as such any changes are restricted by my ability to spend extra time on it.
 
 I have some thoughts as to what I would like to be able to do with this project.  Below are some examples of what I'd like to get to, in some order of priority as I see it:
@@ -223,9 +222,9 @@ I have some thoughts as to what I would like to be able to do with this project.
 	- Also allowing for importing new VMs, adding them into a separate group, deploying the bundles, and then moving them to the standard group
 - Allow for bundle deployments to have different environment property capabilities
 
-********
 CONTACT:
-********
+========
+
 If you need help with any of the following:
 - setting this project up and getting the JON demo functional
 - a run through of the configured environment (please check the provided slides/video)
