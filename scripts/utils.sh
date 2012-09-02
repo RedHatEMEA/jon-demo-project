@@ -29,7 +29,15 @@ function newLine () {
 #function - takeInput(message) - to output a message before taking input
 function takeInput () {
 	MESSAGE=$1
-	echo -en "\n\tINPUT: $MESSAGE\n\t"
+	SHOW_INPUT=$2
+	
+	TEXT=""
+	
+	if [[ "$SHOW_INPUT" != "0" ]]; then
+		TEXT="INPUT: "
+	fi
+	
+	echo -en "\t${TEXT}$MESSAGE\n\t"
 }
 
 #function - takeYesNoInput(message, [default], [allowBack]) - to output a message before taking input
@@ -111,17 +119,17 @@ function chooseProduct () {
 
 	PRODUCT_ARRAY=(`find ${WORKSPACE_WD}/data -name "*${NAME_PATTERN}*.zip" | grep -v plugins`)
 	PRODUCT_ARRAY_LENGTH=$((${#PRODUCT_ARRAY[@]}))
-	outputLog "\tExisting packages with '$NAME_PATTERN': " "2" "y" "n"
+	takeInput "Select the version of $NAME_PATTERN you would like to install/extract:\n\tB. Back to Main Menu."
+	#takeInput "\tExisting packages with '$NAME_PATTERN': " "0"
 	
 	COUNT=0
 	for p in ${PRODUCT_ARRAY[@]}
 	do
-		outputLog "\t$((++COUNT)). ${p}" "2" "y" "n"
+		takeInput "$((++COUNT)). ${p}" "0"
 	done
 	
 	while true;
 	do
-		takeInput "Select the version of $NAME_PATTERN you would like to install/extract:\n\tB. Back to Main Menu." 
 		read PRODUCT_SELECTED
 		newLine
 		

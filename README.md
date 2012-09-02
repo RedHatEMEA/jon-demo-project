@@ -53,8 +53,6 @@ Then, add the necessary product ZIPs into the appropriate locations (please use 
 	- jon-plugin-pack-*.zip into ./data/jon/jon-server-x.x.x.GA/plugins
 	- unpack any JON  patch ZIPs into ./data/jon/jon-server-x.x.x.GA/patches
 	
-If you have the intention of using bundles, then you must ensure that Ant (v.1.7.x+) is installed on your system.  If not, then bundle creation and deployment will not be available.  You also need to ensure to provide a jboss-eap-*.zip.  Currently, only version 5.x is supported (v.5.1.1 and 5.1.2 confirmed).
-
 At the top of the Main Menu, you can see where the demo will currently be installed (demo directory is ${INSTALL_LOCATION}/jon-demo by default).  You can change that by using the "cd" option.
 
 To manage the JON demo, use the JON demo options, (ID) to Install and (DD) to Delete the JON Demo.
@@ -80,6 +78,27 @@ To add a new version of JON, the suggested steps would be as follows:
 - If there are any patches, add them into the "patches" and extract all the patches into that folder, removing the ZIPs
 - Delete the older version's plug-in ZIPs from the sub-directory called "plug-ins" and drop in the new files for the new version (**Do NOT leave old plug-ins with newer versions of JON, they are incompatible)
 - Voila!  Start up the script, and it should offer up the new version as an option to install
+
+*Note: If at some point, you want to add a newer version of JON, all you need to do is modify the LATEST_JON_VERSION variable in ./data/demo-config.properties to have the new name, and on next start up (or reload of the scripts), the script will create the folder structure for you to drop the files into appropriately.*
+
+*********************************************************************************
+
+## BUNDLES ##
+
+If you have the intention of using bundles, then you must ensure that:
+- Ant (v.1.7.x+) is installed on your system
+- To provide a jboss-eap-*.zip.  
+  - Currently, only version 5.x is supported (v.5.1.1 and 5.1.2 confirmed).
+  
+If not, then bundle creation and deployment will not be available.  
+Bundles can be created separately, as well as part of the demo installation process.
+
+To create more bundles, you would have to add projects under the folder
+		./sub-projects/bundle-creation/src/*
+		
+Any generated bundle files will be added into the ./data/bundles directory and can be copied from there to any other location as desired.  Otherwise, they will be used by the demo script to deploy into the JON server.
+
+It will be very handy to have more applications available to be deployed into JON and thus onto the deliverable JBoss servers.  Demo users could in the future have the option to choose which bundles they would like installed (for example, BRMS with a bundle of rules, SOA-P with an ESB, etc...)
 
 *********************************************************************************
 
@@ -171,6 +190,8 @@ For more information regarding how to use the installed demo and what features c
 
 ### POSTGRESQL ###
 
+- Postgres availability comes from the following website, so if a version is not available for your flavour of Linux or architecture, then it will not be available to you.  Choosing the right version of Postgres for JON is your responsibility. (up to 9.1, currently the latest release, is fully functional)
+		http://yum.postgresql.org/repopackages.php
 - Option to install/delete
 - Option to delete specific databases
 - Creates an "rhqadmin" postgres user and "rhq" database

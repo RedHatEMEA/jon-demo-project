@@ -1,31 +1,29 @@
 TESTS:
-- test creation of data/jon/jon-server dir...
-- test log on vanilla, and log change and output 
-- test install of postgres on rhel, does distro, distro nick and postgres version work right?
-- test update latest jon version
-	update readme, that it'll create the new structure for you
-- test a new version of jon
-- test script in vanilla rhel vm
-- on machine restart does jboss start up? if so demo start fails? or eap managed?
-- test bug of checking, then un-checking wipe directory... does it still wipe?
+RHEL test
+- test install of postgres, does distro, distro nick and postgres version work right?
 - test ownership of data folder change after adding local_user, afterwards
-- Test log level at 3,4. Need to change all inputs from outputLog to userText or something
+- test script in full
+
 - check done waiting output
 
+- on machine restart does jboss start up? if so demo start fails? or eap managed?
+- test bug of checking, then un-checking wipe directory... does it still wipe?
+
+TO CONFIRM:
+- log level 3,4. any more inputs to change to takeInput?
+
 TODO:
--  Re-do functions to allow for scripting of the script and no user input
 -  Deploy agent before wait for server start up completes. Then wait for it
 -  Cannot change directory when demo installed
 -  Log level changing allow 1-4 and the words as well
--  Provide explanation on how to add more applications that can be bundled up
--  Add to read me the supported list of OSes and archs or at least point to the Postgres page used by script
--  debug to pick up log from demo-config, ugly resolution
-	---> resolved with extra loadscript/loadvariables at end of initialise, ugly..
 - set input to lowercase for other check functions/ input
-- get rid of postgres jdbc dependency ?? in conf/jon/jon-server.x.x.x 
 	ANSWER=`lowercase $ANSWER`
 - where are start/stop jon server
 	shift into manage server option
+	
+-  Re-do functions to allow for scripting of the script and no user input
+- get rid of postgres jdbc dependency ?? in conf/jon/jon-server.x.x.x 
+
 - waitFor(s) not functioning properly (known issue, remove from readme on fix)
 	Waiting for availability report to be sent to server from agent
 	Waiting to find "RuntimeDiscoveryExecutor)- Scanned platform and"
@@ -52,10 +50,8 @@ TODO:
 	
 	- once this is done, set cli_commands.sh to load the takeInput outputLog scripts and test if it works separately
 	
-- Switch to GitHub
 - Record video of demo
 - Add PPT specifying all the features installed in the demo
-- Email emea-presales
 - upload CLI scripts separately into my project / and pilhuhn's git project
 
 FEATURES TO ADD:

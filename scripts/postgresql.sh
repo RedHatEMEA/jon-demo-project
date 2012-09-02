@@ -278,7 +278,7 @@ function choosePostgresVersion () {
 	outputLog "Array length is: $VERSION_ARRAY_LENGTH" "1"
 
 	newLine "1"
-	outputLog "Select the version of postgres you would like to install: [1 ... x]\nB. Back to Main Menu.\n" "2" "y" "n"
+	takeInput "Select the version of postgres you would like to install: [1 ... x]\n\tB. Back to Main Menu.\n"
 
 	while true;
 	do
@@ -294,10 +294,10 @@ function choosePostgresVersion () {
 			else 
 				BETA_TEXT=""
 			fi
-			outputLog "\t$i. -- PostgreSQL v.${VERSION_ARRAY[$INDEX_FOR_ARRAY]}${BETA_TEXT}" "2" "y" "n"
+			takeInput "$i. -- PostgreSQL v.${VERSION_ARRAY[$INDEX_FOR_ARRAY]}${BETA_TEXT}" "0"
 		done
 
-		echo -en "\t"
+		#echo -en "\t"
 		read VERSION
 
 		#If non-numeric or not in the correct number range, then invalid else extract version to add to repo base
@@ -341,7 +341,6 @@ function getDistroDetails () {
 		DISTRO_VERSION=${DISTRO_VERSION:0:1}
 	else
 		DISTRO_NICK=$DISTRO
-		echo "--------------------------- here: distro nick is $DISTRO_NICK"
 	fi
 	
 }

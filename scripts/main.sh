@@ -64,8 +64,6 @@ function setWorkingDirectory () {
 
 function loadScripts () {
 	
-	setWorkingDirectory
-	
 	#Include necessary shell scripts
 	. ${WORKSPACE_WD}/scripts/debug.sh
 	outputLog "working in $WORKSPACE_WD"
@@ -602,6 +600,7 @@ function changeLogLevel () {
 	done
 
 	replaceStringInFile "DEMO_LOG_LEVEL=$LOG_LEVEL" "DEMO_LOG_LEVEL=$LOG_CHANGE" "${WORKSPACE_WD}/data/demo-config.properties"
+	loadVariables
 	loadScripts
 	echo Updated LOG_LEVEL to use $LOG_CHANGE
 	newLine
@@ -723,5 +722,6 @@ function initialise () {
 	loadVariables
 }
 
+setWorkingDirectory
 initialise
 mainMenu
