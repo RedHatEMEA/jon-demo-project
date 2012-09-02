@@ -169,6 +169,8 @@ function handleJonFirstStartup () {
 function deleteJONServer () {
 		
 	outputLog "Existing JON instances:" "1" "y" "n"
+	
+	#TODO modify the reading of this variable to take a number versus the full url
 	find $JD_INSTALL_LOCATION -name "jon-server*"
 
 	newLine

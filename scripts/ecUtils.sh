@@ -54,7 +54,7 @@ function findServer () {
 		SERVER_ID=${SERVER_SEARCH#*OUTPUT=}
 		SERVER_ID=${SERVER_ID% *}
 	else
-		outputLog "Server with pattern: ${JBOSS_BASE_CONF}${SERVER_PORT_TO_FIND} not found..." "3"
+		outputLog "Server with pattern: ${JBOSS_BASE_CONF}${SERVER_PORT_TO_FIND} not found..." "2"
 	fi
 	newLine
 }

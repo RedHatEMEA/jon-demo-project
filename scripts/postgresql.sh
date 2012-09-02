@@ -422,11 +422,11 @@ function deletePostgresDB () {
 
 #function - uninstallPostgres () - uninstall postgres
 function uninstallPostgres () {
-	takeInput "All postgresql data will be deleted, are you certain? [Y/n]"
-	read ANSWER
+	takeYesNoInput "All postgresql data will be deleted, are you certain? (yes/no): [default no]\n\tB. Back to Main Menu." "no" "1"
+
 	newLine
 
-	if [[ "$ANSWER" == "Y" ]]; then
+	if [[ "$ANSWER" == "yes" ]]; then
 		stopPostgresService
 
 		chkconfig --level 345 $POSTGRES_SERVICE_NAME off

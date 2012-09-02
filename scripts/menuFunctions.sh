@@ -39,13 +39,14 @@ function takeInputOption() {
 #function - basicMenuOptions (option) - case stmt used at the end of every menu *) options, handles (b)ack, (q)uit and wrong inputs
 function basicMenuOptions() {
 	option=$1
+	option=`lowercase $option`
 	
 	case $option in
-		"q" | "Q" ) 
+		"q" ) 
 			quit
 			;;
 
-		"b" | "B" ) 
+		"b" ) 
 			mainMenu
 			;;
 		

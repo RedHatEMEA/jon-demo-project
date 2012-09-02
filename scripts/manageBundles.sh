@@ -95,6 +95,7 @@ function createBundles () {
 		
 		cd $CURRENT_WD
 			
+		chown $LOCAL_USER:$LOCAL_USER -R ${WORKSPACE_WD}/data/bundles
 		outputLog "Bundles created." "2"
 	else
 		outputLog "At the moment, only EAP v5.1 is supported for the creation of bundles, more versions will be supported at a later time." "3"

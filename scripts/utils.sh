@@ -62,12 +62,12 @@ function takeYesNoInput () {
 			outputLog "No default provided, so please answer yes or no." "4"
 			ANSWER=""
 			newLine
+		elif [[ "$ANSWER" == "b" && "$ALLOW_BACK" == "1" ]]; then
+			mainMenu
 		elif [[ "$ANSWER" != "yes" && "$ANSWER" != "no" ]]; then
 			outputLog "Invalid input, must be yes or no." "4"
 			ANSWER=""
 			newLine
-		elif [[ "$ANSWER" == "b" || "$ANSWER" == "B" && "$ALLOW_BACK" == "1" ]]; then
-			mainMenu
 		else
 			break
 		fi
