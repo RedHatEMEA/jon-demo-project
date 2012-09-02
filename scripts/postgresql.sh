@@ -69,26 +69,18 @@ function checkPostgresInstall () {
 	
 }
 
-function installPostgres () {
-
-	outputLog "Installing PostgreSQL now...\n" "2"
+#function - getPostgresRepo () - get the postgres repo url using the distro details and the user's choice of postgres version
+function getPostgresRepo () {
 
 	newLine
 	DISTRO_VERSION=
-	DISTRO_NICK=""
+	DISTRO_NICK=
 	DISTRO=
 	ARCH=`arch`
 	VERSION=
 
-	getDistroDetails			#sets DISTRO_VERSION & DISTRO & ARCH
-	outputLog "DISTRO_VERSION is $DISTRO_VERSION --  DISTRO is $DISTRO -- ARCH is $ARCH" "1"
-	
-	if [[ "$DISTRO" == "redhat" ]]; then
-		DISTRO_NICK="rhel"
-		DISTRO_VERSION=${DISTRO_VERSION:0:1}
-	else
-		DISTRO_NICK=$DISTRO
-	fi
+	getDistroDetails			#sets DISTRO_VERSION & DISTRO & ARCH & DISTRO_NICK
+	outputLog "DISTRO_VERSION is $DISTRO_VERSION --  DISTRO is $DISTRO -- ARCH is $ARCH -- DISTRO_NICK is $DISTRO_NICK" "1"
 
 	REPO_PACKAGES_FILE="repopackages.php"
 	WGET_TMP_FILE="wget.tmp"
@@ -122,9 +114,13 @@ function installPostgres () {
 	outputLog "Build number is: ${BUILD_VERSION}"
 	
 	RPM="${RPM}${BUILD_VERSION}.noarch.rpm"
-	REPO="${REPO_BASE}${REPO_WO_RPM}${RPM}"
-	
-	newLine
+	REPO="${REPO_BASE}${REPO_WO_RPM}${RPM}"	
+}
+
+function installPostgres () {
+
+	outputLog "Installing PostgreSQL now...\n" "2"
+
 	outputLog "Getting postgreSQL pgdg RPM from $REPO\n" "2"
 		
 	curl -O $REPO
@@ -169,7 +165,7 @@ function installPostgres () {
 		service $POSTGRES_SERVICE_NAME initdb
 		
 		outputLog "Copying postgres config file to $POSTGRES_INSTALL_LOCATION/${MAJOR_VERSION}.${MINOR_VERSION}/data/pg_hba.conf" "2"
-		cp ../conf/postgres/pg_hba.conf $POSTGRES_INSTALL_LOCATION/${MAJOR_VERSION}.${MINOR_VERSION}/data/pg_hba.conf
+		cp ${WORKSPACE_WD}/conf/postgres/pg_hba.conf $POSTGRES_INSTALL_LOCATION/${MAJOR_VERSION}.${MINOR_VERSION}/data/pg_hba.conf
 
 		outputLog "Setting $POSTGRES_SERVICE_NAME to default to on after a machine restart..." "2"
 		chkconfig $POSTGRES_SERVICE_NAME on
@@ -180,8 +176,6 @@ function installPostgres () {
 	else
 		outputLog "Postgres has not been installed, yum installation failed, check output above." "4"
 	fi	
-	
-	deletePostgresTmpFiles
 
 }
 
@@ -332,16 +326,24 @@ function getDistroDetails () {
 		DISTRO_VERSION=${temp#*release }	#15
 
 		DISTRO="fedora"
-		return
 	fi
 
-	if [[ -f "/etc/redhat-release" ]]; then
+	if [[ -f "/etc/redhat-release" && "$DISTRO" == "" ]]; then
 		temp=`cat /etc/redhat-release`	#Red Hat Enterprise Linux Server release 5 (xxx)
 		temp=${temp% \(*}			#Red Hat Enterprise Linux Server release 5
 		DISTRO_VERSION=${temp#*release }			#5
 
 		DISTRO="redhat"
 	fi
+			
+	if [[ "$DISTRO" == "redhat" ]]; then
+		DISTRO_NICK="rhel"
+		DISTRO_VERSION=${DISTRO_VERSION:0:1}
+	else
+		DISTRO_NICK=$DISTRO
+		echo "--------------------------- here: distro nick is $DISTRO_NICK"
+	fi
+	
 }
 
 #function - createPostgresUser ()- create a user for postgres, by default using rhqadmin, otherwise request input displaying current users

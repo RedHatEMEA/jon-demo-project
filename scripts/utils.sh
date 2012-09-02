@@ -208,7 +208,13 @@ function extractProductVersion () {
 	#Example jon-server-2.4.0.GA
 	PRODUCT_NAME=$1
 
-	TMP=${PRODUCT_NAME%.GA*} #jon-server-2.4.0
+	if [[ "$PRODUCT_NAME" =~ ".GA" ]]; then
+		TMP=${PRODUCT_NAME%.GA*} #jon-server-2.4.0
+	elif [[ "$PRODUCT_NAME" =~ ".CR" ]]; then
+		TMP=${PRODUCT_NAME%.CR*} #jon-server-2.4.0
+	elif [[ "$PRODUCT_NAME" =~ ".RC" ]]; then
+		TMP=${PRODUCT_NAME%.RC*} #jon-server-2.4.0
+	fi
 	TMP=${TMP##*-}		 #2.4.0
 
 	echo $TMP
@@ -389,6 +395,7 @@ function createDemoConfFile () {
 		chown $LOCAL_USER:$LOCAL_USER "${WORKSPACE_WD}/data/demo-config.properties"
 		
 		loadScripts
+		loadVariables
 	fi	
 }
 
@@ -408,6 +415,8 @@ function createDemoFsStructure () {
 	if [[ "$JON_VERSION" == "" ]]; then
 		JON_VERSION=$LATEST_JON_VERSION
 	fi		
+	
+	outputLog "JON VERSION is set to $JON_VERSION"
 
 	#Create the data folder and it's subdirectory	
 	if [[ ! -d ${WORKSPACE_WD}/data/jon/$JON_VERSION ]]; then
@@ -624,7 +633,7 @@ function waitFor () {
 		if [[ "$FOUND" == "" ]]; then
 			sleep 0.5
 		else
-			outputLog ".   Done waiting"  "2" "n" "n"
+			outputLog ".   Done waiting after $(( COUNT / 2 ))s"  "2" "n" "n"
 			WAIT_FOR_RESULT="completed"
 			break
 		fi

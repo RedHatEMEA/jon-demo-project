@@ -1,6 +1,7 @@
 TESTS:
 - test creation of data/jon/jon-server dir...
 - test log on vanilla, and log change and output 
+- test install of postgres on rhel, does distro, distro nick and postgres version work right?
 - test update latest jon version
 	update readme, that it'll create the new structure for you
 - test a new version of jon
@@ -8,8 +9,18 @@ TESTS:
 - on machine restart does jboss start up? if so demo start fails? or eap managed?
 - test bug of checking, then un-checking wipe directory... does it still wipe?
 - test ownership of data folder change after adding local_user, afterwards
+- Test log level at 3,4. Need to change all inputs from outputLog to userText or something
+- check done waiting output
 
 TODO:
+-  Re-do functions to allow for scripting of the script and no user input
+-  Deploy agent before wait for server start up completes. Then wait for it
+-  Cannot change directory when demo installed
+-  Log level changing allow 1-4 and the words as well
+-  Provide explanation on how to add more applications that can be bundled up
+-  Add to read me the supported list of OSes and archs or at least point to the Postgres page used by script
+-  debug to pick up log from demo-config, ugly resolution
+	---> resolved with extra loadscript/loadvariables at end of initialise, ugly..
 - set input to lowercase for other check functions/ input
 - get rid of postgres jdbc dependency ?? in conf/jon/jon-server.x.x.x 
 	ANSWER=`lowercase $ANSWER`

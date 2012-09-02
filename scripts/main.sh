@@ -366,7 +366,7 @@ function mainMenu () {
 				;;
 
 			"r")	
-				loadScripts
+				initialise
 				;;
 				
 			"cl")
@@ -404,7 +404,9 @@ function mainMenu () {
 			"ip") 
 				checkPostgresInstall	
 				if [[ "$POSTGRES_INSTALLED" == "n" ]]; then 
+					getPostgresRepo
 					installPostgres
+					deletePostgresTmpFiles
 				fi
 				;;
 
@@ -507,7 +509,7 @@ function deleteMenu () {
 						deleteFolder "${WORKSPACE_WD}/data/bundles"
 						
 						#Delete any expanded JBoss ZIP directories
-						JBOSS_DIR=`ls -d ${WORKSPACE_WD}/data/jboss/*/`
+						JBOSS_DIR=`ls -d ${WORKSPACE_WD}/data/jboss/*/ 2>&1`
 						
 						if [[ "$JBOSS_DIR" =~ "cannot access" ]]; then
 							outputLog "No JBoss was provided, so nothing to delete."
@@ -717,6 +719,8 @@ function initialise () {
 	checkScriptUser
 	checkOrCreateJBossUser	
 	updateLocalUser
+	loadScripts
+	loadVariables
 }
 
 initialise

@@ -187,12 +187,10 @@ function jdInstallDemo () {
 		checkForPostgresOnSystem
 		checkPostgresInstall	
 		if [[ "$POSTGRES_INSTALLED" == "n" ]]; then 
-			installPostgres
+			getPostgresRepo
 		fi
 		
 		newLine
-				
-		createPostgresUser
 				
 		if [[ "$BUNDLES_ENABLED" == "true" ]]; then
 			takeYesNoInput "Would you like to install the bundles (yes/no): [default yes]\n\tB. Back to Main Menu." "yes" "1"
@@ -244,6 +242,15 @@ function jdInstallDemo () {
 	
 		newLine
 		chooseProduct "jon"
+					
+		if [[ "$POSTGRES_INSTALLED" == "n" ]]; then 
+			installPostgres
+			deletePostgresTmpFiles
+		fi
+		
+		newLine
+				
+		createPostgresUser
 		
 		#Create the bundles
 		if [[ -d "$JD_BUNDLE_LOCATION" && "$INSTALL_BUNDLES" == "yes" ]]; then 
