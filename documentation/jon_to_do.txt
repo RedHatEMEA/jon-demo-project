@@ -1,18 +1,16 @@
 TESTS:
-RHEL test
-- test install of postgres, does distro, distro nick and postgres version work right?
-- test ownership of data folder change after adding local_user, afterwards
-- test script in full
 
-- on machine restart does jboss start up? if so demo start fails? or eap managed?
 
-TO CONFIRM:
+VERIFY:
 - log level 3,4. any more inputs to change to takeInput?
 	to many newLines, how to handle?
 - deployment of patches may not work.  they will get deployed, but not really loaded till next restart of jon server (which is why i used to have two starts)
+- is jboss user needed?
+- on machine restart does jboss start up? if so demo start fails? or eap managed?
 
 TODO:
-- disable change directory when demo installed
+- Add to read me about current bundle architecture
+- if deploying jboss, but no eap plugin provided, then skip last bits of importing the eap server, will only deploy it and output warning
 - Log level changing allow 1-4 and the words as well
 	
 - Re-do functions to allow for scripting of the script and no user input
@@ -31,8 +29,7 @@ TODO:
 	variable utils
 	
 	- once this is done, set cli_commands.sh to load the takeInput outputLog scripts and test if it works separately
-	
-- Record video of demo
+
 - Add PPT specifying all the features installed in the demo
 - upload CLI scripts separately into my project / and pilhuhn's git project
 

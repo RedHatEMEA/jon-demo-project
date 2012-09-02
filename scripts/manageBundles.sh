@@ -1,4 +1,7 @@
-ANT=`which ant`
+#function - setAnt () - sets the variable ANT to the result of which ant
+function setAnt () {
+	ANT=`which ant`	
+}
 
 #function - deleteBundles () - Function that deletes the created bundles and bits of EAP moved into the sub project
 function deleteBundles () {
@@ -89,14 +92,18 @@ function createBundles () {
 
 		CURRENT_WD=`pwd`
 		cd ${WORKSPACE_WD}/sub-projects/bundle-creation
-		
-		#Call ant (forking process) passing in the directory to find the data (under the data folder) required for the bundles				
-		$ANT -Ddata.dir=${WORKSPACE_WD}/data -Ddist.dir=${WORKSPACE_WD}/data/bundles -Dcommon.dir=${WORKSPACE_WD}/data/jboss/$JBOSS_PRODUCT/common -Ddefault.dir=${WORKSPACE_WD}/data/jboss/$JBOSS_PRODUCT/default -Ddvdstore.dir=${WORKSPACE_WD}/sub-projects/bundle-creation/src/seam/seam-dvdstore &
+
+		#Call ant (forking process) passing in the directory to find the data (under the data folder) required for the bundles
+		if [[ "$SUB_PROJECT_CALL" == "true" ]]; then				
+			$ANT -Ddata.dir=${WORKSPACE_WD}/data -Ddist.dir=${WORKSPACE_WD}/data/bundles -Dcommon.dir=${WORKSPACE_WD}/data/jboss/$JBOSS_PRODUCT/common -Ddefault.dir=${WORKSPACE_WD}/data/jboss/$JBOSS_PRODUCT/default -Ddvdstore.dir=${WORKSPACE_WD}/sub-projects/bundle-creation/src/seam/seam-dvdstore
+		else
+			$ANT -Ddata.dir=${WORKSPACE_WD}/data -Ddist.dir=${WORKSPACE_WD}/data/bundles -Dcommon.dir=${WORKSPACE_WD}/data/jboss/$JBOSS_PRODUCT/common -Ddefault.dir=${WORKSPACE_WD}/data/jboss/$JBOSS_PRODUCT/default -Ddvdstore.dir=${WORKSPACE_WD}/sub-projects/bundle-creation/src/seam/seam-dvdstore &
+		fi
 		
 		cd $CURRENT_WD
 			
 		chown $LOCAL_USER:$LOCAL_USER -R ${WORKSPACE_WD}/data/bundles
-		outputLog "Bundles created." "2"
+		outputLog "Bundles are being built..." "2"
 	else
 		outputLog "At the moment, only EAP v5.1 is supported for the creation of bundles, more versions will be supported at a later time." "3"
 	fi 	

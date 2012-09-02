@@ -27,7 +27,7 @@ function cliCommandsMenu () {
 
 		CURRENT_DIR=`pwd`
 		CURRENT_DIR=${CURRENT_DIR%/*}
-		CLI_DIR=${CURRENT_DIR}/cli
+		CLI_DIR=${WORKSPACE_WD}/cli
 		for f in `find ${CLI_DIR} -name "*.js"`
 		do
 			PARAMS_STRING=

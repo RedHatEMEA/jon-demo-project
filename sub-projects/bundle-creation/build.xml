@@ -1,7 +1,7 @@
 <project name="bundles" default="dist" basedir=".">
     <description>Creates all bundles</description>
 
-	<target name="dist" depends="clean">
+	<target name="dist" depends="set-up-tmp-folders,clean">
 		
 		<property name="test.failure" value="true" />
 		<ant antfile="src/EAP/build.xml" target="dist"/>
@@ -10,10 +10,16 @@
 				
 	</target>
 	
+	<target name="set-up-tmp-folders">
+		<mkdir dir="${dist.dir}/default"/>
+		<mkdir dir="${dist.dir}/common" />
+		<mkdir dir="${dist.dir}/seam-dvdstore" />
+	</target>
+	
 	<target name="clean-up">
-		<delete dir="./default" />
-		<delete dir="./common" />
-		<delete dir="./seam-dvdstore" />
+		<delete dir="${dist.dir}/default" />
+		<delete dir="${dist.dir}/common" />
+		<delete dir="${dist.dir}/seam-dvdstore" />
 	</target>
 
 	<target name="clean">

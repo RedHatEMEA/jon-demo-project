@@ -64,11 +64,16 @@ function takeYesNoInput () {
 			newLine
 		elif [[ "$ANSWER" == "b" && "$ALLOW_BACK" == "1" ]]; then
 			mainMenu
-		elif [[ "$ANSWER" != "yes" && "$ANSWER" != "no" ]]; then
+		elif [[ "$ANSWER" != "yes" && "$ANSWER" != "no" && "$ANSWER" != "y" && "$ANSWER" != "n" ]]; then
 			outputLog "Invalid input, must be yes or no." "4"
 			ANSWER=""
 			newLine
 		else
+			if [[ "$ANSWER" == "y" ]]; then
+				ANSWER="yes"
+			elif [[ "$ANSWER" == "n" ]]; then
+				ANSWER="no"
+			fi
 			break
 		fi
 		
@@ -144,7 +149,7 @@ function chooseProduct () {
 				mainMenu
 		elif [[ "$PRODUCT_SELECTED" != +([0-9]) || "$PRODUCT_SELECTED" -lt "1" || "$PRODUCT_SELECTED" -gt "$PRODUCT_ARRAY_LENGTH" ]]; then
 			outputLog "Invalid input, must be between 1 and $PRODUCT_ARRAY_LENGTH" "4"
-			newLine
+			echo -en "\n\t"
 		else
 			#Decrement PRODUCT_SELECTED by one to match the array indices
 			PRODUCT_SELECTED=$((PRODUCT_SELECTED - 1))
@@ -673,6 +678,8 @@ function checkBundlesEnabled () {
 		BUNDLES_ENABLED=false
 		echo "*Note: Bundle creation is not enabled. Install ant on your system if desired."
 	else
+		setAnt
+		
 		echo ***Bundle options***
 		echo "CB. Create bundles"
 		BUNDLES_CREATED=`find ${WORKSPACE_WD}/data -name "bundles"`

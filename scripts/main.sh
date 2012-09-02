@@ -355,7 +355,9 @@ function mainMenu () {
 				;;
 
 			"cb")
+				SUB_PROJECT_CALL=true
 				createBundles
+				SUB_PROJECT_CALL=false
 				;;
 
 			"db")

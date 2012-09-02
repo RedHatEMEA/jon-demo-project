@@ -2,23 +2,18 @@
     <description>seam</description>
 	
 	  <target name="dist" depends="dvdstore" description="generate the bundles" >
-	  	<move todir="${dist.dir}" overwrite="true">
-	  		<fileset dir="./">
-	  			<include name="*.zip"/>
-	  		</fileset>
-		</move>
 	  	<echo>Seam distributions created</echo>
 	  </target>
 
 	  <target name="dvdstore" description="generate the dvdstore bundle" >
-	    <zip destfile="./seam-dvdstore/data.zip">
+	    <zip destfile="${dist.dir}/seam-dvdstore/data.zip">
 	    	<fileset dir="${dvdstore.dir}/data">
 				<include name="**"/>
 			</fileset>
 	    </zip>
-	  	<copy todir="./seam-dvdstore" file="src/seam/seam-dvdstore/deploy.xml" overwrite="yes" />
-	  	<zip destfile="./seam-dvdstore.zip">
-	    	<fileset dir="./seam-dvdstore">
+	  	<copy todir="${dist.dir}/seam-dvdstore" file="src/seam/seam-dvdstore/deploy.xml" overwrite="yes" />
+	  	<zip destfile="${dist.dir}/seam-dvdstore.zip">
+	    	<fileset dir="${dist.dir}/seam-dvdstore">
 	    		<include name="data.zip"/>
 	    		<include name="*.xml"/>
 			</fileset>

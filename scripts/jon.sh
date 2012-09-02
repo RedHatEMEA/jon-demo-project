@@ -258,37 +258,42 @@ function runCLIScripts () {
 		#setup the bundles and the destinations
 		if [[ "$INSTALL_BUNDLES" == "yes" ]]; then
 			outputLog "Installing the bundles into the JON server..." "2"
-			setupBundleAndDestination ${BUNDLE_COMMON_FILE} $DEST_COMMON_SUFFIX
-			setupBundle ${BUNDLE_DEFAULT_FILE}
-			setupBundle ${BUNDLE_APP_FILE}
 			
-			if [[ "$NUM_JBOSS_TO_INSTALL" != 0 ]]; then
-				#Passing in expression to find the creation of the last bundle
-				waitFor "Creating bundle.*name=seam-dvdstore" "$JD_INSTALL_LOCATION/$JON_PRODUCT/logs/rhq-server-log4j.log" "45" "Waiting 45s, giving ant bundle time to be available for deployment."
-		
-				for (( A=1; A <= NUM_JBOSS_TO_INSTALL ; A++ ))
-				do 
-					PORT=$(( $A * 100 ))
-					outputLog "working on port $PORT in iteration $A -- currently deployed [$JBOSS_SERVER_PORTS_PROVISIONED]"
-					if [[ "$JBOSS_SERVER_PORTS_PROVISIONED" =~ "$PORT" ]]; then
-						outputLog "JBoss instance with port $PORT already provisioned, skipping..." "3"
-					else
-						installJBossServer $PORT
-						
-						#This may be modifying by the provisioning script, if we find that port is already installed
-						CURRENT_PORT_BEING_INSTALLED=$PORT
-						if [[ "$JBOSS_SERVER_PORTS_PROVISIONED" == "" ]]; then
-							outputLog "JBOSS_SERVER_PORTS_PROVISIONED is currently empty, adding first port"
-							JBOSS_SERVER_PORTS_PROVISIONED=$CURRENT_PORT_BEING_INSTALLED
+			if [[ -f ${BUNDLE_COMMON_FILE} && -f ${BUNDLE_DEFAULT_FILE} && -f ${BUNDLE_APP_FILE} ]]; then
+				setupBundleAndDestination ${BUNDLE_COMMON_FILE} $DEST_COMMON_SUFFIX
+				setupBundle ${BUNDLE_DEFAULT_FILE}
+				setupBundle ${BUNDLE_APP_FILE}
+				
+				if [[ "$NUM_JBOSS_TO_INSTALL" != 0 ]]; then
+					#Passing in expression to find the creation of the last bundle
+					waitFor "Creating bundle.*name=seam-dvdstore" "$JD_INSTALL_LOCATION/$JON_PRODUCT/logs/rhq-server-log4j.log" "45" "Waiting 45s, giving ant bundle time to be available for deployment."
+			
+					for (( A=1; A <= NUM_JBOSS_TO_INSTALL ; A++ ))
+					do 
+						PORT=$(( $A * 100 ))
+						outputLog "working on port $PORT in iteration $A -- currently deployed [$JBOSS_SERVER_PORTS_PROVISIONED]"
+						if [[ "$JBOSS_SERVER_PORTS_PROVISIONED" =~ "$PORT" ]]; then
+							outputLog "JBoss instance with port $PORT already provisioned, skipping..." "3"
 						else
-							outputLog "JBOSS_SERVER_PORTS_PROVISIONED is currently $JBOSS_SERVER_PORTS_PROVISIONED"
-							JBOSS_SERVER_PORTS_PROVISIONED="\"$JBOSS_SERVER_PORTS_PROVISIONED $CURRENT_PORT_BEING_INSTALLED\""
+							installJBossServer $PORT
+							
+							#This may be modifying by the provisioning script, if we find that port is already installed
+							CURRENT_PORT_BEING_INSTALLED=$PORT
+							if [[ "$JBOSS_SERVER_PORTS_PROVISIONED" == "" ]]; then
+								outputLog "JBOSS_SERVER_PORTS_PROVISIONED is currently empty, adding first port"
+								JBOSS_SERVER_PORTS_PROVISIONED=$CURRENT_PORT_BEING_INSTALLED
+							else
+								outputLog "JBOSS_SERVER_PORTS_PROVISIONED is currently $JBOSS_SERVER_PORTS_PROVISIONED"
+								JBOSS_SERVER_PORTS_PROVISIONED="\"$JBOSS_SERVER_PORTS_PROVISIONED $CURRENT_PORT_BEING_INSTALLED\""
+							fi
+							resetVariableInFile "JBOSS_SERVER_PORTS_PROVISIONED" "$JBOSS_SERVER_PORTS_PROVISIONED"
 						fi
-						resetVariableInFile "JBOSS_SERVER_PORTS_PROVISIONED" "$JBOSS_SERVER_PORTS_PROVISIONED"
-					fi
-				done
+					done
+				else
+					outputLog "No JBoss servers will be installed from the bundles." "2"
+				fi
 			else
-				outputLog "No JBoss servers will be installed from the bundles." "2"
+				outputLog "The bundle files do not exist, bundle upload and deployment failed." "4"
 			fi
 		fi
 	fi

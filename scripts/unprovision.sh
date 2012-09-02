@@ -80,6 +80,8 @@ function unprovision () {
 			else
 				outputLog "Unprovisioning a server other then 100, so keeping the server base..." "2"
 			fi
+		else
+			outputLog "The server with port $PORT_SET, was not set and cannot be unprovisioned." "3"
 		fi
 	fi
 }
