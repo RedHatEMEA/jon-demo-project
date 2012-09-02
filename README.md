@@ -1,8 +1,4 @@
 ****************************************************************************************************************************************
-*AN INTERNET CONNECTION IS REQUIRED FOR AN INITIAL INSTALL WITH NO POSTGRESQL DB INSTALLED LOCALLY*
-
-*IT IS BEST NOT TO MODIFY ANY OF THE SCRIPT FILES BY HAND AND TO USE THE SCRIPT WHERE NECESSARY TO MAKE CHANGES TO THE DEMO ENVIRONMENT*
-****************************************************************************************************************************************
 
 Table of contents:
 - [Description](#description)
@@ -13,6 +9,15 @@ Table of contents:
 	- [Other Options](#other-options)
 	- [Debug](#debug)
 - [Demo Details](#demo-details)
+	- [Features](#features)
+		- [JON](#jon)
+		- [JBOSS](#jboss)
+		- [PostgreSQL](#postgresql)
+		- [Gotchas to be aware of](#gotchas-to-be-aware-of)
+- [Known Issues](#known-issues)
+- [Contributing](#contributing)
+- [Future Planning](#future-planning)
+- [Contact](#contact)
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -69,9 +74,12 @@ At the top of the Main Menu, you can see where the demo will currently be instal
 To manage the JON demo, use the JON demo options, (ID) to Install and (DD) to Delete the JON Demo.
 Follow the prompts.  
 
+Note: An internet connection is required for an initial install with no postgreSQL database installed locally.
 Note: If you already installed an rhq database, it will prompt you to create a new database, just choose the name.
 Note: For demo purposes, all the scan periods on the agent are set to occur every 30 seconds to ensure changes made during the demo are picked up quickly.
 Note: JON 2.x required a license, it will need to be manually added and has not been tested with the latest version of the script.
+
+*IT IS BEST NOT TO MODIFY ANY OF THE SCRIPT FILES OR INSTALLED DEMOS BY HAND AND TO USE THE SCRIPT WHERE NECESSARY TO MAKE CHANGES TO THE WHOLE ENVIRONMENT*
 
 ******************************************************************************
 
@@ -218,10 +226,9 @@ For more information regarding how to use the installed demo and what features c
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+WON'T FIX:
 - If a server is deployed (with port 200), only server's with higher increments should be installed.  Installing (port 300) is fine whereas installing (port 100), will re-deploy the base and has varying behaviour - it either breaks the (port 200) build by removing the symbolic link from ../common/server or leaves it intact.
 	- Recommendation is to always install servers with incrementally higher ports
-- If you use "Start JON Demo" menu option, all the components start up fine, but the text displayed suggests it timed out waiting for "server and agent to be ready..."
-- jon cli warnings on delete when looking for servers to remove, fix log level and info displayed
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
