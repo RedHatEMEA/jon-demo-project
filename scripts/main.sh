@@ -463,7 +463,8 @@ function deleteMenu () {
 
 		echo "J. Delete JON server and database"
 		echo "P. Delete Postgres DB"
-		echo "D. Delete JON Demo data"
+		echo "D. Delete JON Demo basic data"
+		echo "A. Delete all JON Demo data"
 		
 		menuFooter
 		option=`takeInputOption`
@@ -482,8 +483,8 @@ function deleteMenu () {
 				pause
 				;;
 				
-			"d" )
-				takeYesNoInput "Do you want to delete all the associated data, bundles, and demo? (yes/no):"
+			"a" )
+				takeYesNoInput "Are you sure you want to delete all the associated data, bundles, and demo? (yes/no):"
 				if [[ "$ANSWER" == "yes" ]]; then
 					if [[ "$JON_DEMO_INSTALLED" == "y" ]]; then
 						jdDeleteDemo $JD_INSTALL_LOCATION
@@ -493,37 +494,39 @@ function deleteMenu () {
 					
 					deleteFolder ${WORKSPACE_WD}/data
 					initialise
-				else
-					takeYesNoInput "Do you want to delete only the script specific data? (yes/no):"	
-					if [[ "$ANSWER" == "yes" ]]; then
-						if [[ "$JON_DEMO_INSTALLED" == "y" ]]; then
-							jdDeleteDemo $JD_INSTALL_LOCATION
-						else
-							outputLog "Only deleting the data, as the demo is not installed..."
-						fi
-						
-						#Delete the bundles
-						deleteFolder "${WORKSPACE_WD}/data/bundles"
-						
-						#Delete any expanded JBoss ZIP directories
-						JBOSS_DIR=`ls -d ${WORKSPACE_WD}/data/jboss/*/ 2>&1`
-						
-						if [[ "$JBOSS_DIR" =~ "cannot access" ]]; then
-							outputLog "No JBoss was provided, so nothing to delete."
-						else
-							for d in `ls -d ${WORKSPACE_WD}/data/jboss/*/`
-							do
-								deleteFolder $d
-							done
-						fi
-						
-						#Delete the script_variables
-						deleteFile ${WORKSPACE_WD}/data/$SCRIPT_VARIABLES
-						outputLog "All script data files deleted, re-initialsing..." "2"
-						initialise
+				fi
+				newLine
+				pause
+				;;
+				
+			"d" )
+				takeYesNoInput "Are you sure you want to delete the bundle files and script specific data? (yes/no):"
+				if [[ "$ANSWER" == "yes" ]]; then	
+					if [[ "$JON_DEMO_INSTALLED" == "y" ]]; then
+						jdDeleteDemo $JD_INSTALL_LOCATION
 					else
-						outputLog "Not deleting the script data files." "2" 
+						outputLog "Only deleting the data, as the demo is not installed..."
 					fi
+					
+					#Delete the bundles
+					deleteFolder "${WORKSPACE_WD}/data/bundles"
+					
+					#Delete any expanded JBoss ZIP directories
+					JBOSS_DIR=`ls -d ${WORKSPACE_WD}/data/jboss/*/ 2>&1`
+					
+					if [[ "$JBOSS_DIR" =~ "cannot access" ]]; then
+						outputLog "No JBoss was provided, so nothing to delete."
+					else
+						for d in `ls -d ${WORKSPACE_WD}/data/jboss/*/`
+						do
+							deleteFolder $d
+						done
+					fi
+					
+					#Delete the script_variables
+					deleteFile ${WORKSPACE_WD}/data/$SCRIPT_VARIABLES
+					outputLog "All script data files deleted, re-initialsing..." "2"
+					initialise
 				fi
 				newLine
 				pause

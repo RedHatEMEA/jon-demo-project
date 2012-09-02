@@ -14,8 +14,8 @@
     <rhq:bundle name="eap-5.1.0-default" version="1.0" description="EAP 5.1.0 default">
 		<!-- properties -->
 		<rhq:input-property name="JBOSS_HOME" type="string" required="true"
-			description="JBoss Home directory. It's where the EAP-5.1.0-common bundle is deployed (ex.: /opt/jboss/common)"
-			defaultValue="/opt/jboss/common" />    	
+			description="JBoss Home directory. It's where the EAP-5.1.0-common bundle is deployed (ex.: /opt/jon-demo/common)"
+			defaultValue="/opt/jon-demo/common" />    	
 		<rhq:input-property name="JBOSS_USER" type="string" required="true"
 			description="Operating System account used to launch JBoss AS (ex.: jboss)"
 			defaultValue="jboss" />    	
@@ -26,8 +26,8 @@
 			description="offset to use for configurations creation (ex: 100,200,300)"
 			defaultValue="100" />    	
 		<rhq:input-property name="JAVA_HOME" type="string" required="true"
-			description="Where to find Java (ex.: /opt/java)"
-			defaultValue="/opt/java" />    	
+			description="Where to find Java (ex.: /opt/jdk1.6.0_29)"
+			defaultValue="/opt/jdk1.6.0_29" />    	
 		<rhq:input-property name="JAVA_XMS" type="string" required="false"
 			description="Min heap allocated for the JVM in MBytes (ex.: 200)"
 			defaultValue="200" />    	

@@ -219,9 +219,11 @@ function jdInstallDemo () {
 			
 			if [[ "$INSTALL_BUNDLES" == "yes" ]]; then	
 				
-				takeYesNoInput "The bundles already exist, do you want to re-build them? (yes/no): [default no]\n\tB. Back to Main Menu." "no" "1"
-				REBUILD_BUNDLES=$ANSWER
-				outputLog "Re-building of bundles set to $REBUILD_BUNDLES"
+				if [[ "$BUNDLES_CREATED" != "" ]]; then
+					takeYesNoInput "The bundles already exist, do you want to re-build them? (yes/no): [default no]\n\tB. Back to Main Menu." "no" "1"
+					REBUILD_BUNDLES=$ANSWER
+					outputLog "Re-building of bundles set to $REBUILD_BUNDLES"
+				fi
 				
 				while true;
 				do
@@ -269,9 +271,8 @@ function jdInstallDemo () {
 		#Create the bundles if enabled
 		if [[ "$INSTALL_BUNDLES" == "yes" ]]; then
 			
-			#If dont already exist 
-			BUNDLES_FOUND=`ls -A $JD_BUNDLE_LOCATION`
-			if [[ "$BUNDLES_CREATED" == "" || "$BUNDLES_FOUND" == "" || "$REBUILD_BUNDLES" == "yes" ]]; then
+			#If they dont already exist 
+			if [[ "$BUNDLES_CREATED" == "" || "$REBUILD_BUNDLES" == "yes" ]]; then
 				#then create the bundles
 				createBundles
 			else
