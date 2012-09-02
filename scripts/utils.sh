@@ -122,6 +122,8 @@ function chooseProduct () {
 	takeInput "Select the version of $NAME_PATTERN you would like to install/extract:\n\tB. Back to Main Menu."
 	#takeInput "\tExisting packages with '$NAME_PATTERN': " "0"
 	
+	newLine
+	echo -en "\t"
 	COUNT=0
 	for p in ${PRODUCT_ARRAY[@]}
 	do

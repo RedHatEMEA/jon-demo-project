@@ -273,7 +273,11 @@ function mainMenu () {
 
 		FOLDER=`getDemoInstallFolder`
 		echo ***Config options***
-		echo "CD. Change demo directory [Currently: $FOLDER]"
+		if [[ "$JON_DEMO_INSTALLED" != "y" ]]; then
+			echo "CD. Change demo directory [Currently: $FOLDER]"
+		else
+			echo "Note: Change directory not available when a demo is installed."
+		fi
 		newLine
 		
 		echo ***JON Demo options***
@@ -542,36 +546,39 @@ function deleteMenu () {
 
 #function - changeDemoDirectory () - change the directory into which to install
 function changeDemoDirectory () {
-	DEMO_DIR=
-	while [[ "$DEMO_DIR" == "" ]];
-	do
-		echo "Possible options:"
-		newLine
-		for f in `ls ${INSTALL_LOCATION}`
-		do
-			echo $f
-		done
-
-		newLine
-		echo "Please enter the directory you would like to install the demo to:"
-		echo "(base will always be: $INSTALL_LOCATION):"
-		echo "B. Back to Main Menu"
-		echo -en "\t"
-		read DEMO_DIR
-
-		if [[ "$DEMO_DIR" == "" ]]; then
-			echo The directory name cannot be empty, please input it again
-		elif [[ "$DEMO_DIR" == "b" || "$DEMO_DIR" == "B" ]]; then
-			mainMenu
-		fi
-	done
-
-	FOLDER=`getDemoInstallFolder`
 	
-	updateVariablesFile "JD_FOLDER=$FOLDER" "JD_FOLDER=$DEMO_DIR"
-	loadScripts
-	echo Updated $SCRIPT_VARIABLES to use JD_FOLDER=$DEMO_DIR
-	newLine
+	if [[ "$JON_DEMO_INSTALLED" != "y" ]]; then
+		DEMO_DIR=
+		while [[ "$DEMO_DIR" == "" ]];
+		do
+			takeInput "Select one of the options below or enter a new directory name to use as the install location for the demo:\n\t(base is set to [$INSTALL_LOCATION] in demo-config.properties):\n\tB. Back to Main Menu"
+			newLine 
+			
+			for f in `ls ${INSTALL_LOCATION}`
+			do
+				echo -e "\t\t $f"
+			done
+	
+			echo -en "\n\t"
+			read DEMO_DIR
+	
+			if [[ "$DEMO_DIR" == "" ]]; then
+				outputLog "The directory name cannot be empty, please input it again" "4"
+			elif [[ "$DEMO_DIR" == "b" || "$DEMO_DIR" == "B" ]]; then
+				mainMenu
+			fi
+		done
+	
+		FOLDER=`getDemoInstallFolder`
+		
+		updateVariablesFile "JD_FOLDER=$FOLDER" "JD_FOLDER=$DEMO_DIR"
+		loadScripts
+		
+		outputLog "\nUpdated $SCRIPT_VARIABLES to use JD_FOLDER=$DEMO_DIR"
+		newLine
+	else
+		outputLog "Cannot modify the demo install directory as you have a demo installed already." "3"	
+	fi
 }
 
 #function - changeLogLevel () - change the log level to display
