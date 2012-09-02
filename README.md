@@ -4,6 +4,17 @@
 *IT IS BEST NOT TO MODIFY ANY OF THE SCRIPT FILES BY HAND AND TO USE THE SCRIPT WHERE NECESSARY TO MAKE CHANGES TO THE DEMO ENVIRONMENT*
 ****************************************************************************************************************************************
 
+Table of contents:
+- [Description](#description)
+- [Getting Started](#getting-started)
+	- [First Steps](#first-steps)
+	- [New JON Versions](#new-jon-versions)
+	- [Bundles](#bundles)
+	- [Other Options](#other-options)
+	- [Debug](#debug)
+- [Demo Details](#demo-details)
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 # DESCRIPTION: #
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
