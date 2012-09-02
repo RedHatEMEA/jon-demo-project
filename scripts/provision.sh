@@ -149,7 +149,7 @@ function provision () {
 			checkForServerWithPort $PREVIOUS_PORT
 			CHECKING_PREVIOUS="n"
 		fi
-		echo "before second port set is [$PORT_SET]"
+
 		checkForServerWithPort $PORT_SET
 			
 		if [[ "$SERVER_PORT" != "9999" ]]; then
@@ -165,15 +165,16 @@ function provision () {
 			newLine
 			
 			executeAgentCommand discovery
-			waitFor "RuntimeDiscoveryExecutor)- Scanned platform and" "$AGENT_LOG_FOLDER" "20" "Awaiting server detection in JON..."
+			waitFor "Discovered [^0] new server" "$AGENT_LOG_FOLDER" "20" "Awaiting server discovery by JON..."
 
 			executeAgentCommand availability
 			newLine
 			
 			importResources
 			#Wait for the import to take effect to ensure new server is seen in JON
-			waitFor "RuntimeDiscoveryExecutor)- Scanned platform and" "$AGENT_LOG_FOLDER" "20" "Awaiting server detection in JON..."
-			sleep 5
+			waitFor "Scanned platform and [^0] server(s)" "$AGENT_LOG_FOLDER" "30" "Awaiting server import into JON..."
+			#waitFor "Detected new Server" "$AGENT_LOG_FOLDER" "20" "Awaiting server import into JON..."
+			#sleep 5
 			
 			findServer $PORT_SET
 			if [[ "$SERVER_ID" != "" ]]; then

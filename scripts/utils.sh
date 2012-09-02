@@ -67,7 +67,7 @@ function takeYesNoInput () {
 			ANSWER=""
 			newLine
 		elif [[ "$ANSWER" == "b" || "$ANSWER" == "B" && "$ALLOW_BACK" == "1" ]]; then
-			break
+			mainMenu
 		else
 			break
 		fi
@@ -649,7 +649,7 @@ function waitFor () {
 		if [ $COUNT -lt $TIMEOUT ]; then
 			COUNT=$(( $COUNT + 1 ))
 		else 
-			FOUND=".   Timeout of $TIMEOUT seconds reached"
+			FOUND=".   Timeout of $(( TIMEOUT / 2 )) seconds reached"
 			WAIT_FOR_RESULT="timedout"
 			outputLog "$FOUND" "2" "n" "n"
 			break

@@ -66,7 +66,6 @@ function loadScripts () {
 	
 	#Include necessary shell scripts
 	. ${WORKSPACE_WD}/scripts/debug.sh
-	outputLog "working in $WORKSPACE_WD"
 
 	. ${WORKSPACE_WD}/scripts/utils.sh
 	. ${WORKSPACE_WD}/scripts/variables.sh

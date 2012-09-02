@@ -13,9 +13,12 @@ function jonDemoMenu () {
 		case "$SERVER_STATUS" in
 			0)
 				echo SRD. Start Jon Demo
+				DEMO_STATUS="0"
+				echo $DEMO_STATUS
 				;;
 			1)
 				echo SOD. Stop Jon Demo
+				DEMO_STATUS="1"
 				;;
 		esac	
 		
@@ -41,11 +44,19 @@ function jonDemoOptions () {
 				;;
 
 			"srd")  
-				jdStartDemo $JD_INSTALL_LOCATION
+				if [[ "$DEMO_STATUS" == "0" ]]; then
+					jdStartDemo $JD_INSTALL_LOCATION
+				else
+					outputLog "The JON demo is already started, ignoring start command." "2"
+				fi
 				;;
 
 			"sod") 
-				jdStopDemo $JD_INSTALL_LOCATION
+				if [[ "$DEMO_STATUS" == "1" ]]; then
+					jdStopDemo $JD_INSTALL_LOCATION
+				else
+					outputLog "The JON demo is already stopped, ignoring stop command." "2"
+				fi
 				;;
 
 			"c")
@@ -206,9 +217,12 @@ function jdInstallDemo () {
 				mainMenu
 			fi
 			
-			##fix
-			if [[ "$INSTALL_BUNDLES" == "yes" ]]; then
-							
+			if [[ "$INSTALL_BUNDLES" == "yes" ]]; then	
+				
+				takeYesNoInput "The bundles already exist, do you want to re-build them? (yes/no): [default no]\n\tB. Back to Main Menu." "no" "1"
+				REBUILD_BUNDLES=$ANSWER
+				outputLog "Re-building of bundles set to $REBUILD_BUNDLES"
+				
 				while true;
 				do
 					takeInput "If you want to install any JBoss servers - via the bundles - specify how many: [default 0]\n\tB. Back to Main Menu."
@@ -252,15 +266,17 @@ function jdInstallDemo () {
 				
 		createPostgresUser
 		
-		#Create the bundles
-		if [[ -d "$JD_BUNDLE_LOCATION" && "$INSTALL_BUNDLES" == "yes" ]]; then 
+		#Create the bundles if enabled
+		if [[ "$INSTALL_BUNDLES" == "yes" ]]; then
+			
+			#If dont already exist 
 			BUNDLES_FOUND=`ls -A $JD_BUNDLE_LOCATION`
-			if [[ "$BUNDLES_CREATED" == "" || "$BUNDLES_FOUND" == "" ]]; then
+			if [[ "$BUNDLES_CREATED" == "" || "$BUNDLES_FOUND" == "" || "$REBUILD_BUNDLES" == "yes" ]]; then
+				#then create the bundles
 				createBundles
 			else
+				#others, inform user they already exist
 				outputLog "The bundles already existing, not rebuilding them..." "2"
-				#TODO provide the option to rebuild them
-				#Create takeYesNoInput and try return, does it work with echo? don't think so..
 			fi
 		fi
 		extractPackage $JON_PRODUCT_FULL_PATH $JD_INSTALL_LOCATION
@@ -298,7 +314,7 @@ function jdStartDemo () {
 		manageServer jon-server start $JD_INSTALL_LOCATION
 		newLine
 		
-		waitFor "Started in " "$JD_INSTALL_LOCATION/$JON_PRODUCT/logs/rhq-server-log4j.log" "120" "Waiting for server and agent to be ready"
+		outputLog "Going to start JBoss servers, once the JON server and agent are ready..." "2"
 		
 		manageJBossDemoServers start
 		

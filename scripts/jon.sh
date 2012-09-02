@@ -80,12 +80,13 @@ function silentlyInstallJon () {
 		fi
 	fi
 
-	#outputLog	${JD_INSTALL_LOCATION}/$JON_PRODUCT/$BIN/$JON_STARTUP_SCRIPT start
 	newLine
+	#Start the jon server
 	${JD_INSTALL_LOCATION}/$JON_PRODUCT/$BIN/$JON_STARTUP_SCRIPT start
 
 	newLine
 
+	#We need to wait cause on initial start up, the server unpacks stuff...
 	waitFor "Started in" "$JD_INSTALL_LOCATION/$JON_PRODUCT/logs/rhq-server-log4j.log" "180" "Awaiting JON server start up"
 	if [[ "$WAIT_FOR_RESULT" == "completed" ]]; then
 		handleJonFirstStartup
@@ -94,16 +95,30 @@ function silentlyInstallJon () {
 		mainMenu
 	fi
 	
-	waitFor "Starting the master server plugin container" "$JD_INSTALL_LOCATION/$JON_PRODUCT/logs/rhq-server-log4j.log" "300" "Processing JON plugin deployment"
+	#Install the jon tools: agent, cli
+	handleJonAccessoriesSetup
+	
+	#Wait for the JON server to be ready, to display the run firefox line
 	waitFor "Started J2EE application" "$JD_INSTALL_LOCATION/$JON_PRODUCT/logs/rhq-server-log4j.log" "300" "Finalizing JON server setup"
 	
-	if [[ "$WAIT_FOR_RESULT" == "completed" ]]; then
-		handleJonAccessoriesSetup
-		getRHQCLIDetails
-	else
-		outputLog "The timeout was reached for the installation of the JON accessories, install continuing but it may not be complete." "3"
-	fi
+	newLine
+	outputLog "-----------  Run: firefox http://localhost:7080  -----------" "2"
+	newLine
 	
+	#Check which agent is used and wait for it to connect to the server, necessary to use the CLI to deploy, etc...
+	checkEmbeddedAgent
+	
+	if [[ "$EMBEDDED_AGENT_ACTIVE" == "true" ]]; then
+		waitFor "Embedded RHQ Agent has been started!" "$JD_INSTALL_LOCATION/$JON_PRODUCT/logs/rhq-server-log4j.log" "180" "Waiting for embedded agent to start"
+	else
+		outputLog "Embedded agent not enabled, not waiting for it..."
+		waitFor "has connected to this server at" "$JD_INSTALL_LOCATION/$JON_PRODUCT/logs/rhq-server-log4j.log" "180" "Waiting for stand-alone agent to connect to server"
+		
+		waitFor "Discovered new platform with" "$AGENT_LOG_FOLDER" "45" "Waiting for availability report to be sent to server from agent"
+	fi
+
+	runCLIScripts
+		
 	#Set the entire jon demo directory to be owned by the LOCAL_USER
 	chown $LOCAL_USER:$LOCAL_USER -R "$JD_INSTALL_LOCATION"
 	
@@ -117,30 +132,9 @@ function handleJonAccessoriesSetup () {
 	newLine
 	
 	deployAgent "$JD_INSTALL_LOCATION/$JON_PRODUCT"
-		
-	chown -R jboss $JD_INSTALL_LOCATION/$JON_PRODUCT
-	chgrp -R jboss $JD_INSTALL_LOCATION/$JON_PRODUCT
-			
-	newLine
-	outputLog "-----------  Run: firefox http://localhost:7080  -----------" "2"
-	newLine
-	
-	#Check which agent is used and wait for it to connect to the server
-	checkEmbeddedAgent
-	
-	if [[ "$EMBEDDED_AGENT_ACTIVE" == "true" ]]; then
-		waitFor "Embedded RHQ Agent has been started!" "$JD_INSTALL_LOCATION/$JON_PRODUCT/logs/rhq-server-log4j.log" "180" "Waiting for embedded agent to start"
-	else
-		outputLog "Embedded agent not enabled, not waiting for it..."
-		waitFor "has connected to this server at" "$JD_INSTALL_LOCATION/$JON_PRODUCT/logs/rhq-server-log4j.log" "180" "Waiting for stand-alone agent to connect to server"
-		
-		waitFor "Detected new Platform" "$AGENT_LOG_FOLDER" "45" "Waiting for availability report to be sent to server from agent"
-	fi
 
 	deployCLI "$JD_INSTALL_LOCATION/$JON_PRODUCT"
 	deployCLIAntTestTool "$JD_INSTALL_LOCATION/$JON_PRODUCT"
-
-	runCLIScripts
 }
 
 #function - handleJonFirstStartup () - handles the tasks to undertake on first start up of JON, license, postgres driver, patches, etc...
@@ -267,7 +261,8 @@ function runCLIScripts () {
 			setupBundle ${BUNDLE_APP_FILE}
 			
 			if [[ "$NUM_JBOSS_TO_INSTALL" != 0 ]]; then
-				waitFor "Not to be found..." "$JD_INSTALL_LOCATION/$JON_PRODUCT/logs/rhq-server-log4j.log" "45" "Waiting 45s, giving ant bundle time to be available for deployment."
+				#Passing in expression to find the creation of the last bundle
+				waitFor "Creating bundle.*name=seam-dvdstore" "$JD_INSTALL_LOCATION/$JON_PRODUCT/logs/rhq-server-log4j.log" "45" "Waiting 45s, giving ant bundle time to be available for deployment."
 		
 				for (( A=1; A <= NUM_JBOSS_TO_INSTALL ; A++ ))
 				do 

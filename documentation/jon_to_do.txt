@@ -4,16 +4,14 @@ RHEL test
 - test ownership of data folder change after adding local_user, afterwards
 - test script in full
 
-- check done waiting output
-
 - on machine restart does jboss start up? if so demo start fails? or eap managed?
 - test bug of checking, then un-checking wipe directory... does it still wipe?
 
 TO CONFIRM:
 - log level 3,4. any more inputs to change to takeInput?
+- deployment of patches may not work.  they will get deployed, but not really loaded till next restart of jon server (which is why i used to have two starts)
 
 TODO:
--  Deploy agent before wait for server start up completes. Then wait for it
 -  Cannot change directory when demo installed
 -  Log level changing allow 1-4 and the words as well
 - set input to lowercase for other check functions/ input
@@ -23,12 +21,6 @@ TODO:
 	
 -  Re-do functions to allow for scripting of the script and no user input
 - get rid of postgres jdbc dependency ?? in conf/jon/jon-server.x.x.x 
-
-- waitFor(s) not functioning properly (known issue, remove from readme on fix)
-	Waiting for availability report to be sent to server from agent
-	Waiting to find "RuntimeDiscoveryExecutor)- Scanned platform and"
-		Awaiting server detection in JON
-	Waiting 45s, giving ant bundle time to be available for deployment
 
 - change warning text to debug (known issue, remove from readme on fix)
 	[WARNING] Server with pattern: ec-default100 not found...

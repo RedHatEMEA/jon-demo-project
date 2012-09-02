@@ -92,12 +92,14 @@ function checkServerStatus() {
 	    currentAvailability = AvailabilityManager.getCurrentAvailabilityForResource(serverId).getAvailabilityType().toString();
 	    count++;
 	    if (count > (availabilityScanPeriod * 2.5)) {
-	    	println("Server availability not confirmed to be: " + expectedAvailability);
+	    	println("\nServer availability not confirmed to be: " + expectedAvailability);
 	    	break;
 	    }
 	}
 	
-	println("\nServer availability now confirmed to be: " + currentAvailability + "\n");
+	if ( expectedAvailability == currentAvailability ) {
+		println("\nServer availability now confirmed to be: " + currentAvailability + "\n");
+	}
 }
 
 function run (command) {

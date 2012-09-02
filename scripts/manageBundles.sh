@@ -90,8 +90,8 @@ function createBundles () {
 		CURRENT_WD=`pwd`
 		cd ${WORKSPACE_WD}/sub-projects/bundle-creation
 		
-		#Call ant passing in the directory to find the data (under the data folder) required for the bundles				
-		$ANT -Ddata.dir=${WORKSPACE_WD}/data -Ddist.dir=${WORKSPACE_WD}/data/bundles -Dcommon.dir=${WORKSPACE_WD}/data/jboss/$JBOSS_PRODUCT/common -Ddefault.dir=${WORKSPACE_WD}/data/jboss/$JBOSS_PRODUCT/default -Ddvdstore.dir=${WORKSPACE_WD}/sub-projects/bundle-creation/src/seam/seam-dvdstore
+		#Call ant (forking process) passing in the directory to find the data (under the data folder) required for the bundles				
+		$ANT -Ddata.dir=${WORKSPACE_WD}/data -Ddist.dir=${WORKSPACE_WD}/data/bundles -Dcommon.dir=${WORKSPACE_WD}/data/jboss/$JBOSS_PRODUCT/common -Ddefault.dir=${WORKSPACE_WD}/data/jboss/$JBOSS_PRODUCT/default -Ddvdstore.dir=${WORKSPACE_WD}/sub-projects/bundle-creation/src/seam/seam-dvdstore &
 		
 		cd $CURRENT_WD
 			
