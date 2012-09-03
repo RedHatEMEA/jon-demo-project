@@ -1,0 +1,605 @@
+0
+00:00:00,111 --> 00:00:02,111
+Subtitles by Nabeel Saad - nsaad@redhat.com
+
+1
+00:00:02,222 --> 00:00:04,533
+Hello, and welcome to the JON demo project
+
+2
+00:00:04,633 --> 00:00:06,700
+introduction video.. The aim of this project
+
+3
+00:00:06,950 --> 00:00:08,500
+is to provide a fast and easy way to build
+
+4
+00:00:8,639 --> 00:00:10,313
+a JON demo environment with all the 
+
+5
+00:00:10,528 --> 00:00:12,300
+necessary features for a demo.
+
+6
+00:00:12,700 --> 00:00:14,500
+To dive right in, my first suggestion
+
+7
+00:00:14,770 --> 00:00:16,900
+is to read the README file provided
+
+8
+00:00:17,100 --> 00:00:18,800
+as it contains a lot of information regarding
+
+9
+00:00:18,993 --> 00:00:20,600
+all the aspects of the project.
+
+10
+00:00:20,885 --> 00:00:22,820
+You can start at the table of contents to get
+
+11
+00:00:22,980 --> 00:00:24,690
+a feel of the different info you can get
+
+12
+00:00:24,893 --> 00:00:26,229
+from that file.
+
+13
+00:00:26,400 --> 00:00:28,550
+Given that you are watching this video,
+
+14
+00:00:28,750 --> 00:00:30,211
+you have already checked the project out of
+
+15
+00:00:30,411 --> 00:00:31,850
+GIT and are ready to start.
+
+16
+00:00:32,000 --> 00:00:34,114
+So, in a terminal, I will go to
+
+17
+00:00:34,314 --> 00:00:37,255
+my project base directory, as you can
+
+18
+00:00:37,464 --> 00:00:40,417
+see mine is in within my {home}/jon-demo-project
+
+19
+00:00:43,650 --> 00:00:48,250
+To start off, I will run ./scripts/main.sh
+
+20
+00:00:48,550 --> 00:00:51,609
+as root. Root is required as the
+
+21
+00:00:51,859 --> 00:00:59,593
+script may use yum, access /etc
+/init.d, or other super user actions.
+
+22
+00:01:00,000 --> 00:01:04,990
+This will show me a splash screen with
+the basics from the README that are required
+
+23
+00:01:05,142 --> 00:01:07,275
+to get started with the demo project.
+
+24
+00:01:07,475 --> 00:01:12,100
+In the background, it has created the data
+folder structure necessary by the script. 
+
+25
+00:01:12,303 --> 00:01:15,700
+Upon pressing any key, I will get a set of errors
+
+26
+00:01:16,008 --> 00:01:22,077
+informing me that I need to set or modify some
+variables and provide appropriate product ZIPs.
+
+27
+00:01:23,247 --> 00:01:28,850
+Having the script install Postgres will
+require an Internet connection on the first time.
+
+28
+00:01:29,780 --> 00:01:35,900
+So, I will do the following to setup the script:
+I will modify the demo-config.properties file
+
+29
+00:01:36,287 --> 00:01:37,757
+under the data folder
+
+30
+00:01:42,500 --> 00:01:46,400
+In here, I will point the Java
+Home to the  appropriate location
+
+31
+00:01:49,200 --> 00:01:57,700
+I will provide a local user to be used to give 
+ownership to all the script and demo files to that user
+
+32
+00:01:58,452 --> 00:02:04,682
+All the remaining modifications are optional 
+and mostly self explanatory. More explanation
+
+33
+00:02:05,102 --> 00:02:06,480
+is available in the README file.
+
+34
+00:02:08,795 --> 00:02:14,900
+Then I will copy enterprise ZIP files into the
+appropriate locations as per the README file
+
+35
+00:02:15,108 --> 00:02:19,913
+and the splash screen. I
+will copy the JON server ZIP.
+
+36
+00:02:27,800 --> 00:02:37,649
+Into the data/jon/jon-server folder
+
+37
+00:02:39,549 --> 00:02:43,520
+Also, all the plugins into
+the appropriate sub directory
+
+38
+00:02:54,020 --> 00:02:59,700
+Given that I want to use bundles, I will
+copy the jboss-eap-5.x ZIP file into
+
+39
+00:03:00,192 --> 00:03:05,999
+data/jboss, that is currently the only supported
+version for bundling in the jon demo project
+
+40
+00:03:06,295 --> 00:03:08,964
+With other versions for bundling to come.
+
+41
+00:03:18,565 --> 00:03:24,234
+Now I'm ready to continue.
+So I will re-run the script
+
+42
+00:03:28,434 --> 00:03:32,310
+And now what I see is the main
+menu with some different options
+
+43
+00:03:32,504 --> 00:03:37,708
+Starting with some configuration options, you can
+change the folder into which you'll be installing
+
+44
+00:03:37,808 --> 00:03:39,744
+the demo using the CD option
+
+45
+00:03:40,844 --> 00:03:48,614
+You'll get some options and it'll suggest the
+root of  the location, as you can see, it's /opt
+
+46
+00:03:48,814 --> 00:03:51,886
+That can be changed in the
+demo-config.properties file
+
+47
+00:03:52,188 --> 00:03:56,890
+You can specify a new folder or you 
+can choose one of the existing ones
+
+48
+00:04:03,927 --> 00:04:09,327
+Also, you can change the log level to get 
+more or less log info using the CL option.
+
+49
+00:04:09,933 --> 00:04:14,401
+This will mostly be useful if you are having
+issues with the script and need to debug.
+
+50
+00:04:15,398 --> 00:04:20,800
+There's an option to create bundles separately from the
+JON demo installation as long as you have provided the
+
+51
+00:04:21,001 --> 00:04:24,704
+JBoss EAP zip and you have Ant installed on your system
+
+52
+00:04:25,404 --> 00:04:31,275
+Of course, this can be executed as part of the demo install
+but can also be run separately to use the bundles for 
+
+53
+00:04:31,409 --> 00:04:32,380
+other purposes.
+
+54
+00:04:33,680 --> 00:04:39,092
+There are other options that you can read more about
+in the README file and some only available in debug mode.
+
+55
+00:04:39,852 --> 00:04:45,122
+So moving on to the heart of the script, I will input
+ID to start the demo installation. First thing that'll
+
+56
+00:04:45,322 --> 00:04:54,059
+happen is a check for postgres on the filesystem, 
+by checking for a service file in /etc/init.d and
+
+57
+00:04:54,259 --> 00:04:59,004
+and then it'll check if you've previously
+installed postgres via the script variables
+
+58
+00:04:59,598 --> 00:05:06,768
+If neither are the case, as we see now, it'll provide you
+a list of the most recent version numbers for your particular
+
+59
+00:05:06,969 --> 00:05:15,273
+OS and architecture of postgres that you can install.
+Once you select the version, the first question is 
+
+60
+00:05:15,473 --> 00:05:23,778
+if you want to install the bundles. I will go
+ahead and choose the version 9.1 as my postgres.
+
+61
+00:05:25,848 --> 00:05:30,550
+So as you can see, the next question is if I want to 
+install the bundles.  At this point I will say "yes"
+
+62
+00:05:31,050 --> 00:05:35,600
+to use all the available features of the demo, but
+you can choose not to install them if you so desire.
+
+63
+00:05:37,221 --> 00:05:42,826
+Given that we are installing the bundles, we get to specify
+how many JBoss servers we want to deploy via the JON bundles
+
+64
+00:05:43,226 --> 00:05:47,763
+0 for no servers, or up to 10 local instances.
+
+65
+00:05:47,983 --> 00:05:49,999
+I'll choose one at the moment.
+
+66
+00:05:51,099 --> 00:05:56,036
+The next option is to select the version of JON
+to be installed, this will depend on the ZIPs you
+
+67
+00:05:56,336 --> 00:06:00,672
+have provided in the data/jon/jon-server.x.x.x folder.
+
+68
+00:06:01,053 --> 00:06:06,289
+Again, I will choose the only option that's 
+available to me right now, providing the number 1.
+
+69
+00:06:07,025 --> 00:06:12,661
+Once you choose that, the process will run and deploy 
+everything. As it runs, I will explain some of the things
+
+70
+00:06:12,963 --> 00:06:17,069
+taking place. First, it'll install postgres using yum.
+
+71
+00:06:17,349 --> 00:06:23,452
+This will install the server and the necessary libraries,
+initialise the database, and update the configuration.
+
+72
+00:06:24,188 --> 00:06:32,924
+Once it completes, it will create an rhqadmin user
+with default credentials along with an rhq database
+
+73
+00:06:33,140 --> 00:06:34,310
+to be used by the JON server.
+
+74
+00:06:35,468 --> 00:06:42,571
+If at a later point in time, you were to run the install 
+script or if you already had postgres and the rhq database
+
+75
+00:06:42,874 --> 00:06:46,807
+you'll be asked for a name for the
+database to be created by the script
+
+76
+00:06:47,186 --> 00:06:53,535
+Once postgres has been set up properly, the bundles will
+be built by calling the Ant sub project for building the
+
+77
+00:06:53,734 --> 00:06:59,954
+bundles. That runs in parallel to the build, and
+the script continues to extract the JON ZIP to the
+
+78
+00:07:00,100 --> 00:07:05,400
+install location with updates to configuration
+as necessary to allow for auto-installation.
+
+79
+00:07:06,308 --> 00:07:11,258
+This script will also copy patches and plugins, 
+deploy them to the data folder for that version
+
+80
+00:07:11,488 --> 00:07:18,036
+of JON. Please ensure you use compatible versions
+of the patches and plugins that work with the JON
+
+81
+00:07:18,265 --> 00:07:18,856
+version that you are using.  
+
+82
+00:07:19,037 --> 00:07:24,308
+Then the JON server will be started up and it'll
+run thru the initial install setup silently
+
+83
+00:07:24,459 --> 00:07:30,000
+In the meantime, the JON agent will be deployed
+locally with all discovery scan periods set to
+
+84
+00:07:30,177 --> 00:07:32,200
+30 seconds and started as a service. 
+
+85
+00:07:33,133 --> 00:07:39,470
+Also the CLI tool will be deployed into
+the demo install under a JON-TOOLS directory
+
+86
+00:07:40,551 --> 00:07:46,565
+Finally, using the CLI the script will import
+the local server into JON, add it to a group
+
+87
+00:07:46,759 --> 00:07:51,374
+and upload and deploy the JON bundles 
+depending on your previous answers.
+
+88
+00:07:52,307 --> 00:07:55,328
+Now bear in mind that the 
+bundle setup is as follows - 
+
+89
+00:07:55,494 --> 00:07:59,339
+and you can see more about this in the README file.
+
+90
+00:07:59,902 --> 00:08:06,884
+There is a common bundle that holds the top-
+level JBoss folders such as conf, bin, lib, etc...
+
+91
+00:08:06,995 --> 00:08:13,554
+And this is called the common bundle.
+Then, another bundle that installs the JBoss 
+
+92
+00:08:13,782 --> 00:08:19,032
+profile with a symbolic link from the common/server
+directory.  These nodes will be installed with
+
+93
+00:08:19,328 --> 00:08:25,639
+port numbers increasing incrementally
+by 100 for each server instance installed.
+
+94
+00:08:26,472 --> 00:08:31,523
+Each instance is started as part of the
+bundle deployment, and added as a service under 
+
+95
+00:08:31,707 --> 00:08:35,149
+/etc/init.d directory.
+
+96
+00:08:36,745 --> 00:08:41,358
+Finally, there's a dvd-store
+application deployed to each node.
+
+97
+00:08:43,978 --> 00:08:47,933
+Once all the bundle deployments
+complete, then the script is finished
+
+98
+00:08:50,078 --> 00:08:55,336
+We'll give the JON server 
+setup a few moments to complete
+
+99
+00:08:59,430 --> 00:09:05,853
+And then, the remaining part left for 
+this script will be to deploy the bundles
+
+100
+00:09:11,342 --> 00:09:19,828
+In the meantime, we can access 
+the JON server once it's ready.
+
+101
+00:09:43,021 --> 00:09:50,174
+The (default) credentials are rhqadmin/rhqadmin,
+as is defined in the installation manual for JON
+
+102
+00:10:03,007 --> 00:10:09,670
+Once the agent connects to the server and sends
+it's first availability report, informing it of
+
+103
+00:10:08,825 --> 00:10:12,654
+any resources that are available on the local machine
+
+104
+00:10:17,047 --> 00:10:25,033
+Then the script will setup the JON server to 
+have a new group called Linux-Platforms, it will
+
+105
+00:10:25,266 --> 00:10:31,023
+auto-import any resources - which will be the
+local platform - and it will add the local platform
+
+106
+00:10:31,255 --> 00:10:31,806
+into that group.
+
+107
+00:10:34,203 --> 00:10:39,956
+Once it's done that, it will install the bundles 
+into the JON server.  So there are three bundles
+
+108
+00:10:40,119 --> 00:10:46,858
+that have been created and exist under data/
+bundles and they get uploaded into the system.
+
+109
+00:10:52,201 --> 00:10:59,522
+And having chosen to deploy a JBoss server, at this
+point, we are deploying only one.  We can see the 
+
+110
+00:10:59,698 --> 00:11:01,323
+deployments being invoked
+
+111
+00:11:12,455 --> 00:11:18,680
+As part of the bundle deployment, the JBoss server
+that is deployed will get started up, so that it
+
+112
+00:11:18,813 --> 00:11:23,994
+can get picked up by the JON server 
+after a discovery and an availability scan 
+
+113
+00:11:25,627 --> 00:11:31,579
+And as you can see, the EAP server itself
+is being imported into the JON server
+
+114
+00:11:59,612 --> 00:12:06,760
+Finally, some configuration is done to the 
+connection settings so that JON can connect to
+
+115
+00:12:06,881 --> 00:12:14,406
+the EAP server. And that's the script complete
+in 7 minutes and 22 seconds from start to finish.
+
+116
+00:12:15,331 --> 00:12:20,384
+If you were to do this without postgres you might
+be looking at anywhere between 4 to 5 minutes
+
+117
+00:12:22,117 --> 00:12:23,999
+Of course depending on your machine.
+(Mine is i7 quad-core, 8GB RAM)
+
+118
+00:12:25,431 --> 00:12:32,947
+So, that is the completion of the script itself.
+Now, if I come back to the JON server very quickly.
+
+119
+00:12:35,779 --> 00:12:39,065
+We've logged into the JON server to
+see the setup completed by the script.
+
+120
+00:12:39,898 --> 00:12:48,956
+Under "Inventory", we can see the local platform that
+has been imported under "Servers - Top Level Platforms"
+
+121
+00:12:49,754 --> 00:12:55,984
+Then, under "Compatible Groups", we can see the
+Linux-Platform group that has been created
+
+122
+00:12:57,006 --> 00:13:01,996
+Containing, under the "Inventory"
+tab, the local server as a member.
+
+123
+00:13:02,914 --> 00:13:08,505
+Finally, going to the "Bundles" tab, we can see
+the bundles that have been uploaded into JON
+
+124
+00:13:09,319 --> 00:13:18,842
+The destinations, and the live 
+deployments that have taken place.
+
+125
+00:13:22,774 --> 00:13:28,438
+That's the current setup as it ends up at this 
+point in time. Please refer to the README file
+
+126
+00:13:28,583 --> 00:13:30,577
+for updates on new features for this project.
+
+127
+00:13:30,716 --> 00:13:34,967
+Hope you found this useful.  Please do feel free
+to contact me for any help relating to the script
+
+128
+00:13:35,337 --> 00:13:39,590
+Via my contact details in the README file.
+Thanks for watching (nsaad@redhat.com)
+
+129
+00:13:39,590 --> 00:13:42,93
+Nabeel Saad - nsaad@redhat.com

@@ -15,6 +15,7 @@ Table of contents:
 		- [PostgreSQL](#postgresql)
 		- [Gotchas to be aware of](#gotchas-to-be-aware-of)
 - [Known Issues](#known-issues)
+- [Tested Environments](#tested-environments)
 - [Contributing](#contributing)
 - [Future Planning](#future-planning)
 - [Contact](#contact)
@@ -187,6 +188,8 @@ All debug menus (as defined below) on the main menu will only be visible when LO
 For more information regarding how to use the installed demo and what features come with it, please refer to the attached recording:
 	./documentation/intro_video.avi
 	
+It has subtitles available.  Using VLC, just playing the AVI file with the subtitles in the same folder works. I have not tested with other players.
+	
 ## FEATURES ##
 
 ### JON ###
@@ -229,6 +232,20 @@ For more information regarding how to use the installed demo and what features c
 WON'T FIX:
 - If a server is deployed (with port 200), only server's with higher increments should be installed.  Installing (port 300) is fine whereas installing (port 100), will re-deploy the base and has varying behaviour - it either breaks the (port 200) build by removing the symbolic link from ../common/server or leaves it intact.
 	- Recommendation is to always install servers with incrementally higher ports
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+# Tested Environments: #
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Testing at the moment is more of a manual process.  As such, there are no guarantees regarding the full functionality of all the aspects of the script on different environments.  
+
+The following have been tested:
+Fedora 15 64-bit (code developed on this environment)
+RHEL 6.1  64-bit (running as a VM)
+
+Note: I'd be interested in hearing how this runs on OSX or any other setups people might have.
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

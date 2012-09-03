@@ -14,7 +14,10 @@ TODO:
 - Log level changing allow 1-4 and the words as well
 	
 - Re-do functions to allow for scripting of the script and no user input
-- get rid of postgres jdbc dependency ?? in conf/jon/jon-server.x.x.x 
+- get rid of postgres jdbc dependency ?? in conf/jon/jon-server.x.x.x
+- offer option to decide if you want demo components installed?
+	yes, then create group, bundles, alerts, drift, etc..
+	no, then just vanilla install
 	
 - re-organise functions logically
 	string utils
