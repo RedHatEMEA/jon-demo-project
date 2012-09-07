@@ -29,7 +29,7 @@ function outputLog () {
 	START_COLOR=""
 	END_COLOR=""
 	
-	if [[ "$LOG_TO_DISPLAY" == "" ]]; then
+	if [[ "$LOG_TO_DISPLAY" == "" || "$LOG_TO_DISPLAY" -gt 4 ]]; then
 		LOG_TO_DISPLAY=1
 	fi
 	
@@ -92,7 +92,7 @@ function testFunction () {
 	#t=`hostname`
 	#setupJonServer
 
-	#splashScreen
+	extractJONPlugins
 	
 	#try with  server start, shutdown, and try start/stop.. 4 combination i believe
 		

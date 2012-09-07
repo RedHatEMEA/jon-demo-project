@@ -604,17 +604,20 @@ function changeLogLevel () {
 		read LOG_CHANGE
 
 		if [[ "$LOG_CHANGE" == "" ]]; then
-			echo "The log level cannot be empty, please input it again."
+			outputLog "The log level cannot be empty, please input it again." "4"
 		elif [[ "$LOG_CHANGE" == "b" || "$LOG_CHANGE" == "B" ]]; then
 			mainMenu
+		elif [[ "$LOG_CHANGE" != +([1-4]) ]]; then
+			outputLog "The chosen log level [$LOG_CHANGE] is not an appropriate option, select a number between 1 and 4 relating to the appropriate log level." "4"
+			LOG_CHANGE=""
+		else
+			replaceStringInFile "DEMO_LOG_LEVEL=$LOG_LEVEL" "DEMO_LOG_LEVEL=$LOG_CHANGE" "${WORKSPACE_WD}/data/demo-config.properties"
+			loadVariables
+			loadScripts
+			outputLog "Updated LOG_LEVEL to use $LOG_CHANGE"
+			newLine
 		fi
 	done
-
-	replaceStringInFile "DEMO_LOG_LEVEL=$LOG_LEVEL" "DEMO_LOG_LEVEL=$LOG_CHANGE" "${WORKSPACE_WD}/data/demo-config.properties"
-	loadVariables
-	loadScripts
-	echo Updated LOG_LEVEL to use $LOG_CHANGE
-	newLine
 }
 
 #function - getDemoInstallFolder() - gets the folder used to install the demo into, from SCRIPT_VARIABLES, outputs/returns the name

@@ -129,6 +129,8 @@ function installServer () {
 function provision () {
 	#This is the main part of the script - gets called at startup of the script
 	PORT_SET=$1
+	#FUTURE pass in platform to deploy to be used to check against the plugin.
+	
 	if [[ "${PORT_SET}x" == "x" ]]; then
 		outputLog "Usage: $0 <${NODE_TEXT}-PORT_SET> (ex. 100, 200, etc...)" "4"
 		outputLog "This script will provision extra servers using the provided port set" "4"
@@ -164,31 +166,38 @@ function provision () {
 			waitFor "Started in" "$JD_INSTALL_LOCATION/${NODE_TEXT}${PORT_SET}/${JBOSS_BASE_CONF}${PORT_SET}/log/server.log" "$SERVER_STARTUP_TIMEOUT" "Waiting for the JBoss server start up"
 			newLine
 			
-			executeAgentCommand discovery
-			waitFor "Discovered [^0] new server" "$AGENT_LOG_FOLDER" "20" "Awaiting server discovery by JON..."
-
-			executeAgentCommand availability
-			newLine
+			#Check if the plug in exists
+			EAP_PLUGIN_FOUND=`find $JON_PLUGINS_DIRECTORY -name "*eap*"`
+			if [[ "$EAP_PLUGIN_FOUND" != "" ]]; then 
 			
-			importResources
-			#Wait for the import to take effect to ensure new server is seen in JON
-			waitFor "Scanned platform and [^0] server(s)" "$AGENT_LOG_FOLDER" "30" "Awaiting server import into JON..."
-			#waitFor "Detected new Server" "$AGENT_LOG_FOLDER" "20" "Awaiting server import into JON..."
-			#sleep 5
-			
-			findServer $PORT_SET
-			if [[ "$SERVER_ID" != "" ]]; then
-				JNP_PORT=$(( $PORT_SET + 1099 ))
-				eval $CLI_COMMAND $RHQ_OPTS -f "${WORKSPACE_WD}/cli/CLI/configureServer.js ${SERVER_ID} true namingURL=jnp://127.0.0.1:${JNP_PORT} javaHome=${JAVA_HOME} bindAddress=0.0.0.0 startWaitMax=2 stopWaitMax=1"
-				sleep 7
-				
-				#Once the configuration is update, wait to ensure it takes effect
-				waitFor "RuntimeDiscoveryExecutor)- Scanned platform and" "$AGENT_LOG_FOLDER" "20" "Platform and server being scanned..."
+				executeAgentCommand discovery
+				waitFor "Discovered [^0] new server" "$AGENT_LOG_FOLDER" "20" "Awaiting server discovery by JON..."
+	
+				executeAgentCommand availability
 				newLine
-
-				eval $CLI_COMMAND $RHQ_OPTS -f "${WORKSPACE_WD}/cli/CLI/agentsOperations.js availability"
+				
+				importResources
+				#Wait for the import to take effect to ensure new server is seen in JON
+				waitFor "Scanned platform and [^0] server(s)" "$AGENT_LOG_FOLDER" "30" "Awaiting server import into JON..."
+				#waitFor "Detected new Server" "$AGENT_LOG_FOLDER" "20" "Awaiting server import into JON..."
+				#sleep 5
+				
+				findServer $PORT_SET
+				if [[ "$SERVER_ID" != "" ]]; then
+					JNP_PORT=$(( $PORT_SET + 1099 ))
+					eval $CLI_COMMAND $RHQ_OPTS -f "${WORKSPACE_WD}/cli/CLI/configureServer.js ${SERVER_ID} true namingURL=jnp://127.0.0.1:${JNP_PORT} javaHome=${JAVA_HOME} bindAddress=0.0.0.0 startWaitMax=2 stopWaitMax=1"
+					sleep 7
+					
+					#Once the configuration is update, wait to ensure it takes effect
+					waitFor "RuntimeDiscoveryExecutor)- Scanned platform and" "$AGENT_LOG_FOLDER" "20" "Platform and server being scanned..."
+					newLine
+	
+					eval $CLI_COMMAND $RHQ_OPTS -f "${WORKSPACE_WD}/cli/CLI/agentsOperations.js availability"
+				else
+					outputLog "Server with portSet: $PORT_SET not found in JON, not updating config". "3"
+				fi
 			else
-				outputLog "Server with portSet: $PORT_SET not found in JON, not updating config". "3"
+				outputLog "The EAP plugin has not been provided.  The JBoss server was deployed but cannot be imported and properly configured." "3"
 			fi
 		else
 			#Not installing a server, so change the current port being installed to empty

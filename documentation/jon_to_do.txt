@@ -1,7 +1,8 @@
 TESTS:
-
+- deploy jon demo without eap plugin, should deploy and provide warning
 
 VERIFY:
+- nsaadorkspaces/ nsaadWorkspaces/ being created by script??
 - log level 3,4. any more inputs to change to takeInput?
 	to many newLines, how to handle?
 - deployment of patches may not work.  they will get deployed, but not really loaded till next restart of jon server (which is why i used to have two starts)
@@ -9,10 +10,6 @@ VERIFY:
 - on machine restart does jboss start up? if so demo start fails? or eap managed?
 
 TODO:
-- Add to read me about current bundle architecture
-- if deploying jboss, but no eap plugin provided, then skip last bits of importing the eap server, will only deploy it and output warning
-- Log level changing allow 1-4 and the words as well
-	
 - Re-do functions to allow for scripting of the script and no user input
 - get rid of postgres jdbc dependency ?? in conf/jon/jon-server.x.x.x
 - offer option to decide if you want demo components installed?

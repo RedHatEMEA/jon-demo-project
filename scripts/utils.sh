@@ -691,3 +691,17 @@ function checkBundlesEnabled () {
 	updateVariablesFile "BUNDLES_ENABLED=" "BUNDLES_ENABLED=$BUNDLES_ENABLED"
 	
 }
+
+#function - contains () - checks if an array contains a value
+function contains () {
+	local N=$#
+	local VALUE=${!N}
+	for (( I = 1; i < $#; i++ )) {
+		if [ "${!I}" == "${VALUE}" ]; then
+			echo "y"
+			return 0
+		fi
+	}	
+	echo "n"
+	return 1
+}

@@ -10,7 +10,7 @@ function extractJONPlugins () {
 
 	#Directory for plugins for selected JON product (from above - ex: ./data/jon/plugins)
 	JON_PLUGINS_DIRECTORY=$JON_DIRECTORY/$JON_PLUGINS
-	#outputLog "JON_PLUGINS_DIRECTORY: $JON_PLUGINS_DIRECTORY"
+	outputLog "JON_PLUGINS_DIRECTORY: $JON_PLUGINS_DIRECTORY"
 
 	JON_PRODUCT=`extractProductName $JON_PRODUCT_FULL_PATH`
 	outputLog "JON_PRODUCT: $JON_PRODUCT"
@@ -99,6 +99,7 @@ function silentlyInstallJon () {
 	handleJonAccessoriesSetup
 	
 	#Wait for the JON server to be ready, to display the run firefox line
+	waitFor "Starting the master server plugin container" "$JD_INSTALL_LOCATION/$JON_PRODUCT/logs/rhq-server-log4j.log" "300" "Processing JON plugin deployment..."
 	waitFor "Started J2EE application" "$JD_INSTALL_LOCATION/$JON_PRODUCT/logs/rhq-server-log4j.log" "300" "Finalizing JON server setup"
 	
 	newLine

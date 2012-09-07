@@ -113,12 +113,37 @@ If you have the intention of using bundles, then you must ensure that:
 If not, then bundle creation and deployment will not be available.  
 Bundles can be created separately, as well as part of the demo installation process.
 
-To create more bundles, you would have to add projects under the folder
+To create more bundles, you would have to add a new project under the folder:
 		./sub-projects/bundle-creation/src/*
 		
 Any generated bundle files will be added into the ./data/bundles directory and can be copied from there to any other location as desired.  Otherwise, they will be used by the demo script to deploy into the JON server.
 
 It will be very handy to have more applications available to be deployed into JON and thus onto the deliverable JBoss servers.  Demo users could in the future have the option to choose which bundles they would like installed (for example, BRMS with a bundle of rules, SOA-P with an ESB, etc...)
+
+### Bundle Architecture ###
+	The setup as it currently stands, the demo script will build 3 bundles:
+	- common: This contains the JBoss common server components such as lib, bin, server, etc...
+	- default: This contains the JBoss server instance with the conf, lib, start/stop scripts, port binding info, etc...  It will request a port number, amongst other things, and deploy to a folder with name "node{PortNum}".
+	- seam-dvdstore: This contains a sample application to provide some basic functionality for testing purposes in the demo.
+	
+	In terms of deployment, the bundles will be deployed as follows (with the default demo destination):
+	- {JON_DEMO_LOCATION}
+		- common
+		- node100
+			- ec-default100
+		- node200
+			- ec-default200
+		- ...
+		- nodeXxx
+			-ec-defaultXxx
+		- applications
+			- node100
+				- seam-dvdstore
+			- node200
+				- seam-dvdstore
+			- ...
+			- nodeXxx
+				- seam-dvdstore
 
 *********************************************************************************
 
