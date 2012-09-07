@@ -338,15 +338,22 @@ function replaceStringInFile () {
 	
 	if [[ -f "$FILE" ]]; then
 		
-		TMP_FILE=$TMP_LOCATION/replacing
-		
-		sed -e "s|$STRING_TO_REPLACE|$STRING_REPLACING|g" $FILE > $TMP_FILE
-		
-		cp $TMP_FILE $FILE
-		deleteFile $TMP_FILE
+		local STRING_FOUND=`grep "$STRING_TO_REPLACE" "$FILE"`
+		if [[ "$STRING_FOUND" != "" ]]; then
+			
+			TMP_FILE=$TMP_LOCATION/replacing
+			
+			sed -e "s|$STRING_TO_REPLACE|$STRING_REPLACING|g" $FILE > $TMP_FILE
+			
+			cp $TMP_FILE $FILE
+			deleteFile $TMP_FILE
+		else
+			outputLog "The string [$STRING_TO_REPLACE] is not found in $FILE, so no replace will take place." "3"
+		fi
 	
 	else
-		outputLog "File $FILE does not exist in replaceStringInFile, so skipping replace"
+		echo "file not found"
+		outputLog "File $FILE does not exist in replaceStringInFile, so skipping replace..." "3"
 	fi
 }
 
