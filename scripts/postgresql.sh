@@ -36,14 +36,18 @@ function checkForPostgresOnSystem () {
 			updateVariablesFile "POSTGRES_SERVICE_NAME=" "POSTGRES_SERVICE_NAME=${POSTGRES_SERVICE_NAME}"
 			updateVariablesFile "POSTGRES_INSTALLED=" "POSTGRES_INSTALLED=y"
 			
-			VERSION=${POSTGRES_SERVICE_NAME#*-}
-			outputLog "VERSION: $VERSION"
-			MAJOR_VERSION=${VERSION:0:1}
-			MINOR_VERSION=${VERSION:2:1}
-			outputLog "MAJOR [$MAJOR_VERSION] -- MINOR [$MINOR_VERSION]"
-			
-			updateVariablesFile "POSTGRES_MAJOR_VERSION=" "POSTGRES_MAJOR_VERSION=${MAJOR_VERSION}"
-			updateVariablesFile "POSTGRES_MINOR_VERSION=" "POSTGRES_MINOR_VERSION=${MINOR_VERSION}"
+			if [[ "$POSTGRES_SERVICE_NAME" != "postgresql" ]]; then 
+				VERSION=${POSTGRES_SERVICE_NAME#*-}
+				outputLog "VERSION: $VERSION"
+				MAJOR_VERSION=${VERSION:0:1}
+				MINOR_VERSION=${VERSION:2:1}
+				outputLog "MAJOR [$MAJOR_VERSION] -- MINOR [$MINOR_VERSION]"
+				
+				updateVariablesFile "POSTGRES_MAJOR_VERSION=" "POSTGRES_MAJOR_VERSION=${MAJOR_VERSION}"
+				updateVariablesFile "POSTGRES_MINOR_VERSION=" "POSTGRES_MINOR_VERSION=${MINOR_VERSION}"
+			else
+				outputLog "Version of postgresql not found in service name, ignoring version numbers"
+			fi
 			loadVariables
 		fi	
 	fi
@@ -54,7 +58,7 @@ function checkPostgresInstall () {
 
 	POSTGRES_INSTALLED="n"
 
-	if [ -f $POSTGRES_SERVICE_FILE ]; then
+	if [ -f $POSTGRES_SERVICE_FILE && "$POSTGRES_INSTALLED" == "n" ]; then
 
 		newLine
 		status=`service $POSTGRES_SERVICE_NAME status`
@@ -73,7 +77,7 @@ function checkPostgresInstall () {
 			;;
 		esac
 	else
-		outputLog "PostgreSQL is not installed...\n" "2"
+		outputLog "PostgreSQL is not installed on the filesystem...\n" "2"
 		POSTGRES_INSTALLED="n"
 	fi
 	
