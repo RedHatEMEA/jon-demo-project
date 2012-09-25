@@ -56,9 +56,7 @@ function checkForPostgresOnSystem () {
 #function - checkPostgresInstall () - check if postgres is installed, running, etc
 function checkPostgresInstall () {
 
-	POSTGRES_INSTALLED="n"
-
-	if [ -f $POSTGRES_SERVICE_FILE && "$POSTGRES_INSTALLED" == "n" ]; then
+	if [[ "$POSTGRES_INSTALLED" == "y" ]]; then
 
 		newLine
 		status=`service $POSTGRES_SERVICE_NAME status`
@@ -66,22 +64,15 @@ function checkPostgresInstall () {
 		case "$status" in
 		*inactive* | *stopped*)
 			startPostgresService
-			POSTGRES_INSTALLED="y"
 			;;
 		*active* | *running*)
 			outputLog "PostgreSQL is installed, and running..." "2"
-			POSTGRES_INSTALLED="y"
 			;;
 		*)
 			outputLog "Somehow, none of the scenarios apply..." "3"
 			;;
 		esac
-	else
-		outputLog "PostgreSQL is not installed on the filesystem...\n" "2"
-		POSTGRES_INSTALLED="n"
 	fi
-	
-	updateVariablesFile "POSTGRES_INSTALLED=" "POSTGRES_INSTALLED=${POSTGRES_INSTALLED}"
 	
 }
 
