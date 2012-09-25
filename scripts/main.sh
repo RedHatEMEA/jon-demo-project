@@ -228,7 +228,7 @@ function splashScreen () {
 	TEXT_OUTPUT="${TEXT_OUTPUT}\n"
 	breakTextLine $WIDTH "  2-- Add the JON server zip and plugin packages into the appropriate location"
 	TEXT_OUTPUT="${TEXT_OUTPUT}\n"
-	breakTextLine $WIDTH "  3-- Add the JBoss server zip (only 5.1.1 currently supported) for bundle creation into the appropriate location"
+	breakTextLine $WIDTH "  3-- Add the JBoss server zip (only 5.1.x currently supported) for bundle creation into the appropriate location"
 	TEXT_OUTPUT="${TEXT_OUTPUT}\n"
 	breakTextLine $WIDTH "  4-- (Optional) Install Ant to your system to enable bundle creation and deployment."
 	TEXT_OUTPUT="${TEXT_OUTPUT}\n"

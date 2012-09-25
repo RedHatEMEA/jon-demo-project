@@ -81,8 +81,8 @@ function createBundles () {
 		replaceStringInFile "<parameter>100</parameter>" "<parameter>\@PORTS_OFFSET\@</parameter>" "${WORKSPACE_WD}/data/jboss/$JBOSS_PRODUCT/default/bindings-jboss-beans.xml"
 		
 		#Copy the additional files into the appropriate dir
-		cp ${WORKSPACE_WD}/sub-projects/bundle-creation/src/EAP/default/files/$JBOSS_VERSION/* ${WORKSPACE_WD}/data/jboss/$JBOSS_PRODUCT/default/
-		cp -R ${WORKSPACE_WD}/sub-projects/bundle-creation/src/EAP/common/files/$JBOSS_VERSION/* ${WORKSPACE_WD}/data/jboss/$JBOSS_PRODUCT/common/
+		cp ${WORKSPACE_WD}/sub-projects/bundle-creation/src/EAP/default/files/$JBOSS_VERSION_NO_REVISION/* ${WORKSPACE_WD}/data/jboss/$JBOSS_PRODUCT/default/
+		cp -R ${WORKSPACE_WD}/sub-projects/bundle-creation/src/EAP/common/files/$JBOSS_VERSION_NO_REVISION/* ${WORKSPACE_WD}/data/jboss/$JBOSS_PRODUCT/common/
 		
 		#Uncomment the admin user credentials for the jmx-console
 		replaceStringInFile "# admin=admin" "admin=admin" "${WORKSPACE_WD}/data/jboss/$JBOSS_PRODUCT/default/conf/props/jmx-console-users.properties"
@@ -105,6 +105,6 @@ function createBundles () {
 		chown $LOCAL_USER:$LOCAL_USER -R ${WORKSPACE_WD}/data/bundles
 		outputLog "Bundles are being built..." "2"
 	else
-		outputLog "At the moment, only EAP v5.1 is supported for the creation of bundles, more versions will be supported at a later time." "3"
+		outputLog "At the moment, only EAP v5.1.x is supported for the creation of bundles, more versions will be supported at a later time. Bundle creation will be skipped." "3"
 	fi 	
 }

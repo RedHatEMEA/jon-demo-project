@@ -14,7 +14,6 @@ function jonDemoMenu () {
 			0)
 				echo SRD. Start Jon Demo
 				DEMO_STATUS="0"
-				echo $DEMO_STATUS
 				;;
 			1)
 				echo SOD. Stop Jon Demo
