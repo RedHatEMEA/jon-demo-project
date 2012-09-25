@@ -28,7 +28,7 @@ function checkForPostgresOnSystem () {
 			fi
 		fi
 			
-			
+		if [[ "$POSTGRES_SERVICE_NAME" != "" ]]; then
 
 			outputLog "POSTGRES_SERVICE_FILE is $POSTGRES_SERVICE_FILE"
 			outputLog "POSTGRES_SERVICE_NAME is $POSTGRES_SERVICE_NAME"
