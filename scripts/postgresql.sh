@@ -14,9 +14,21 @@ function checkForPostgresOnSystem () {
 	
 	if [[ "$POSTGRES_INSTALLED" != "y" ]]; then 
 		#If postgresql exists in /etc/init.d, then the service exists
-		if [[ "$POSTGRES_SERVICE_NAME" == "" ]]; then
-			POSTGRES_SERVICE_FILE=`find $INIT_D/ -name "postgresql*"`
-			POSTGRES_SERVICE_NAME=${POSTGRES_SERVICE_FILE#*$INIT_D/}
+		POSTGRES_SERVICE_FILE=`find $INIT_D/ -name "postgresql*"`
+		POSTGRES_SERVICE_NAME=${POSTGRES_SERVICE_FILE#*$INIT_D/}
+		
+		if [[ "$POSTGRES_SERVICE_FILE" == "" ]]; then
+			outputLog "Postgres service file is not found on the file system." "2"
+			CHECK_SYSTEM=`systemctl | grep postgres`
+				
+			if [[ "$CHECK_SYSTEM" != "" ]]; then
+				POSTGRES_SERVICE_NAME=${CHECK_SYSTEM%.service*}
+			else
+				outputLog "Postgres is not found in the system check." "2"
+			fi
+		fi
+			
+			
 
 			outputLog "POSTGRES_SERVICE_FILE is $POSTGRES_SERVICE_FILE"
 			outputLog "POSTGRES_SERVICE_NAME is $POSTGRES_SERVICE_NAME"
