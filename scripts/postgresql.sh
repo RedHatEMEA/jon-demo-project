@@ -369,10 +369,10 @@ function createPostgresUser () {
 #function - createPostgresDb () - to create a database, by default using rhq, otherwise request user input display all the current dbs
 function createPostgresDb () {
 
-	createdb -h 127.0.0.1 -p 5432 -U postgres -O $POSTGRES_USER $POSTGRES_DB_DEFAULT 2>&1
+	DB_CREATION=`createdb -h 127.0.0.1 -p 5432 -U postgres -O $POSTGRES_USER $POSTGRES_DB_DEFAULT 2>&1`
 	
 	POSTGRES_DB=""
-	while [[ "$?" == "1" ]]; do
+	while [[ "$DB_CREATION" =~ "database creation failed" ]]; do
 		while [[ "$POSTGRES_DB" == "" ]]; do
 	
 			outputLog "createdb errored, the following dbs already exist:" "3"
