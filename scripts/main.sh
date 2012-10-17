@@ -309,7 +309,7 @@ function mainMenu () {
 		fi
 
 		if [ -f $POSTGRES_SERVICE_FILE ]; then
-			SERVICE_STATUS=`service $POSTGRES_SERVICE_NAME status`
+			SERVICE_STATUS=`service $POSTGRES_SERVICE_NAME status 2>/dev/null`
 			case "$SERVICE_STATUS" in
 			*inactive*)
 				echo RP. Start Postgres Service
