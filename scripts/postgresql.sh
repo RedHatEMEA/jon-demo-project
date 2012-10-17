@@ -18,7 +18,7 @@ function checkForPostgresOnSystem () {
 		POSTGRES_SERVICE_NAME=${POSTGRES_SERVICE_FILE#*$INIT_D/}
 		
 		if [[ "$POSTGRES_SERVICE_FILE" == "" ]]; then
-			outputLog "Postgres service file is not found on the file system." "2"
+			outputLog "Postgres service file is not found on the file system." "1"
 			CHECK_SYSTEM=`systemctl | grep postgres`
 				
 			if [[ "$CHECK_SYSTEM" != "" ]]; then
@@ -27,7 +27,7 @@ function checkForPostgresOnSystem () {
 				#Set the postgres service file 
 				POSTGRES_SERVICE_FILE=$INIT_D/$POSTGRES_SERVICE_NAME
 			else
-				outputLog "Postgres is not found in the system check." "2"
+				outputLog "Postgres is not found in the system check." "1"
 				if [[ "$POSTGRES_INSTALLED" != "y" ]]; then 
 					POSTGRES_INSTALLED="n"
 					updateVariablesFile "POSTGRES_INSTALLED=" "POSTGRES_INSTALLED=$POSTGRES_INSTALLED"
@@ -136,13 +136,18 @@ function getPostgresRepo () {
 		CONNECTION_REFUSED=`grep "Connection refused" $WGET_TMP_FILE` 
 		if [[ "$CONNECTION_REFUSED" != "" ]]; then
 			outputLog "Could not reach http://yum.postgresql.org/..." "4"
-			outputLog "Is your internet connection available? Stopping install." "4"
+			outputLog "Is your internet connection available? Stopping install." "3"
 		else
-			outputLog "Some error occurred in acquiring Postgres list from http://yum.postgresql.org/, stopping install" "4"
+			outputLog "Some error occurred in acquiring Postgres list from http://yum.postgresql.org/" "4"
+			outputLog "Is your internet connection available? Stopping install." "3"
 			cat $WGET_TMP_FILE
 		fi
 		
 		deletePostgresTmpFiles
+		
+		newLine
+		pause
+		
 		mainMenu
 	fi
 }
@@ -203,8 +208,8 @@ function installPostgres () {
 		newLine
 		startPostgresService
 		updateVariablesFile "POSTGRES_INSTALLED=" "POSTGRES_INSTALLED=y"
-	elif [ -f "/lib/systemd/system/postgresql-${MAJOR_VERSION}.${MINOR_VERSION}.service" ]; then
-		/usr/pgsql-${MAJOR_VERSION}.${MINOR_VERSION}/bin/postgresql${MAJOR_VERSION}${MINOR_VERSION}-setup initdb
+	#elif [ -f "/lib/systemd/system/postgresql-${MAJOR_VERSION}.${MINOR_VERSION}.service" ]; then
+	#	/usr/pgsql-${MAJOR_VERSION}.${MINOR_VERSION}/bin/postgresql${MAJOR_VERSION}${MINOR_VERSION}-setup initdb
 		
 		
 	else
@@ -228,12 +233,15 @@ function findLatestPgRpmVersion () {
 	
 	TOP_BUILD_NUMBER=0
 	TOP_MAINTENANCE_NUMBER=0
+	local COUNT=0
 	
+	outputLog "Available build-maintenance version numbers are:" "2" "y" "n" 
 	for V in "${RPM_ARRAY[@]}"
 	do
+		COUNT=$(( COUNT + 1 ))
 		outputLog "Processing $V" "1"
 		if [[ "$V" =~ "Provides-match" ]]; then
-			outputLog "Ignoring last night in array..." "1"
+			outputLog "Ignoring last line in array..." "1"
 		else
 			BUILD_VERSION=${V:17:1}
 			MAINTENANCE_VERSION=${V:19:1}
@@ -242,21 +250,59 @@ function findLatestPgRpmVersion () {
 			if [[ $TOP_BUILD_NUMBER -eq 0 ]]; then
 				TOP_BUILD_NUMBER=$BUILD_VERSION
 				TOP_MAINTENANCE_NUMBER=$MAINTENANCE_VERSION
+				TOP_CHOICE=$COUNT
 				outputLog "TOP numbers at 0, set them both to TOP_BUILD_NUMBER[$TOP_BUILD_NUMBER] -- TOP_MAINTENANCE_NUMBER[$TOP_MAINTENANCE_NUMBER]" "1"
 			elif [[ $TOP_BUILD_NUMBER -lt $BUILD_VERSION ]]; then
 				TOP_BUILD_NUMBER=$BUILD_VERSION
 				TOP_MAINTENANCE_NUMBER=$MAINTENANCE_VERSION
+				TOP_CHOICE=$COUNT
 				outputLog "Current build greater then $TOP_BUILD_NUMBER, set them both to TOP_BUILD_NUMBER[$TOP_BUILD_NUMBER] -- TOP_MAINTENANCE_NUMBER[$TOP_MAINTENANCE_NUMBER]" "1"
 			elif [[ $TOP_BUILD_NUMBER -eq $BUILD_VERSION && $TOP_MAINTENANCE_NUMBER -lt $MAINTENANCE_VERSION ]]; then
 				TOP_MAINTENANCE_NUMBER=$MAINTENANCE_VERSION
+				TOP_CHOICE=$COUNT
 				outputLog "Build numbers are the same [$BUILD_VERSION], but current maintence greater then $TOP_MAINTENANCE_NUMBER, set TOP_MAINTENANCE_NUMBER[$TOP_MAINTENANCE_NUMBER]" "1"
 			fi
 		fi
 		
-		#TODO HARDCODED -- fix!!
-		TOP_BUILD_NUMBER="1"
-		TOP_MAINTENANCE_NUMBER="4"
+		outputLog "\t${COUNT}. postgresql${VERSION}.${BUILD_VERSION}-${MAINTENANCE_VERSION}" "2" "y" "n"
 	done
+	
+	while true;
+	do
+		takeInput "Choose the build/maintenance version you desire, it's recommended to use the default: (${TOP_BUILD_NUMBER}-${TOP_MAINTENANCE_NUMBER})"
+		read DETAIL_VERSION_TO_INSTALL
+		
+		#If non-numeric or not in the correct number range, then invalid else extract version to add to repo base
+		if [[ "$DETAIL_VERSION_TO_INSTALL" == "b" || "$DETAIL_VERSION_TO_INSTALL" == "B" ]]; then
+			deletePostgresDB "$POSTGRES_JON_DB"
+			resetVariableInFile "POSTGRES_JON_DB"
+			INSTALL_BUNDLES=""
+			loadVariables
+			mainMenu
+		elif [[ "$DETAIL_VERSION_TO_INSTALL" == "" ]]; then
+			DETAIL_VERSION_TO_INSTALL=$TOP_CHOICE
+			break
+		elif [[ "$DETAIL_VERSION_TO_INSTALL" != +([0-9]) || "$DETAIL_VERSION_TO_INSTALL" -le "0" || "$DETAIL_VERSION_TO_INSTALL" -gt "$COUNT" ]]; then
+			outputLog "Invalid input, must be between 1 and $COUNT" "4"
+			newLine
+		else
+			break
+		fi
+	done
+	
+	#Take into account the zero/one start index of list/array
+	DETAIL_VERSION_TO_INSTALL=$(( DETAIL_VERSION_TO_INSTALL - 1 ))
+	
+	CHOSEN_CHOICE=${RPM_ARRAY[DETAIL_VERSION_TO_INSTALL]}
+	TOP_BUILD_NUMBER=${CHOSEN_CHOICE:17:1}
+	TOP_MAINTENANCE_NUMBER=${CHOSEN_CHOICE:19:1}
+	
+	outputLog "TOP_BUILD_NUMBER: [$TOP_BUILD_NUMBER] -- TOP_MAINTENANCE_NUMBER: [$TOP_MAINTENANCE_NUMBER]"
+	
+	#TODO HARDCODED -- fix 6-1 update!!
+	TOP_BUILD_NUMBER="1"
+	TOP_MAINTENANCE_NUMBER="4"
+	
 	
 }
 
