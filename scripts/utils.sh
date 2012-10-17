@@ -436,6 +436,8 @@ function createDemoFsStructure () {
 	#or if it's not in the right format jon-server-x.x.x
 	if [[ "$JON_VERSION" == "" ]]; then
 		JON_VERSION=$LATEST_JON_VERSION
+	else
+		outputLog "Using JON version: [$JON_VERSION]" "1"
 	fi		
 	
 	outputLog "JON VERSION is set to $JON_VERSION"
