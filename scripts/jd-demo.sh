@@ -342,9 +342,12 @@ function jdStopDemo () {
 		if [[ "${JBOSS_SERVER_PORTS_PROVISIONED}" != "" ]]; then
 			#If the agent is stopped, start it up to be able to manage any deployed JBoss servers
 			getAgentFolder
-			AGENT_STATUS=`$AGENT_FOLDER/$BIN/rhq-agent-wrapper.sh status`
-			if [[ "$AGENT_STATUS" =~ "NOT running" ]]; then
-				manageJonAgent "$AGENT_FOLDER" "start"
+			
+			if [ -f "$AGENT_FOLDER/$BIN/rhq-agent-wrapper.sh" ]; then
+				AGENT_STATUS=`$AGENT_FOLDER/$BIN/rhq-agent-wrapper.sh status`
+				if [[ "$AGENT_STATUS" =~ "NOT running" ]]; then
+					manageJonAgent "$AGENT_FOLDER" "start"
+				fi
 			fi
 			
 			getRHQCLIDetails
