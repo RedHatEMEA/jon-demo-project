@@ -25,6 +25,11 @@ function checkForPostgresOnSystem () {
 				POSTGRES_SERVICE_NAME=${CHECK_SYSTEM%.service*}
 			else
 				outputLog "Postgres is not found in the system check." "2"
+				if [[ "$POSTGRES_INSTALLED" != "y" ]]; then 
+					POSTGRES_INSTALLED="n"
+					updateVariablesFile "POSTGRES_INSTALLED=" "POSTGRES_INSTALLED=$POSTGRES_INSTALLED"
+					loadVariables
+				fi
 			fi
 		fi
 			
@@ -180,6 +185,10 @@ function installPostgres () {
 		newLine
 		startPostgresService
 		updateVariablesFile "POSTGRES_INSTALLED=" "POSTGRES_INSTALLED=y"
+	elif [ -f "/lib/systemd/system/postgresql-${MAJOR_VERSION}.${MINOR_VERSION}.service" ]; then
+		/usr/pgsql-${MAJOR_VERSION}.${MINOR_VERSION}/bin/postgresql${MAJOR_VERSION}${MINOR_VERSION}-setup initdb
+		
+		
 	else
 		outputLog "Postgres has not been installed, yum installation failed, check output above." "4"
 	fi	
@@ -204,23 +213,31 @@ function findLatestPgRpmVersion () {
 	
 	for V in "${RPM_ARRAY[@]}"
 	do
-		BUILD_VERSION=${V:17:1}
-		MAINTENANCE_VERSION=${V:19:1}
-		outputLog "BUILD_VERSION [$BUILD_VERSION] -- MAINTENANCE_VERSION [$MAINTENANCE_VERSION]" "1"
-		
-		if [[ $TOP_BUILD_NUMBER -eq 0 ]]; then
-			TOP_BUILD_NUMBER=$BUILD_VERSION
-			TOP_MAINTENANCE_NUMBER=$MAINTENANCE_VERSION
-			outputLog "TOP numbers at 0, set them both to TOP_BUILD_NUMBER[$TOP_BUILD_NUMBER] -- TOP_MAINTENANCE_NUMBER[$TOP_MAINTENANCE_NUMBER]" "1"
-		elif [[ $TOP_BUILD_NUMBER -lt $BUILD_VERSION ]]; then
-			TOP_BUILD_NUMBER=$BUILD_VERSION
-			TOP_MAINTENANCE_NUMBER=$MAINTENANCE_VERSION
-			outputLog "Current build greater then $TOP_BUILD_NUMBER, set them both to TOP_BUILD_NUMBER[$TOP_BUILD_NUMBER] -- TOP_MAINTENANCE_NUMBER[$TOP_MAINTENANCE_NUMBER]" "1"
-		elif [[ $TOP_BUILD_NUMBER -eq $BUILD_VERSION && $TOP_MAINTENANCE_NUMBER -lt $MAINTENANCE_VERSION ]]; then
-			TOP_MAINTENANCE_NUMBER=$MAINTENANCE_VERSION
-			outputLog "Build numbers are the same [$BUILD_VERSION], but current maintence greater then $TOP_MAINTENANCE_NUMBER, set TOP_MAINTENANCE_NUMBER[$TOP_MAINTENANCE_NUMBER]" "1"
+		outputLog "Processing $V" "1"
+		if [[ "$V" =~ "Provides-match" ]]; then
+			outputLog "Ignoring last night in array..." "1"
+		else
+			BUILD_VERSION=${V:17:1}
+			MAINTENANCE_VERSION=${V:19:1}
+			outputLog "BUILD_VERSION [$BUILD_VERSION] -- MAINTENANCE_VERSION [$MAINTENANCE_VERSION]" "1"
+			
+			if [[ $TOP_BUILD_NUMBER -eq 0 ]]; then
+				TOP_BUILD_NUMBER=$BUILD_VERSION
+				TOP_MAINTENANCE_NUMBER=$MAINTENANCE_VERSION
+				outputLog "TOP numbers at 0, set them both to TOP_BUILD_NUMBER[$TOP_BUILD_NUMBER] -- TOP_MAINTENANCE_NUMBER[$TOP_MAINTENANCE_NUMBER]" "1"
+			elif [[ $TOP_BUILD_NUMBER -lt $BUILD_VERSION ]]; then
+				TOP_BUILD_NUMBER=$BUILD_VERSION
+				TOP_MAINTENANCE_NUMBER=$MAINTENANCE_VERSION
+				outputLog "Current build greater then $TOP_BUILD_NUMBER, set them both to TOP_BUILD_NUMBER[$TOP_BUILD_NUMBER] -- TOP_MAINTENANCE_NUMBER[$TOP_MAINTENANCE_NUMBER]" "1"
+			elif [[ $TOP_BUILD_NUMBER -eq $BUILD_VERSION && $TOP_MAINTENANCE_NUMBER -lt $MAINTENANCE_VERSION ]]; then
+				TOP_MAINTENANCE_NUMBER=$MAINTENANCE_VERSION
+				outputLog "Build numbers are the same [$BUILD_VERSION], but current maintence greater then $TOP_MAINTENANCE_NUMBER, set TOP_MAINTENANCE_NUMBER[$TOP_MAINTENANCE_NUMBER]" "1"
+			fi
 		fi
 		
+		#TODO HARDCODED -- fix!!
+		TOP_BUILD_NUMBER="1"
+		TOP_MAINTENANCE_NUMBER="4"
 	done
 	
 }
