@@ -652,20 +652,20 @@ function checkScriptPrereqs () {
 			
 			#Can we get index.html from google - i.e we have internet
 			wget www.google.com -o output.txt
-			
+
 			#If we don't have internet connectivity, error with message
 			if [[ ! -f index.html ]]; then 
 				outputLog "PostgreSQL is not installed, and no internet connectivity found" "4"
 				ERROR=true
 			else
-				outputLog "PostgreSQL is not installed or on the system, but found internet connectivity"
+				outputLog "PostgreSQL is not installed or on the system, but internet connectivity available."
 			fi
 			
 			#Clean wget files
 			deleteFile index.html
 			deleteFile output.txt
 		
-		#If postgres is not installed but found on the system
+		#If postgres is not installed by the script but found on the system
 		elif [[ "$POSTGRES_INSTALLED" != "y" && "$POSTGRES_SERVICE_FILE" != "" ]]; then
 			outputLog "PostgreSQL is not installed, but found on the system. Internet is not required"
 		fi 

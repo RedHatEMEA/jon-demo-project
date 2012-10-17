@@ -47,7 +47,6 @@ JBOSS_JMX_USERS=$JBOSS_CONF/props/jmx-console-users.properties
 JBOSS_JMX_ADMIN_PASSWORD=jd_admin
 
 #Postgres specific variables
-POSTGRES_SERVICE_FILE=$INIT_D/$POSTGRES_SERVICE_NAME
 POSTGRES_INSTALL_LOCATION=/var/lib/pgsql
 POSTGRES_USER=rhqadmin
 POSTGRES_DB_DEFAULT=rhq

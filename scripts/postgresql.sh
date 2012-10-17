@@ -23,6 +23,9 @@ function checkForPostgresOnSystem () {
 				
 			if [[ "$CHECK_SYSTEM" != "" ]]; then
 				POSTGRES_SERVICE_NAME=${CHECK_SYSTEM%.service*}
+				
+				#Set the postgres service file 
+				POSTGRES_SERVICE_FILE=$INIT_D/$POSTGRES_SERVICE_NAME
 			else
 				outputLog "Postgres is not found in the system check." "2"
 				if [[ "$POSTGRES_INSTALLED" != "y" ]]; then 
@@ -136,7 +139,7 @@ function getPostgresRepo () {
 			outputLog "Is your internet connection available? Stopping install." "4"
 		else
 			outputLog "Some error occurred in acquiring Postgres list from http://yum.postgresql.org/, stopping install" "4"
-			cat $WGET_TMP_FILE`
+			cat $WGET_TMP_FILE
 		fi
 		
 		deletePostgresTmpFiles
