@@ -3,7 +3,7 @@ function jonDemoMenu () {
 	INSTALL_LOCATION=$1
 	
 	JD_BASE=`find $INSTALL_LOCATION -name "$JD_FOLDER" 2>&1`
-	if [[ -d $JD_BASE ]]; then
+	if [[ -d $JD_BASE && "$JON_DEMO_INSTALLED" == "y" ]]; then
 		JD_JON_DIRECTORY=`find $JD_INSTALL_LOCATION -name "jon-server*"`
 		#outputLog JD_JON_DIRECTORY $JD_JON_DIRECTORY -- INSTALL_LOCATION $JD_INSTALL_LOCATION -- JD_FOLDER $JD_FOLDER
 		JON_SCRIPT=$JD_JON_DIRECTORY/$BIN/$JON_STARTUP_SCRIPT
@@ -24,6 +24,9 @@ function jonDemoMenu () {
 		echo DD. Delete Jon Demo
 	else
 		echo ID. Install Jon Demo
+		if [[ -d $JD_BASE && ( "$JON_DEMO_INSTALLED" == "n" || "$JON_DEMO_INSTALLED" == "" ) ]]; then
+			outputLog "[$JD_BASE] already exists, you might want to check it's contents..." "3"
+		fi
 	fi
 	newLine
 }
@@ -257,7 +260,7 @@ function jdInstallDemo () {
 	
 		newLine
 		chooseProduct "jon"
-					
+	
 		if [[ "$POSTGRES_INSTALLED" == "n" ]]; then 
 			installPostgres
 			deletePostgresTmpFiles
