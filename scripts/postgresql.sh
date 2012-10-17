@@ -97,36 +97,51 @@ function getPostgresRepo () {
 	REPO_PACKAGES_FILE="repopackages.php"
 	WGET_TMP_FILE="wget.tmp"
 	wget http://yum.postgresql.org/${REPO_PACKAGES_FILE} -o $WGET_TMP_FILE
-	choosePostgresVersion			#sets VERSION
-
-	MAJOR_VERSION=${VERSION:0:1}
-	MINOR_VERSION=${VERSION:1:2}
 	
-	updateVariablesFile "POSTGRES_MAJOR_VERSION=" "POSTGRES_MAJOR_VERSION=${MAJOR_VERSION}"
-	updateVariablesFile "POSTGRES_MINOR_VERSION=" "POSTGRES_MINOR_VERSION=${MINOR_VERSION}"
+	if [[ -f "$REPO_PACKAGES_FILE" ]]; then
+		choosePostgresVersion			#sets VERSION
 	
-	DOT_VERSION="${MAJOR_VERSION}.${MINOR_VERSION}"
+		MAJOR_VERSION=${VERSION:0:1}
+		MINOR_VERSION=${VERSION:1:2}
+		
+		updateVariablesFile "POSTGRES_MAJOR_VERSION=" "POSTGRES_MAJOR_VERSION=${MAJOR_VERSION}"
+		updateVariablesFile "POSTGRES_MINOR_VERSION=" "POSTGRES_MINOR_VERSION=${MINOR_VERSION}"
+		
+		DOT_VERSION="${MAJOR_VERSION}.${MINOR_VERSION}"
+		
+		newLine
+		outputLog "POSTGRES VERSION is ${MAJOR_VERSION}.${MINOR_VERSION}" "2"
 	
-	newLine
-	outputLog "POSTGRES VERSION is ${MAJOR_VERSION}.${MINOR_VERSION}" "2"
-
-	REPO_BASE="http://yum.postgresql.org"
-	RPM="pgdg-${DISTRO}${VERSION}-${DOT_VERSION}-"
-	REPO_WO_RPM="/${DOT_VERSION}/${DISTRO}/${DISTRO_NICK}-${DISTRO_VERSION}-${ARCH}/"
-	
-	outputLog "Link used to get build number: ${REPO_WO_RPM}${RPM}" "1"
-	LINK=`grep ${REPO_WO_RPM}${RPM} $REPO_PACKAGES_FILE`
-	outputLog "Link from file is $LINK" "1"
-	INDEX=`awk -v a="$LINK" -v b=".noarch" 'BEGIN{print index(a,b)}'`
-	outputLog "Index found at $INDEX" "1"
-	INDEX=$((INDEX - 2))
-	outputLog "Index corrected to $INDEX" "1"
-	
-	BUILD_VERSION=${LINK:INDEX:1}
-	outputLog "Build number is: ${BUILD_VERSION}"
-	
-	RPM="${RPM}${BUILD_VERSION}.noarch.rpm"
-	REPO="${REPO_BASE}${REPO_WO_RPM}${RPM}"	
+		REPO_BASE="http://yum.postgresql.org"
+		RPM="pgdg-${DISTRO}${VERSION}-${DOT_VERSION}-"
+		REPO_WO_RPM="/${DOT_VERSION}/${DISTRO}/${DISTRO_NICK}-${DISTRO_VERSION}-${ARCH}/"
+		
+		outputLog "Link used to get build number: ${REPO_WO_RPM}${RPM}" "1"
+		LINK=`grep ${REPO_WO_RPM}${RPM} $REPO_PACKAGES_FILE`
+		outputLog "Link from file is $LINK" "1"
+		INDEX=`awk -v a="$LINK" -v b=".noarch" 'BEGIN{print index(a,b)}'`
+		outputLog "Index found at $INDEX" "1"
+		INDEX=$((INDEX - 2))
+		outputLog "Index corrected to $INDEX" "1"
+		
+		BUILD_VERSION=${LINK:INDEX:1}
+		outputLog "Build number is: ${BUILD_VERSION}"
+		
+		RPM="${RPM}${BUILD_VERSION}.noarch.rpm"
+		REPO="${REPO_BASE}${REPO_WO_RPM}${RPM}"	
+	else
+		CONNECTION_REFUSED=`grep "Connection refused" $WGET_TMP_FILE` 
+		if [[ "$CONNECTION_REFUSED" != "" ]]; then
+			outputLog "Could not reach http://yum.postgresql.org/..." "4"
+			outputLog "Is your internet connection available? Stopping install." "4"
+		else
+			outputLog "Some error occurred in acquiring Postgres list from http://yum.postgresql.org/, stopping install" "4"
+			cat $WGET_TMP_FILE`
+		fi
+		
+		deletePostgresTmpFiles
+		mainMenu
+	fi
 }
 
 function installPostgres () {
