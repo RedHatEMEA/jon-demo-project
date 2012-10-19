@@ -1,9 +1,17 @@
 <?xml version="1.0"?>
 <project name="tomcat-loadtest-application" default="main" xmlns:rhq="antlib:org.rhq.bundle">
-	<rhq:bundle name="tomcat-loadtest-application" version="3.0" description="A simple load test application">	
+	<rhq:bundle name="tomcat-loadtest-application" version="3.0" description="A simple load test application">
+		<!-- properties -->
+		<rhq:input-property name="JBOSS_HOME" type="string" required="true"
+			description="JBoss Home directory. It's where the EAP-x.x.x-common bundle is deployed (ex.: /opt/jboss/common)"
+			defaultValue="/opt/jboss/common" />
+		<rhq:input-property name="JBOSS_CONF" type="string" required="true"
+			description="JBoss Configuration to deploy to (ex.: default01,default02,default03)"
+			defaultValue="default" />
+		
 		<rhq:deployment-unit name="webapplication"
 			preinstallTarget="preinstall" postinstallTarget="postinstall">
-			<rhq:file name="hello.world.servlet-0.0.1-SNAPSHOT.war" destinationFile="hello.world.servlet.war" />
+			<rhq:file name="hello.world.servlet-0.0.1-SNAPSHOT.war" destinationFile="hello.world.war" />
 		</rhq:deployment-unit>
 	</rhq:bundle>
 	
@@ -13,6 +21,36 @@
 		<property name="preinstallTargetExecuted" value="true" />
 	</target>
 	<target name="postinstall">
+    	<property name="jboss-user" value="jboss"/>
+		<!--  	<copy todir="${JBOSS_HOME}/../@{CONF}/deploy" >
+  		<fileset dir="${rhq.deploy.dir}">
+  			<include name="jboss-seam-dvdstore-ds.xml"/>
+  			<include name="jboss-seam-dvdstore.ear"/>
+  		</fileset>
+  	</copy>-->
+
+		<chgrp group="${jboss-user}" type="both">
+			<fileset dir="${rhq.deploy.dir}" />
+		</chgrp>
+
+		<chown owner="${jboss-user}" type="both">
+			<fileset dir="${rhq.deploy.dir}" />
+		</chown>
+
+		<exec executable="ln">
+			<arg value="-s"/>
+			<arg value="${rhq.deploy.dir}"/>
+			<arg value="${JBOSS_HOME}/server/${JBOSS_CONF}/deploy"/>
+		</exec>
+		
+		<chgrp group="${jboss-user}" type="both">
+			<fileset dir="${rhq.deploy.dir}" />
+		</chgrp>
+
+		<chown owner="${jboss-user}" type="both">
+			<fileset dir="${rhq.deploy.dir}" />
+		</chown>
+		
 		<echo>Done deploying tomcat load test application to ${rhq.deploy.dir}.</echo>	
 		<property name="postinstallTargetExecuted" value="true" />
 	</target>

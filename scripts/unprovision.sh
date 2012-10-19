@@ -31,10 +31,12 @@ function uninventoryServer () {
 
 #function - unprovisionApp (portSet) - the function to unprovision the app using the specified portSet
 function unprovisionApp () {
-
+	
 	PORT_SET=$1
+	APP_BUNDLE=$2
+	
 	BUNDLE_NAME=""
-	getBundleDetails ${BUNDLE_APP_FILE}
+	getBundleDetails $APP_BUNDLE
 	
 	eval $CLI_COMMAND $RHQ_OPTS -f "${WORKSPACE_WD}/cli/CLI/purgeBundleDeployment.js ${BUNDLE_NAME} $PORT_SET"
 	newLine
@@ -63,7 +65,8 @@ function unprovision () {
 			#Shutdown the server if it is running
 			manageServerProfile $SERVER_ID "shutdown"
 		
-			unprovisionApp $PORT_SET
+			unprovisionApp $PORT_SET ${BUNDLE_APP_FILE}
+			unprovisionApp $PORT_SET ${BUNDLE_HW_APP_FILE}
 			unprovisionServerProfile $PORT_SET
 			uninventoryServer $PORT_SET
 			
@@ -71,14 +74,17 @@ function unprovision () {
 			CMD_ARG_PORT_SET=$PORT_SET
 			
 			SERVER_ID=
-			#Hardcoding 100
-			findServer 100
+			
+			#Look for the first server that was provisioned...
+			FIRST_SERVER=${JBOSS_SERVER_PORTS_PROVISIONED%% *}
+			findServer $FIRST_SERVER
 			PORT_SET=$CMD_ARG_PORT_SET
+			
 			#Hardcoding the fact that if we are unprovision portSet 100, we remove the base
 			if [[ "${SERVER_ID}x" == "x" || "$PORT_SET" == "100" ]]; then
 				unprovisionServer
 			else
-				outputLog "Unprovisioning a server other then 100, so keeping the server base..." "2"
+				outputLog "Unprovisioning a server other then 100 or the first [$FIRST_SERVER], so keeping the server base..." "2"
 			fi
 		else
 			outputLog "The server with port $PORT_SET, was not set and cannot be unprovisioned." "3"

@@ -1,3 +1,7 @@
 <web-app>
 	<display-name>Hello World JSP</display-name>
+	
+	<welcome-file-list>
+    	<welcome-file>default.jsp</welcome-file>
+	</welcome-file-list>
 </web-app> 

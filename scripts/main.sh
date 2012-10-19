@@ -230,7 +230,7 @@ function splashScreen () {
 	TEXT_OUTPUT="${TEXT_OUTPUT}\n"
 	breakTextLine $WIDTH "  3-- Add the JBoss server zip (only 5.1.x currently supported) for bundle creation into the appropriate location"
 	TEXT_OUTPUT="${TEXT_OUTPUT}\n"
-	breakTextLine $WIDTH "  4-- (Optional) Install Ant to your system to enable bundle creation and deployment."
+	breakTextLine $WIDTH "  4-- (Optional) Install Ant and Maven to your system - allowing access by root - to enable bundle creation and deployment."
 	TEXT_OUTPUT="${TEXT_OUTPUT}\n"
 	breakTextLine $WIDTH "  *Note: On a first install, if PostgreSQL is not installed, an internet connection will be required"
 	
@@ -419,7 +419,7 @@ function mainMenu () {
 				fi
 				;;
 
-			"dd" | "id" | "srd" | "sod" | "c") 
+			"dd" | "id" | "srd" | "sod" | "c" | "dj" | "uj" ) 
 				jonDemoOptions $option $JD_INSTALL_LOCATION
 				;;
 			

@@ -3,6 +3,11 @@ function setAnt () {
 	ANT=`which ant`	
 }
 
+#function - setMaven () - sets the variable MAVEN to the result of which mvn
+function setMaven () {
+	MAVEN=`which mvn`	
+}
+
 #function - deleteBundles () - Function that deletes the created bundles and bits of EAP moved into the sub project
 function deleteBundles () {
 
@@ -100,9 +105,20 @@ function createBundles () {
 			$ANT -Ddata.dir=${WORKSPACE_WD}/data -Ddist.dir=${WORKSPACE_WD}/data/bundles -Dcommon.dir=${WORKSPACE_WD}/data/jboss/$JBOSS_PRODUCT/common -Ddefault.dir=${WORKSPACE_WD}/data/jboss/$JBOSS_PRODUCT/default -Ddvdstore.dir=${WORKSPACE_WD}/sub-projects/bundle-creation/src/seam/seam-dvdstore &
 		fi
 		
+		#Go to the application hello world, and build it using maven
+		cd ${WORKSPACE_WD}/sub-projects/applications/hello_world_servlet
+		outputLog "Building the hello world application bundle..." "2"
+		$MAVEN clean package
+		
+		#Copy the bundle zip to the bundles folder
+		outputLog "Copying the hello world application bundle..." "1"
+		cp target/hello.world.servlet-0.0.1-SNAPSHOT-bundle.zip $BUNDLE_HW_APP_FILE
+		
 		cd $CURRENT_WD
 			
+		#Change the owner ship from root to default script user
 		chown $LOCAL_USER:$LOCAL_USER -R ${WORKSPACE_WD}/data/bundles
+		
 		outputLog "Bundles are being built..." "2"
 	else
 		outputLog "At the moment, only EAP v5.1.x is supported for the creation of bundles, more versions will be supported at a later time. Bundle creation will be skipped." "3"

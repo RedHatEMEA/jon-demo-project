@@ -92,7 +92,7 @@ function testFunction () {
 	#t=`hostname`
 	#setupJonServer
 
-	extractJONPlugins
+	undeployJBoss "300"
 	
 	#try with  server start, shutdown, and try start/stop.. 4 combination i believe
 		

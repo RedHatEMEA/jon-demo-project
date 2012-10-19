@@ -41,10 +41,11 @@ function provisionApp () {
 	
 	PORT_SET=$1
 	DESTINATION_NAME=$2
+	APP_FILE=$3
 
 	outputLog "DESTINATION_NAME $DESTINATION_NAME"
 	BUNDLE_NAME=""
-	getBundleDetails ${BUNDLE_APP_FILE}
+	getBundleDetails $APP_FILE
 	 
 	#Deploy bundle
 	#BUNDLE_NAME taken from above
@@ -114,15 +115,21 @@ function installServer () {
 	
 	setupDestination ${BUNDLE_DEFAULT_FILE} "${NODE_TEXT}${SERVER_PORT}"
 		
-	APPLICATION_DESTINATION_NAME="applications/${NODE_TEXT}${SERVER_PORT}/seam-dvdstore"
-	setupDestination ${BUNDLE_APP_FILE} $APPLICATION_DESTINATION_NAME
-		
 	if [[ "$PROVISION_BASE" == "y" ]]; then
 		provisionServer
 	fi
 	
 	provisionServerProfile $SERVER_PORT
-	provisionApp $SERVER_PORT $APPLICATION_DESTINATION_NAME
+		
+	#Deploy and provision the dvd-store app
+	APPLICATION_DESTINATION_NAME="applications/${NODE_TEXT}${SERVER_PORT}/seam-dvdstore"
+	setupDestination ${BUNDLE_APP_FILE} $APPLICATION_DESTINATION_NAME
+	provisionApp $SERVER_PORT $APPLICATION_DESTINATION_NAME ${BUNDLE_APP_FILE}
+	
+	#Deploy and provision the hello-world app
+	APPLICATION_DESTINATION_NAME="applications/${NODE_TEXT}${SERVER_PORT}/hello-world"
+	setupDestination ${BUNDLE_HW_APP_FILE} $APPLICATION_DESTINATION_NAME
+	provisionApp $SERVER_PORT $APPLICATION_DESTINATION_NAME ${BUNDLE_HW_APP_FILE}
 }
 
 #function - provision (portSet) - the start function to provision a new server with the passed in portSet
@@ -166,9 +173,9 @@ function provision () {
 			waitFor "Started in" "$JD_INSTALL_LOCATION/${NODE_TEXT}${PORT_SET}/${JBOSS_BASE_CONF}${PORT_SET}/log/server.log" "$SERVER_STARTUP_TIMEOUT" "Waiting for the JBoss server start up"
 			newLine
 			
-			#Check if the plug in exists
+			#Check if the plug in exists and that the JBoss server has started up
 			EAP_PLUGIN_FOUND=`find $JON_PLUGINS_DIRECTORY -name "*eap*"`
-			if [[ "$EAP_PLUGIN_FOUND" != "" ]]; then 
+			if [[ "$EAP_PLUGIN_FOUND" != "" && "$WAIT_FOR_RESULT" != "timedout" ]]; then 
 			
 				executeAgentCommand discovery
 				waitFor "Discovered [^0] new server" "$AGENT_LOG_FOLDER" "20" "Awaiting server discovery by JON..."
@@ -187,6 +194,8 @@ function provision () {
 					JNP_PORT=$(( $PORT_SET + 1099 ))
 					eval $CLI_COMMAND $RHQ_OPTS -f "${WORKSPACE_WD}/cli/CLI/configureServer.js ${SERVER_ID} true namingURL=jnp://127.0.0.1:${JNP_PORT} javaHome=${JAVA_HOME} bindAddress=0.0.0.0 startWaitMax=2 stopWaitMax=1"
 					sleep 7
+					
+					#TODO enable events in the configuration... either new cli script, or the above one..
 					
 					#Once the configuration is update, wait to ensure it takes effect
 					waitFor "RuntimeDiscoveryExecutor)- Scanned platform and" "$AGENT_LOG_FOLDER" "20" "Platform and server being scanned..."

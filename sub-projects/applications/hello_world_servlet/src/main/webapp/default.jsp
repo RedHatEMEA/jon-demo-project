@@ -92,7 +92,7 @@
 		<!--Script courtesy of http://www.web-source.net - Your Guide to Professional Web Site Design and Development
 		var time = null
 		function move() {
-		window.location = 'hello.jsp?startDate=<%=startDate%>&requestCount=<%=requestCount%>'
+		window.location = 'default.jsp?startDate=<%=startDate%>&requestCount=<%=requestCount%>'
 		}
 		//-->
 		</script>
@@ -105,8 +105,8 @@
 		<p>This page will be "updated" in <%=randomRedirect%> seconds</p>
 		<br />
 		<ul>
-			<li>debug: timePeriodInSecs == <%=timePeriodInSecs %></li>
-			<li>debug: timePeriodInMins == <%=timePeriodInMins %></li>
+<!--			<li>debug: timePeriodInSecs == <%=timePeriodInSecs %></li>-->
+<!--			<li>debug: timePeriodInMins == <%=timePeriodInMins %></li>-->
 			<li>Time Period: <%=timePeriodInMinsText%>:<%=timePeriodInSecsText %> <%=timePeriodUnit %></li>
 			<li>Request Count: <%=requestCount.intValue() %></li>
 			<li>Average Requests per Minute: <%=averageRequestPerMinute %></li>

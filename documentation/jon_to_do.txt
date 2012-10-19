@@ -1,5 +1,32 @@
+temp:
+suggest no jboss/jon installed or running... can have postgres, but not all issues will be caught, best to allow script to install on it's own.
+
+bug: when i find postgres, check for rhqadmin, if i fail, try to create it, otherwise fail
+bug: if f16 postgresql-setup initdb on install..
+
+update systems deployed to, to cover f16 after:
+	- fixing above bug
+	- create f16 vm to test
+
+jon deploy app to non-platforms
+
 TESTS:
+- deploy next servers when there are 
+	0 deployed (i.e jboss_provisioned = "")
+	1 deployed (i.e jboss_provisioned = "100")
+	2 deployed (i.e jboss_provisioned = "100 200")
 - deploy jon demo without eap plugin, should deploy and provide warning
+- plugin and patches folders created in both jon and jon/jon-server-x.x.x
+	utils.sh, line 440, does it ever come up as empty?
+	
+- To confirm, re-build demo, does hello-world work from the first time?
+	on first attempt, something failed in the eap start up (admin-console didn't work either) and had to restart...
+	
+-if /opt/jon-demo exists, it allows for the text "DD" to delete demo, but running it outputs:
+	jon demo not installed, deleting is not an option
+
+-if running ID script first time, without internet access, error thrown
+	sed: can't read repopackages.php: no such file or directory
 
 VERIFY:
 - nsaadorkspaces/ nsaadWorkspaces/ being created by script??
@@ -13,6 +40,15 @@ BUGS:
 - if an rhq db exists, and you hit back, it deletes the original rhq, when really it shouldn't.. should only delete the appropriate db after choosing a db..
 
 TODO:
+Event setup:
+	under connection settings, turn on the event log that is there by default
+	that's it, make sure to save the settings making the change
+
+	cause an event (re-deploy app)
+
+Modify the metrics schedules for hello-world app to collect response times more regularly for nice graph
+
+
 - Re-do functions to allow for scripting of the script and no user input
 - get rid of postgres jdbc dependency ?? in conf/jon/jon-server.x.x.x
 - offer option to decide if you want demo components installed?
@@ -89,6 +125,7 @@ GUI
 	provide number of servers
 - provide a list of available applications to deploy... and the ones that are chosen, create bundles and deploy to local server
 	(idea is to allow the deployment of dvd-store, the hello-world load generator, and potentially others later)
+- allow for deployment of bundles separately from the main install (all demo bundles for example)
 
 OTHER
 - deal with all TODOs / Fixme / future

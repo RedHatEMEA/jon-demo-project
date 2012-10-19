@@ -1,14 +1,5 @@
-#Set these variables to connect to your JON server
-JON_HOST=127.0.0.1
-JON_USER=rhqadmin
-JON_PWD=rhqadmin
-JON_PORT=7080
-
-#Set this variable to point to the directory of your CLI client
-#Ensure that the user calling this script has access to the directory below
-#CLI_CLIENT=/opt/${JD_FOLDER}/jon-tools/
-CLI_CLIENT=/opt/jon-demo/jon-tools/
-
+#Load user set variables
+. $WORKSPACE_WD/cli/cli-user-settings.sh
 
 #function - cliCommandsMenu (cliScriptFolder) - menu to show all CLI scripts
 function cliCommandsMenu () {
@@ -17,17 +8,18 @@ function cliCommandsMenu () {
 	PARAMS_REQ=
 	PARAMS_OPT=
 
-	t=`pwd`
-	outputLog $t "2" "y" "n"
-
 	while true;
 	do
 		menuHeader "CLI Scripts"
 		COUNT=1
-
-		CURRENT_DIR=`pwd`
-		CURRENT_DIR=${CURRENT_DIR%/*}
-		CLI_DIR=${WORKSPACE_WD}/cli
+		
+		if [[ "$WORKSPACE_WD" != "" ]]; then
+			CLI_DIR=${WORKSPACE_WD}/cli	
+		else
+			CURRENT_DIR=`pwd`
+			CLI_DIR=${WORKSPACE_WD}/cli
+		fi
+		
 		for f in `find ${CLI_DIR} -name "*.js"`
 		do
 			PARAMS_STRING=
@@ -47,11 +39,11 @@ function cliCommandsMenu () {
 				PARAMS_STRING="${PARAMS_STRING} [${PARAM}]"
 			done
 
-			outputLog "$COUNT. $f" "2" "y" "n"
+			echo "$COUNT. $f"
 			USAGE=`grep "//Usage: " $f`
 			DESC=`grep "//Description: " $f`
-			outputLog "${USAGE#*\/\/} ${PARAMS_STRING}" "2" "y" "n"
-			outputLog "${DESC#*\/\/}" "2" "y" "n"
+			echo "${USAGE#*\/\/} ${PARAMS_STRING}"
+			echo "${DESC#*\/\/}"
 			CLI_CMD_ARRAY[$COUNT]=$f
 			COUNT=$(( $COUNT + 1 ))
 			newLine
@@ -65,7 +57,7 @@ function cliCommandsMenu () {
 			basicMenuOptions $option
 		else
 			if [[ "$option" != +([0-9]) || "$option" -lt "1" || "$option" -gt "$COUNT" ]]; then
-				outputLog "Invalid input, please enter a value between 1 and $COUNT" "4" "y" "n"
+				echo "Invalid input, please enter a value between 1 and $COUNT"
 			else
 				PARAMS_STRING=
 
@@ -80,7 +72,7 @@ function cliCommandsMenu () {
 				#Read the required parameters
 				for PARAM in $PARAMS_REQ
 				do
-					takeInput "Input required $PARAM:"
+					echo "Input required $PARAM:"
 					read INPUT_PARAM
 					PARAMS_STRING="${PARAMS_STRING} ${INPUT_PARAM}"
 				done
@@ -88,7 +80,7 @@ function cliCommandsMenu () {
 				#Read the optional parameters
 				for PARAM in $PARAMS_OPT
 				do
-					takeInput "Input optional $PARAM:"
+					echo "Input optional $PARAM:"
 					read INPUT_PARAM
 					PARAMS_STRING="${PARAMS_STRING} ${INPUT_PARAM}"
 				done
@@ -102,4 +94,18 @@ function cliCommandsMenu () {
 
 		pause
 	done
+}
+
+#function - getRHQCLIDetails () - sets up the CLI required variables
+function getRHQCLIDetails () {
+
+	export RHQ_CLI_JAVA_HOME=$JAVA_HOME
+	RHQ_OPTS="-s $JON_HOST -u $JON_USER -t $JON_PORT -p $JON_PWD"
+
+	if [[ -d $CLI_CLIENT ]]; then
+		CLI_COMMAND=`find $CLI_CLIENT -name "rhq*cli.sh"`
+	else
+		outputLog "JON Tools not installed, giving up." "4"
+		mainMenu
+	fi
 }

@@ -260,12 +260,23 @@ function findLatestPgRpmVersion () {
 			elif [[ $TOP_BUILD_NUMBER -eq $BUILD_VERSION && $TOP_MAINTENANCE_NUMBER -lt $MAINTENANCE_VERSION ]]; then
 				TOP_MAINTENANCE_NUMBER=$MAINTENANCE_VERSION
 				TOP_CHOICE=$COUNT
+				
+				#TODO hardcode 4.1 as default
+				if [[ "$BUILD_VERSION" == "4" && "$MAINTENANCE_VERSION" == "1" ]]; then
+					TEMP_CHOICE=$COUNT
+				fi
+				
 				outputLog "Build numbers are the same [$BUILD_VERSION], but current maintence greater then $TOP_MAINTENANCE_NUMBER, set TOP_MAINTENANCE_NUMBER[$TOP_MAINTENANCE_NUMBER]" "1"
 			fi
 		fi
 		
 		outputLog "\t${COUNT}. postgresql${VERSION}.${BUILD_VERSION}-${MAINTENANCE_VERSION}" "2" "y" "n"
 	done
+	
+	#TODO hardcode 4.1 as default
+	TOP_CHOICE=$TEMP_CHOICE
+	TOP_MAINTENANCE_NUMBER=1
+	TOP_BUILD_NUMBER=4
 	
 	while true;
 	do

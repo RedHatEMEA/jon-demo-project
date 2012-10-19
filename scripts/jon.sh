@@ -265,6 +265,8 @@ function runCLIScripts () {
 				setupBundle ${BUNDLE_DEFAULT_FILE}
 				setupBundle ${BUNDLE_APP_FILE}
 				
+				setupBundle ${BUNDLE_HW_APP_FILE}
+				
 				if [[ "$NUM_JBOSS_TO_INSTALL" != 0 ]]; then
 					#Passing in expression to find the creation of the last bundle
 					waitFor "Creating bundle.*name=seam-dvdstore" "$JD_INSTALL_LOCATION/$JON_PRODUCT/logs/rhq-server-log4j.log" "45" "Waiting 45s, giving ant bundle time to be available for deployment."
@@ -287,6 +289,8 @@ function runCLIScripts () {
 								outputLog "JBOSS_SERVER_PORTS_PROVISIONED is currently $JBOSS_SERVER_PORTS_PROVISIONED"
 								JBOSS_SERVER_PORTS_PROVISIONED="\"$JBOSS_SERVER_PORTS_PROVISIONED $CURRENT_PORT_BEING_INSTALLED\""
 							fi
+							#TODO this line is confusing, is it meant to be here? doesn't it always reset this to empty?
+							#TODO should it be update instead?
 							resetVariableInFile "JBOSS_SERVER_PORTS_PROVISIONED" "$JBOSS_SERVER_PORTS_PROVISIONED"
 						fi
 					done

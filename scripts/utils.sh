@@ -680,14 +680,20 @@ function waitFor () {
 function checkBundlesEnabled () {
 	JBOSS_PROVIDED=`find ${WORKSPACE_WD}/data/jboss -name "jboss-eap-*.zip"`
 	ANT_PROVIDED=`ant -version 2>&1`
+	MAVEN_PROVIDED=`mvn -version 2>&1`
+
 	if [[ "$JBOSS_PROVIDED" == "" ]]; then
 		BUNDLES_ENABLED=false
 		echo "*Note: Bundle creation is not enabled. Add JBoss to the data folder if desired."
 	elif [[ "$ANT_PROVIDED" =~ "command not found" ]]; then
 		BUNDLES_ENABLED=false
 		echo "*Note: Bundle creation is not enabled. Install ant on your system if desired."
+	elif [[ "$MAVEN_PROVIDED" =~ "command not found" ]]; then
+		BUNDLES_ENABLED=false
+		echo "*Note: Bundle creation is not enabled. Install maven on your system if desired."
 	else
 		setAnt
+		setMaven
 		
 		echo ***Bundle options***
 		echo "CB. Create bundles"

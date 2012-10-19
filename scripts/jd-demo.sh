@@ -21,6 +21,35 @@ function jonDemoMenu () {
 				;;
 		esac	
 		
+		newLine
+		
+		#TODO move into separate functions
+		NEXT_SERVER="100"
+		if [[ "$JBOSS_SERVER_PORTS_PROVISIONED" != "" ]]; then
+			if [[ "$JBOSS_SERVER_PORTS_PROVISIONED" =~ " " ]]; then
+				LAST_SERVER=${JBOSS_SERVER_PORTS_PROVISIONED##* }
+			else
+				LAST_SERVER=$JBOSS_SERVER_PORTS_PROVISIONED
+			fi
+			outputLog "The last server found is: [$LAST_SERVER]" "1"
+			NEXT_SERVER=$(( LAST_SERVER + 100 ))
+		fi		
+		echo "DJ. Deploy next JBoss server [Port: $(( 8080 + NEXT_SERVER ))]"
+				
+		LAST_SERVER=""
+		if [[ "$JBOSS_SERVER_PORTS_PROVISIONED" != "" ]]; then
+			if [[ "$JBOSS_SERVER_PORTS_PROVISIONED" =~ " " ]]; then
+				LAST_SERVER=${JBOSS_SERVER_PORTS_PROVISIONED##* }
+			else
+				LAST_SERVER=$JBOSS_SERVER_PORTS_PROVISIONED
+			fi
+			outputLog "The last server found is: [$LAST_SERVER]" "1"
+			echo "UJ. Undeploy last JBoss server [Port: $(( 8080 + LAST_SERVER ))]"
+		else
+			outputLog "No JBoss servers to unprovision..." "1" "y" "n"
+		fi
+		
+		newLine
 		echo DD. Delete Jon Demo
 	else
 		echo ID. Install Jon Demo
@@ -59,6 +88,14 @@ function jonDemoOptions () {
 				else
 					outputLog "The JON demo is already stopped, ignoring stop command." "2"
 				fi
+				;;
+
+			"dj")
+				deployJBoss $NEXT_SERVER
+				;;
+
+			"uj")
+				undeployJBoss $LAST_SERVER
 				;;
 
 			"c")
@@ -363,5 +400,58 @@ function jdStopDemo () {
 		
 		newLine
 		
+	fi
+}
+
+#function - deployJBoss () - will deploy a JBoss server with the next port number 
+function deployJBoss () {
+	
+	NEXT_SERVER=$1
+	
+	outputLog "The next server to be installed will have port set [$NEXT_SERVER]" "2"
+	#TODO this is copied from jon.sh runCliscripts, should split it out to a separate function
+	installJBossServer $NEXT_SERVER
+								
+	#This may be modifying by the provisioning script, if we find that port is already installed otherwise just set it to the original calculated value
+	if [[ "$CURRENT_PORT_BEING_INSTALLED" == "" ]]; then
+		 CURRENT_PORT_BEING_INSTALLED=$NEXT_SERVER
+	fi
+		
+	if [[ "$JBOSS_SERVER_PORTS_PROVISIONED" == "" ]]; then
+		outputLog "JBOSS_SERVER_PORTS_PROVISIONED is currently empty, adding first port"
+		JBOSS_SERVER_PORTS_PROVISIONED=$CURRENT_PORT_BEING_INSTALLED
+	else
+		outputLog "JBOSS_SERVER_PORTS_PROVISIONED is currently $JBOSS_SERVER_PORTS_PROVISIONED"
+		JBOSS_SERVER_PORTS_PROVISIONED="\"$JBOSS_SERVER_PORTS_PROVISIONED $CURRENT_PORT_BEING_INSTALLED\""
+	fi
+
+	updateVariablesFile "JBOSS_SERVER_PORTS_PROVISIONED" "JBOSS_SERVER_PORTS_PROVISIONED=$JBOSS_SERVER_PORTS_PROVISIONED"
+}
+
+#function - undeployJBoss () - will undeploy the last deployed JBoss server 
+function undeployJBoss () {
+	
+	LAST_SERVER=$1
+	
+	#Avoid attempting to undeploy if no servers are available 
+	if [[ "$LAST_SERVER" != "" ]]; then
+	
+		outputLog "The last server to be installed had port set [$LAST_SERVER]" "2"
+		#TODO this is copied from jon.sh runCliscripts, should split it out to a separate function
+		unprovision $LAST_SERVER
+									
+		#This may be modifying by the provisioning script, if we find that port is already installed
+		CURRENT_PORT_BEING_UNPROVISIONED=$LAST_SERVER
+		if [[ "$JBOSS_SERVER_PORTS_PROVISIONED" == "$CURRENT_PORT_BEING_UNPROVISIONED" ]]; then
+			outputLog "JBOSS_SERVER_PORTS_PROVISIONED only has $CURRENT_PORT_BEING_UNPROVISIONED, empty after this..."
+			JBOSS_SERVER_PORTS_PROVISIONED=""
+		elif [[ "$JBOSS_SERVER_PORTS_PROVISIONED" != "" ]]; then
+			outputLog "JBOSS_SERVER_PORTS_PROVISIONED is $JBOSS_SERVER_PORTS_PROVISIONED, removing $CURRENT_PORT_BEING_UNPROVISIONED"
+			JBOSS_SERVER_PORTS_PROVISIONED="\"${JBOSS_SERVER_PORTS_PROVISIONED%* $CURRENT_PORT_BEING_UNPROVISIONED}\""
+		else
+			outputLog "We shouldn't be trying to unprovision is JBOSS_SERVER_PORTS_PROVISIONED is already empty... ignoring."
+		fi
+	
+		updateVariablesFile "JBOSS_SERVER_PORTS_PROVISIONED" "JBOSS_SERVER_PORTS_PROVISIONED=$JBOSS_SERVER_PORTS_PROVISIONED"
 	fi
 }
