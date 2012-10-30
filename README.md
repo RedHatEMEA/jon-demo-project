@@ -3,6 +3,7 @@
 Table of contents:
 - [Description](#description)
 - [Getting Started](#getting-started)
+	- [Pre-requisites](#pre-requisites)
 	- [First Steps](#first-steps)
 - [More](#more)
 
@@ -17,6 +18,14 @@ This set of scripts is meant to allow you to easily install a new JON demo consi
 
 # GETTING STARTED: #
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+## PRE-REQUISITE ##
+
+- You can have Postgres installed before hand, but it may be better to let the script handle it as it doesn't cover every scenario of Postgres deployments...
+- Ensure you do not have any JON servers/agents running on the server you are deploying to
+- Ensure that if you do not have any JBoss servers running, but if necessary, 8080 will not be used by this demo.
+
+*********************************************************************************
 
 ## FIRST STEPS ##
 
@@ -61,10 +70,10 @@ At the top of the Main Menu, you can see where the demo will currently be instal
 To manage the JON demo, use the JON demo options, (ID) to Install and (DD) to Delete the JON Demo.
 Follow the prompts.  
 
-Note: An internet connection is required for an initial install with no postgreSQL database installed locally.
-Note: If you already installed an rhq database, it will prompt you to create a new database, just choose the name.
-Note: For demo purposes, all the scan periods on the agent are set to occur every 30 seconds to ensure changes made during the demo are picked up quickly.
-Note: JON 2.x required a license, it will need to be manually added and has not been tested with the latest version of the script.
+- Note: An internet connection is required for an initial install with no postgreSQL database installed locally.
+- Note: If you already installed an rhq database, it will prompt you to create a new database, just choose the name.
+- Note: For demo purposes, all the scan periods on the agent are set to occur every 30 seconds to ensure changes made during the demo are picked up quickly.
+- Note: JON 2.x required a license, it will need to be manually added and has not been tested with the latest version of the script.
 
 *IT IS BEST NOT TO MODIFY ANY OF THE SCRIPT FILES OR INSTALLED DEMOS BY HAND AND TO USE THE SCRIPT WHERE NECESSARY TO MAKE CHANGES TO THE WHOLE ENVIRONMENT*
 
