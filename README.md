@@ -83,7 +83,7 @@ Follow the prompts.
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-For extra details about this project relating to any of the following, please read the README-MORE file: 
+For extra details about this project relating to any of the following, please read the [README-MORE](README-MORE.md) file: 
 
 - Getting Started
 	- New JON Versions
