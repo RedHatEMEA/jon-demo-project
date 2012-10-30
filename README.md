@@ -5,7 +5,7 @@ Table of contents:
 - [Getting Started](#getting-started)
 	- [Pre-requisites](#pre-requisites)
 	- [First Steps](#first-steps)
-- [More](#more)
+- [More Info](#more-info)
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -19,7 +19,7 @@ This set of scripts is meant to allow you to easily install a new JON demo consi
 # GETTING STARTED: #
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
-## PRE-REQUISITE ##
+## PRE-REQUISITES ##
 
 - You can have Postgres installed before hand, but it may be better to let the script handle it as it doesn't cover every scenario of Postgres deployments...
 - Ensure you do not have any JON servers/agents running on the server you are deploying to
