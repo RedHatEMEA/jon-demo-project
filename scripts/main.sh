@@ -222,9 +222,11 @@ function splashScreen () {
 	breakTextLine $WIDTH "  1-- Update the configurable variables in the \"data\demo-config.properties\" file:"
 	breakTextLine $WIDTH "      a-- INSTALL_LOCATION: If you have a preference, you can modify the default base install location. This location will have the JD_FOLDER variable (configurable via the script) appended to it."
 	breakTextLine $WIDTH "      b-- JAVA_HOME: Update to the appropriate value on your system."
-	breakTextLine $WIDTH "      c-- LOCAL_USER: Set to a local user account that you would like to own any new files or folders, if left empty or invalid, root will be used by default."
-	breakTextLine $WIDTH "      d-- LATEST_JON_VERSION: The latest version of JON for the creation of the default data FS.  Currently set to jon-server-3.1.0."
-	breakTextLine $WIDTH "      e-- DEMO_LOG_LEVEL: The log level to be used across the demo script project"	
+	breakTextLine $WIDTH "      c-- MVN_HOME: Update to the appropriate value on your system."
+	breakTextLine $WIDTH "      d-- ANT_HOME: Update to the appropriate value on your system."
+	breakTextLine $WIDTH "      e-- LOCAL_USER: Set to a local user account that you would like to own any new files or folders, if left empty or invalid, root will be used by default."
+	breakTextLine $WIDTH "      f-- LATEST_JON_VERSION: The latest version of JON for the creation of the default data FS.  Currently set to jon-server-3.1.0."
+	breakTextLine $WIDTH "      g-- DEMO_LOG_LEVEL: The log level to be used across the demo script project"	
 	TEXT_OUTPUT="${TEXT_OUTPUT}\n"
 	breakTextLine $WIDTH "  2-- Add the JON server zip and plugin packages into the appropriate location"
 	TEXT_OUTPUT="${TEXT_OUTPUT}\n"
@@ -673,6 +675,14 @@ function checkScriptPrereqs () {
 		if [[ "$JAVA_HOME" == "" || ! -d $JAVA_HOME ]]; then
 			outputLog "JAVA_HOME has not been set or is set to a non-existent folder [$JAVA_HOME] in [${WORKSPACE_WD}/data/demo-config.properties], please set it first" "4"
 			ERROR=true
+		fi
+		
+		if [[ "$ANT_HOME" == "" || ! -d $ANT_HOME ]]; then
+			outputLog "ANT_HOME has not been set or is set to a non-existent folder [$ANT_HOME] in [${WORKSPACE_WD}/data/demo-config.properties], please set it appropriately.  In the meantime, bundles will not be available" "3"
+		fi	
+		
+		if [[ "$MVN_HOME" == "" || ! -d $MVN_HOME ]]; then
+			outputLog "MVN_HOME has not been set or is set to a non-existent folder [$MVN_HOME] in [${WORKSPACE_WD}/data/demo-config.properties], please set it first.  In the meantime, bundles will not be available" "3"
 		fi
 		
 		if [[ "$INSTALL_LOCATION" == "" || ! -d $INSTALL_LOCATION ]]; then
