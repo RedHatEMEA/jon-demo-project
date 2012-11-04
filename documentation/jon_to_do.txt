@@ -1,23 +1,21 @@
-temp:
-suggest no jboss/jon installed or running... can have postgres, but not all issues will be caught, best to allow script to install on it's own.
-
-bug: when i find postgres, check for rhqadmin, if i fail, try to create it, otherwise fail
-bug: if f16 postgresql-setup initdb on install..
-
-update systems deployed to, to cover f16 after:
-	- fixing above bug
-	- create f16 vm to test
-
-jon deploy app to non-platforms
+POSTGRES BUG: 
+- when i find postgres, check for rhqadmin, if i fail, try to create it, otherwise fail
+- if f16 postgresql-setup initdb on install..
+- postgresql install failing... 
+	HARDCODED 9.1-4 (.6 changes everything!)
+	remove TODO fix me (3 of them?)
+- installing postgres v9.2 fails
+	does it not exist for fedora 15?
+		if so, then throw error or don't include it as an option...
+	otherwise, why not
 
 TESTS:
-- deploy next servers when there are 
-	0 deployed (i.e jboss_provisioned = "")
-	1 deployed (i.e jboss_provisioned = "100")
-	2 deployed (i.e jboss_provisioned = "100 200")
-- deploy jon demo without eap plugin, should deploy and provide warning
+- confirm deploy with/without eap_plugin works during install
+- confirm deploy with/without eap_plugin works after install
+
 - plugin and patches folders created in both jon and jon/jon-server-x.x.x
 	utils.sh, line 440, does it ever come up as empty?
+		2012-10-19, No.
 	
 - To confirm, re-build demo, does hello-world work from the first time?
 	on first attempt, something failed in the eap start up (admin-console didn't work either) and had to restart...
@@ -27,27 +25,50 @@ TESTS:
 
 -if running ID script first time, without internet access, error thrown
 	sed: can't read repopackages.php: no such file or directory
+	
+- create f16 vm to test
+	- update systems deployed to, to cover f16 after:
+	
+- jboss deploy/undeploy functionality -- seems ok?
+	something killed my node100 and node200 folders, clearing them out... 
+	did unprovision remove the wrong thing somehow? check if it happens again
+	had gone up to node400 but with node200 originally not started up, but normal...
 
 VERIFY:
+- installing node200 via gui (also cli?), fails to start up for some reason, and had default200 instead of ec-default200
 - nsaadorkspaces/ nsaadWorkspaces/ being created by script??
 - log level 3,4. any more inputs to change to takeInput?
 	to many newLines, how to handle?
 - deployment of patches may not work.  they will get deployed, but not really loaded till next restart of jon server (which is why i used to have two starts)
 - is jboss user needed?
 - on machine restart does jboss start up? if so demo start fails? or eap managed?
+	none of the servers restart on laptop restart?
+	install jon and agent as services -- is this necessary? do i want to change the chkconfig for jboss to not restart?
+	make sure, it's all or none for demo start/stop to work properly
+		add "manage server/service" option (for postgres, jon, agent, each jboss and all jboss, all demo)
+		maybe have each component be started separately (by calling it's own function)
+		allowing for more granular control eventually via webpage
+		allowing for parts of the demo to have different status
 
 BUGS:
 - if an rhq db exists, and you hit back, it deletes the original rhq, when really it shouldn't.. should only delete the appropriate db after choosing a db..
+- sometimes - JBoss service won't start up from bundle (most likely resolved)
 
 TODO:
-Event setup:
+- Make sure to add any new jboss port number in the correct order in the jboss_provioned var
+
+- Event setup:
 	under connection settings, turn on the event log that is there by default
 	that's it, make sure to save the settings making the change
 
 	cause an event (re-deploy app)
 
-Modify the metrics schedules for hello-world app to collect response times more regularly for nice graph
+- Modify the metrics schedules for hello-world app to collect response times more regularly for nice graph
 
+- if demo installed, but local data wiped, disallow until local build is deleted...
+	otherwise, allow for different conf files depending on jd_folder location
+
+- jon deploy app to non-platforms
 
 - Re-do functions to allow for scripting of the script and no user input
 - get rid of postgres jdbc dependency ?? in conf/jon/jon-server.x.x.x
@@ -67,19 +88,15 @@ Modify the metrics schedules for hello-world app to collect response times more 
 	postgresql
 	variable utils
 	
-	- once this is done, set cli_commands.sh to load the takeInput outputLog scripts and test if it works separately
-
 - Add PPT specifying all the features installed in the demo
-- upload CLI scripts separately into my project / and pilhuhn's git project
+- upload CLI scripts separately into and pilhuhn's git project
 
 FEATURES TO ADD:
 - add sub-project menu?
 	create bundle
 	cli commands
 
-- install jon and agent as services -- is this necessary? do i want to change the chkconfig for jboss to not restart?
-- add "manage server/service" option (for postgres, jon, agent, each jboss and all jboss, all demo)
-- overload the installJONSilently method with a version that takes the variables pre-defined and calls the original method quitely... in prep for java bash caller
+- overload the installJONSilently method with a version that takes the variables pre-defined and calls the original method quietly... in prep for java bash caller
 
 Add server (move from DB project)
 Create addServer script
@@ -88,9 +105,6 @@ Instead of using auto import, it imports just that server
 Adds it to temp group
 Runs provision on that group
 Moves server to new group
-
-BUGS:
-- sometimes - JBoss service won't start up from bundle (most likely resolved)
 
 TO GET TO:
 JON FEATURES
