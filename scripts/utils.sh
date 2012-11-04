@@ -403,6 +403,12 @@ function createDemoConfFile () {
 		echo "#The location of the system's JAVA install" >> ${WORKSPACE_WD}/data/demo-config.properties
 		echo "JAVA_HOME=" >> ${WORKSPACE_WD}/data/demo-config.properties
 		echo -e "\n" >> ${WORKSPACE_WD}/data/demo-config.properties
+		echo "#The location of the system's ANT install" >> ${WORKSPACE_WD}/data/demo-config.properties
+		echo "ANT_HOME=" >> ${WORKSPACE_WD}/data/demo-config.properties
+		echo -e "\n" >> ${WORKSPACE_WD}/data/demo-config.properties
+		echo "#The location of the system's MAVEN install" >> ${WORKSPACE_WD}/data/demo-config.properties
+		echo "MVN_HOME=" >> ${WORKSPACE_WD}/data/demo-config.properties
+		echo -e "\n" >> ${WORKSPACE_WD}/data/demo-config.properties
 		echo "#The local user account to use for new files and folders, root if left empty" >> ${WORKSPACE_WD}/data/demo-config.properties
 		echo "LOCAL_USER=" >> ${WORKSPACE_WD}/data/demo-config.properties
 		echo -e "\n" >> ${WORKSPACE_WD}/data/demo-config.properties
@@ -679,8 +685,18 @@ function waitFor () {
 #function - checkBundlesEnabled () - check if bundles are enabled by checking jboss and ant being provided
 function checkBundlesEnabled () {
 	JBOSS_PROVIDED=`find ${WORKSPACE_WD}/data/jboss -name "jboss-eap-*.zip"`
-	ANT_PROVIDED=`ant -version 2>&1`
-	MAVEN_PROVIDED=`mvn -version 2>&1`
+
+	if [[ "$ANT_HOME" != "" ]]; then
+		ANT_PROVIDED="found"
+	else
+		ANT_PROVIDED=`ant -version 2>&1`
+	fi
+	
+	if [[ "$MVN_HOME" != "" ]]; then
+		MAVEN_PROVIDED="found"
+	else
+		MAVEN_PROVIDED=`mvn -version 2>&1`
+	fi
 
 	if [[ "$JBOSS_PROVIDED" == "" ]]; then
 		BUNDLES_ENABLED=false
