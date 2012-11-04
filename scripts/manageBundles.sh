@@ -1,11 +1,11 @@
 #function - setAnt () - sets the variable ANT to the result of which ant
 function setAnt () {
-	ANT=`which ant`	
+	ANT=`which ant 2>/dev/null`	
 }
 
 #function - setMaven () - sets the variable MAVEN to the result of which mvn
 function setMaven () {
-	MAVEN=`which mvn`	
+	MAVEN=`which mvn 2>/dev/null`	
 }
 
 #function - deleteBundles () - Function that deletes the created bundles and bits of EAP moved into the sub project
