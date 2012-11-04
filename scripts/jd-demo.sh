@@ -385,6 +385,8 @@ function jdStopDemo () {
 				if [[ "$AGENT_STATUS" =~ "NOT running" ]]; then
 					manageJonAgent "$AGENT_FOLDER" "start"
 				fi
+			else
+				outputLog "The JON Agent is missing, demo deletion will not be 100% smooth" "3"
 			fi
 			
 			getRHQCLIDetails
