@@ -5,6 +5,7 @@ Table of contents:
 - [Getting Started](#getting-started)
 	- [Pre-requisites](#pre-requisites)
 	- [First Steps](#first-steps)
+- [Known Issues](#known-issues)
 - [More Info](#more-info)
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -79,6 +80,19 @@ Follow the prompts.
 - Note: JON 2.x required a license, it will need to be manually added and has not been tested with the latest version of the script.
 
 *IT IS BEST NOT TO MODIFY ANY OF THE SCRIPT FILES OR INSTALLED DEMOS BY HAND AND TO USE THE SCRIPT WHERE NECESSARY TO MAKE CHANGES TO THE WHOLE ENVIRONMENT*
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+# Known Issues: #
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+- Using PostgreSQL version 9.1-6 will break the demo
+	Currently, provided a mechanism to choose the last known working version and providing it as default option.
+
+WON'T FIX:
+- If a server is deployed (with port 200), only server's with higher increments should be installed.  Installing (port 300) is fine whereas installing (port 100), will re-deploy the base and has varying behaviour - it either breaks the (port 200) build by removing the symbolic link from ../common/server or leaves it intact.
+	- Recommendation is to always install servers with incrementally higher ports
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

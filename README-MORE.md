@@ -13,7 +13,6 @@ Table of contents:
 		- [JBOSS](#jboss)
 		- [PostgreSQL](#postgresql)
 		- [Gotchas to be aware of](#gotchas-to-be-aware-of)
-- [Known Issues](#known-issues)
 - [Tested Environments](#tested-environments)
 - [Contributing](#contributing)
 - [Future Planning](#future-planning)
@@ -202,16 +201,6 @@ It has subtitles available.  Using VLC, just playing the AVI file with the subti
 ### Gotchas to be aware of: ###
 - If you plan to manually deploy a JBoss server via the bundles uploaded into the JON demo, please ensure that you set up the destination for the ec-default instance correctly; otherwise, you're deployment will fail.
 - If you accidentally set the destination to be something like "/opt/jon-demo/", ensure NOT to click the "Clean deployment" check-box; otherwise, it will wipe you're entire jon-demo folder.
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-# Known Issues: #
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-WON'T FIX:
-- If a server is deployed (with port 200), only server's with higher increments should be installed.  Installing (port 300) is fine whereas installing (port 100), will re-deploy the base and has varying behaviour - it either breaks the (port 200) build by removing the symbolic link from ../common/server or leaves it intact.
-	- Recommendation is to always install servers with incrementally higher ports
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
