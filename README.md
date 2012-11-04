@@ -24,6 +24,7 @@ This set of scripts is meant to allow you to easily install a new JON demo consi
 - You can have Postgres installed before hand, but it may be better to let the script handle it as it doesn't cover every scenario of Postgres deployments...
 - Ensure you do not have any JON servers/agents running on the server you are deploying to
 - Ensure that if you do not have any JBoss servers running, but if necessary, 8080 will not be used by this demo.
+- For bundle creation to be enabled, ensure you have ant and maven installed locally
 
 *********************************************************************************
 
@@ -42,7 +43,9 @@ One of the necessary modifications is to the user-defined variables file (./data
 + REQUIRED  
 	- JAVA_HOME:			Update to the appropriate value on your system  
 	
-+ OPTIONAL  
++ OPTIONAL
+	- ANT_HOME:				If you want bundle creation to be enabled, provide the ant home location
+	- MVN_HOME:				  If you want bundle creation to be enabled, provide the mvn home location
 	- INSTALL_LOCATION:		If you have a preference, you can modify the base install location (default: /opt/).  This location will have the JD_FOLDER variable (configurable via the script) appended to it.
 	- LOCAL_USER:			Set to a local user account that you would like to own any new files or folders created by the script.  If it's left empty or invalid, root will be used by default.
 	- LATEST_JON_VERSION: 	The latest version of JON for the creation of the default data FS.  Currently set to jon-server-3.1.0.
