@@ -173,6 +173,11 @@ function provision () {
 			waitFor "Started in" "$JD_INSTALL_LOCATION/${NODE_TEXT}${PORT_SET}/${JBOSS_BASE_CONF}${PORT_SET}/log/server.log" "$SERVER_STARTUP_TIMEOUT" "Waiting for the JBoss server start up"
 			newLine
 			
+			#If the jon plugin directory hasn't been defined due to no installation, then update it
+			if [[ "$JON_PLUGINS_DIRECTORY" == "" ]]; then
+				getJONPluginDirectory
+			fi
+			
 			#Check if the plug in exists and that the JBoss server has started up
 			EAP_PLUGIN_FOUND=`find $JON_PLUGINS_DIRECTORY -name "*eap*"`
 			if [[ "$EAP_PLUGIN_FOUND" != "" && "$WAIT_FOR_RESULT" != "timedout" ]]; then 
@@ -206,6 +211,7 @@ function provision () {
 					outputLog "Server with portSet: $PORT_SET not found in JON, not updating config". "3"
 				fi
 			else
+				outputLog "Looked in '$EAP_PLUGIN_FOUND' for a plugin with name *eap*" "1"
 				outputLog "The EAP plugin has not been provided.  The JBoss server was deployed but cannot be imported and properly configured." "3"
 			fi
 		else
