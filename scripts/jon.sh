@@ -1,16 +1,28 @@
+function getJONPluginDirectory () {
+
+	if [[ "$JON_PRODUCT_FULL_PATH" != "" ]]; then
+	
+		#Directory for selected product (ex: ./data/jon/jon-server-3.1.0.GA.zip)
+		JON_DIRECTORY=${JON_PRODUCT_FULL_PATH%/*}
+		#outputLog "JON_DIRECTORY: $JON_DIRECTORY"	
+	
+		#Directory for plugins for selected JON product (from above - ex: ./data/jon/plugins)
+		JON_PLUGINS_DIRECTORY=$JON_DIRECTORY/$JON_PLUGINS	
+		
+		outputLog "JON_PLUGINS_DIRECTORY: $JON_PLUGINS_DIRECTORY"	
+	else
+		outputLog "The JON_PRODUCT_FULL_PATH hasn't been defined, as such no JON_PLUGIN_DIRECTORY can be defined." "3"
+	fi
+}
+
 #function - extractJONPlugins () - extracts all the found plugins into the installed jon server
 function extractJONPlugins () {
 
 	newLine
 	outputLog "JON product selected, extracting plugins..." "2"
 		
-	#Directory for selected product (ex: ./data/jon/jon-server-3.1.0.GA.zip)
-	JON_DIRECTORY=${JON_PRODUCT_FULL_PATH%/*}
-	#outputLog "JON_DIRECTORY: $JON_DIRECTORY"
-
-	#Directory for plugins for selected JON product (from above - ex: ./data/jon/plugins)
-	JON_PLUGINS_DIRECTORY=$JON_DIRECTORY/$JON_PLUGINS
-	outputLog "JON_PLUGINS_DIRECTORY: $JON_PLUGINS_DIRECTORY"
+	#Get the JON Plugin directory...
+	getJONPluginDirectory
 
 	JON_PRODUCT=`extractProductName $JON_PRODUCT_FULL_PATH`
 	outputLog "JON_PRODUCT: $JON_PRODUCT"
@@ -415,7 +427,15 @@ function manageJonAgent () {
 	AGENT_FOLDER=$1
 	COMMAND=$2
 	
-	$AGENT_FOLDER/$BIN/rhq-agent-wrapper.sh $COMMAND
+	CHECK_AGENT=`$AGENT_FOLDER/$BIN/rhq-agent-wrapper.sh status`
+	
+	#If the agent is running but we are just starting up the demo, restart it (as when the PC goes into suspend, the agent isn't happy)
+	if [[ "$CHECK_AGENT" =~ "is running" && "$COMMAND" == "start" ]]; then
+		$AGENT_FOLDER/$BIN/rhq-agent-wrapper.sh restart
+	else
+		$AGENT_FOLDER/$BIN/rhq-agent-wrapper.sh $COMMAND
+	fi 
+	
 }
 
 function deployCLIAntTestTool () {
