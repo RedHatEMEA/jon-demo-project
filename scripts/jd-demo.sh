@@ -10,16 +10,16 @@ function jonDemoMenu () {
 		
 		SERVER_STATUS=`checkServerStatus $JON_SCRIPT`
 		
-		case "$SERVER_STATUS" in
-			0)
+		#case "$SERVER_STATUS" in
+		#	0)
 				echo SRD. Start Jon Demo
-				DEMO_STATUS="0"
-				;;
-			1)
+		#		DEMO_STATUS="0"
+		#		;;
+		#	1)
 				echo SOD. Stop Jon Demo
-				DEMO_STATUS="1"
-				;;
-		esac	
+		#		DEMO_STATUS="1"
+		#		;;
+		#esac	
 		
 		newLine
 		
@@ -75,19 +75,19 @@ function jonDemoOptions () {
 				;;
 
 			"srd")  
-				if [[ "$DEMO_STATUS" == "0" ]]; then
+				##if [[ "$DEMO_STATUS" == "0" ]]; then
 					jdStartDemo $JD_INSTALL_LOCATION
-				else
-					outputLog "The JON demo is already started, ignoring start command." "2"
-				fi
+				##else
+				##	outputLog "The JON demo is already started, ignoring start command." "2"
+				##fi
 				;;
 
 			"sod") 
-				if [[ "$DEMO_STATUS" == "1" ]]; then
+				##if [[ "$DEMO_STATUS" == "1" ]]; then
 					jdStopDemo $JD_INSTALL_LOCATION
-				else
-					outputLog "The JON demo is already stopped, ignoring stop command." "2"
-				fi
+				##else
+				##	outputLog "The JON demo is already stopped, ignoring stop command." "2"
+				##fi
 				;;
 
 			"dj")
@@ -348,17 +348,21 @@ function jdStartDemo () {
 			
 		newLine
 		outputLog "Starting up jon server demo..." "2"
+		getStartTime
 		
 		newLine
 		manageJonAgent $AGENT_FOLDER start
 		manageServer jon-server start $JD_INSTALL_LOCATION
 		newLine
 		
-		outputLog "Going to start JBoss servers, once the JON server and agent are ready..." "2"
+		outputLog "Going to start $NUM_JBOSS_TO_INSTALL JBoss server(s), once the JON server and agent are ready..." "2"
 		
 		manageJBossDemoServers start
 		
 		newLine
+		
+		getEndTime
+		getTimeTaken "y"
 	
 	fi
 
@@ -375,6 +379,7 @@ function jdStopDemo () {
 	
 		newLine
 		outputLog "Stopping jon server demo..." "2"
+		getStartTime
 				
 		if [[ "${JBOSS_SERVER_PORTS_PROVISIONED}" != "" ]]; then
 			#If the agent is stopped, start it up to be able to manage any deployed JBoss servers
@@ -402,6 +407,9 @@ function jdStopDemo () {
 		
 		newLine
 		
+		getEndTime
+		getTimeTaken "y"
+		
 	fi
 }
 
@@ -426,7 +434,9 @@ function deployJBoss () {
 		outputLog "JBOSS_SERVER_PORTS_PROVISIONED is currently $JBOSS_SERVER_PORTS_PROVISIONED"
 		JBOSS_SERVER_PORTS_PROVISIONED="\"$JBOSS_SERVER_PORTS_PROVISIONED $CURRENT_PORT_BEING_INSTALLED\""
 	fi
+	NUM_JBOSS_TO_INSTALL=$(( NUM_JBOSS_TO_INSTALL + 1 ))
 
+	updateVariablesFile "NUM_JBOSS_TO_INSTALL" "NUM_JBOSS_TO_INSTALL=$NUM_JBOSS_TO_INSTALL"
 	updateVariablesFile "JBOSS_SERVER_PORTS_PROVISIONED" "JBOSS_SERVER_PORTS_PROVISIONED=$JBOSS_SERVER_PORTS_PROVISIONED"
 }
 
@@ -453,7 +463,9 @@ function undeployJBoss () {
 		else
 			outputLog "We shouldn't be trying to unprovision is JBOSS_SERVER_PORTS_PROVISIONED is already empty... ignoring."
 		fi
+		NUM_JBOSS_TO_INSTALL=$(( NUM_JBOSS_TO_INSTALL - 1 ))
 	
+		updateVariablesFile "NUM_JBOSS_TO_INSTALL" "NUM_JBOSS_TO_INSTALL=$NUM_JBOSS_TO_INSTALL"	
 		updateVariablesFile "JBOSS_SERVER_PORTS_PROVISIONED" "JBOSS_SERVER_PORTS_PROVISIONED=$JBOSS_SERVER_PORTS_PROVISIONED"
 	fi
 }
