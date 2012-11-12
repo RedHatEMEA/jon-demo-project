@@ -431,6 +431,7 @@ function manageJonAgent () {
 	
 	#If the agent is running but we are just starting up the demo, restart it (as when the PC goes into suspend, the agent isn't happy)
 	if [[ "$CHECK_AGENT" =~ "is running" && "$COMMAND" == "start" ]]; then
+		outputLog "Even though the agent was started, we will restart it to ensure it's running properly." "2" 
 		$AGENT_FOLDER/$BIN/rhq-agent-wrapper.sh restart
 	else
 		$AGENT_FOLDER/$BIN/rhq-agent-wrapper.sh $COMMAND
