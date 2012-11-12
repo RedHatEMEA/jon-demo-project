@@ -51,7 +51,7 @@ function getResource () {
 
 function applyOperation (operation) {
 	
-	var availability = currentAvailability = AvailabilityManager.getCurrentAvailabilityForResource(serverId).getAvailabilityType().toString();
+	var availability = getAvailability();
 	//println("DEBUG: Current status is: " + availability);
 	if (availability == "DOWN" && operation == "shutdown") {
 		println("Server is already down, nothing to do.");
@@ -63,6 +63,8 @@ function applyOperation (operation) {
 	} else if (availability == "UP" && operation == "start") {
 		println("Server is already running, no need to start it up...");
 		return true;
+	} else {
+		println("Server status [" + availability + "] is not recognised, attempting operation");
 	}
 	OperationManager.scheduleResourceOperation(serverId, operation, 0, 0, 0, 5000, new Configuration(), "CLI Operation");
 	return false;	
@@ -72,7 +74,7 @@ function checkServerStatus() {
 	var expectedAvailability;
 	var currentAvailability;
 	
-	var currentAvailability = AvailabilityManager.getCurrentAvailabilityForResource(serverId).getAvailabilityType().toString();
+	var currentAvailability = getAvailability();
 	if (currentAvailability == "DOWN") {
 		expectedAvailability = "UP";
 	} else if (currentAvailability == "UP") {
@@ -89,7 +91,7 @@ function checkServerStatus() {
 		}
 		
 	    java.lang.Thread.sleep(1000);  // sleep for 1 seconds
-	    currentAvailability = AvailabilityManager.getCurrentAvailabilityForResource(serverId).getAvailabilityType().toString();
+	    currentAvailability = getAvailability();
 	    count++;
 	    if (count > (availabilityScanPeriod * 2.5)) {
 	    	println("\nServer availability not confirmed to be: " + expectedAvailability);
@@ -107,13 +109,21 @@ function run (command) {
 	if (!error) error = checkServerStatus();
 }
 
+function getAvailability() {
+	var availabilty = AvailabilityManager.getCurrentAvailabilityForResource(serverId);
+	var availabiltyType = availabilty.getAvailabilityType();
+	var availabiltyText = availabiltyType.toString();
+	
+	return availabiltyText;
+}
+
 var error = checkArgs();
 if (!error) error = getResource();
 
 if (serverOperation == "restart") {
 	println("Restarting the server...");
 	
-	var currentAvailability = currentAvailability = AvailabilityManager.getCurrentAvailabilityForResource(serverId).getAvailabilityType().toString();
+	var currentAvailability = getAvailability();
 	if (currentAvailability == "UP") {
 		run("shutdown");
 	}
