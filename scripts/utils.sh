@@ -570,11 +570,15 @@ function manageServer () {
 			"start") 		
 				if [[ "$SERVER_STATUS" == "0" ]]; then
 					$PRODUCT_SCRIPT start $INSTANCE
+				elif [[ "$SERVER_STATUS" == "1" ]]; then
+					outputLog "The $PRODUCT server is already started, not starting again" "2"
 				fi
 				;;
 			"stop") 			
 				if [[ "$SERVER_STATUS" =~ "1" ]]; then
-					$PRODUCT_SCRIPT stop $INSTANCE
+					$PRODUCT_SCRIPT stop $INSTANCE				
+				elif [[ "$SERVER_STATUS" == "0" ]]; then
+					outputLog "The $PRODUCT server is already stopped, not stopping again" "2"
 				fi
 				;;
 			"restart") 			
