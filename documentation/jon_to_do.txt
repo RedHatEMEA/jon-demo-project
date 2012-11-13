@@ -13,6 +13,9 @@ TESTS:
 - confirm deploy with/without eap_plugin works during install
 - confirm deploy with/without eap_plugin works after install
 
+- confirm start/stop postgres
+- confirm install/uninstall postgres
+
 - plugin and patches folders created in both jon and jon/jon-server-x.x.x
 	utils.sh, line 440, does it ever come up as empty?
 		2012-10-19, No.
@@ -44,11 +47,6 @@ VERIFY:
 - on machine restart does jboss start up? if so demo start fails? or eap managed?
 	none of the servers restart on laptop restart?
 	install jon and agent as services -- is this necessary? do i want to change the chkconfig for jboss to not restart?
-	make sure, it's all or none for demo start/stop to work properly
-		add "manage server/service" option (for postgres, jon, agent, each jboss and all jboss, all demo)
-		maybe have each component be started separately (by calling it's own function)
-		allowing for more granular control eventually via webpage
-		allowing for parts of the demo to have different status
 
 BUGS:
 - if an rhq db exists, and you hit back, it deletes the original rhq, when really it shouldn't.. should only delete the appropriate db after choosing a db..
