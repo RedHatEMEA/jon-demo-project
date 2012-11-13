@@ -77,6 +77,7 @@ function loadScripts () {
 	. ${WORKSPACE_WD}/scripts/unprovision.sh
 	. ${WORKSPACE_WD}/scripts/jd-demo.sh
 	. ${WORKSPACE_WD}/scripts/menuFunctions.sh
+	. ${WORKSPACE_WD}/scripts/menuManageServers.sh
 	. ${WORKSPACE_WD}/scripts/manageBundles.sh
 	
 	. ${WORKSPACE_WD}/cli/cli-commands.sh
@@ -287,6 +288,8 @@ function mainMenu () {
 		
 		checkBundlesEnabled
 		
+		manageServersMenu
+		
 		echo -------------------------------------------------------
 		newLine
 		
@@ -294,32 +297,7 @@ function mainMenu () {
 		echo I. Install menu
 		echo D. Delete menu
 
-		JON_DIRECTORY=`find /opt -name "jon-server*"`
-		if [[ "$JON_DEMO_INSTALLED" == "y" ]]; then
-			JON_SCRIPT=$JON_DIRECTORY/$BIN/$JON_STARTUP_SCRIPT
-			SERVER_STATUS=`checkServerStatus $JON_SCRIPT`
-			newLine
-			case "$SERVER_STATUS" in
-				0)
-					echo sj. Start Jon Server
-					;;
-				1)
-					echo pj. Stop Jon Server
-					;;
-			esac
-			newLine
-		fi
-
 		if [ -f $POSTGRES_SERVICE_FILE ]; then
-			SERVICE_STATUS=`service $POSTGRES_SERVICE_NAME status 2>/dev/null`
-			case "$SERVICE_STATUS" in
-			*inactive*)
-				echo RP. Start Postgres Service
-				;;
-			*active*)
-				echo SP. Stop Postgres Service
-				;;
-			esac
 			echo UP. Uninstall Postgres Service
 		else
 			newLine			
@@ -390,22 +368,6 @@ function mainMenu () {
 				$option
 				;;
 
-			"sj")
-				manageServer jon-server start $JD_INSTALL_LOCATION
-				;;
-
-			"pj")
-				manageServer jon-server stop $JD_INSTALL_LOCATION
-				;;
-
-			"sp") 
-				stopPostgresService
-				;;
-
-			"rp") 
-				startPostgresService
-				;;
-
 			"ip") 
 				checkPostgresInstall	
 				if [[ "$POSTGRES_INSTALLED" == "n" ]]; then 
@@ -424,8 +386,17 @@ function mainMenu () {
 			"dd" | "id" | "srd" | "sod" | "c" | "dj" | "uj" ) 
 				jonDemoOptions $option $JD_INSTALL_LOCATION
 				;;
-			
-			*) basicMenuOptions $option
+				
+			"sp" | "rp" | "sj" | "pj" | "pa" | "sa" | "ra" | "sajb" | "pajb"  ) 
+				manageServersOptions $option
+				;;
+				
+			*) 
+				if [[ "$option" =~ "sjb" || "$option" =~ "pjb" ]]; then
+					manageServersOptions $option
+				else
+					basicMenuOptions $option
+				fi
 				;;
 		esac
 		

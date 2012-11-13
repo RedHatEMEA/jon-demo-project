@@ -238,16 +238,26 @@ function deployJONPatches () {
 
 }
 
-#function - manageJBossDemoServers (command) - start/shutdown the servers installed with the demo
+#function - manageJBossDemoServers (command, jbossPortArray) - start/shutdown the servers installed with the demo
 function manageJBossDemoServers () {
 	
 	COMMAND=$1
+	local PORT_ARRAY=$2
+	
+	if [[ "$PORT_ARRAY" == "" ]]; then
+		PORT_ARRAY=($( echo $JBOSS_SERVER_PORTS_PROVISIONED ))
+	else
+		PORT_ARRAY=($( echo $PORT_ARRAY ))
+	fi
+	
+	outputLog "Managing the JBoss servers: ${PORT_ARRAY[@]}" "1"
 	
 	if [[ "$NUM_JBOSS_TO_INSTALL" != 0 ]]; then
-		for (( A=1; A <= NUM_JBOSS_TO_INSTALL ; A++ ))
+		for PORT in ${PORT_ARRAY[@]}
+		#for (( A=1; A <= NUM_JBOSS_TO_INSTALL ; A++ ))
 		do 
-			PORT=$(( $A * 100 ))
-			outputLog "working on port $PORT in iteration $A -- currently deployed [$JBOSS_SERVER_PORTS_PROVISIONED]"
+			#PORT=$(( $A * 100 ))
+			outputLog "working on port $PORT -- currently deployed [$JBOSS_SERVER_PORTS_PROVISIONED]"
 			
 			findServer $PORT
 			if [[ "${SERVER_ID}x" != "x" ]]; then
