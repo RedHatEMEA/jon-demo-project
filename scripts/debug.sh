@@ -92,7 +92,7 @@ function testFunction () {
 	#t=`hostname`
 	#setupJonServer
 
-	undeployJBoss "300"
+	manageJBossDemoServers "start" "100 300"
 	
 	#try with  server start, shutdown, and try start/stop.. 4 combination i believe
 		
