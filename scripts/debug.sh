@@ -92,7 +92,19 @@ function testFunction () {
 	#t=`hostname`
 	#setupJonServer
 
-	manageJBossDemoServers "start" "100 300"
+	#JBOSS_SERVER_PORTS_PROVISIONED="100 200 300"
+	#outputLog "JBOSS_SERVER_PORTS_PROVISIONED updated to $JBOSS_SERVER_PORTS_PROVISIONED"
+	#updateVariablesFile "JBOSS_SERVER_PORTS_PROVISIONED" "JBOSS_SERVER_PORTS_PROVISIONED=\"$JBOSS_SERVER_PORTS_PROVISIONED\""
+
+	t="navy royal"
+	n="aqua"
+	t="${t} ${n}"
+	resetVariableInFile "blue" "/home/nsaad/test" "\"${t}\""
+
+	#eval $CLI_COMMAND $RHQ_OPTS -f "${WORKSPACE_WD}/cli/CLI/toggleEventLogging.js 11771 on"
+
+	#insertUniquePortInIncreasingOrder "500" "100 200"
+	#manageJBossDemoServers "start" "100 300"
 	
 	#try with  server start, shutdown, and try start/stop.. 4 combination i believe
 		
