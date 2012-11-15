@@ -198,6 +198,7 @@ function provision () {
 				if [[ "$SERVER_ID" != "" ]]; then
 					JNP_PORT=$(( $PORT_SET + 1099 ))
 					eval $CLI_COMMAND $RHQ_OPTS -f "${WORKSPACE_WD}/cli/CLI/configureServer.js ${SERVER_ID} true namingURL=jnp://127.0.0.1:${JNP_PORT} javaHome=${JAVA_HOME} bindAddress=0.0.0.0 startWaitMax=2 stopWaitMax=1"
+					eval $CLI_COMMAND $RHQ_OPTS -f "${WORKSPACE_WD}/cli/CLI/toggleEventLogging.js ${SERVER_ID} on"
 					sleep 7
 					
 					#TODO enable events in the configuration... either new cli script, or the above one..
