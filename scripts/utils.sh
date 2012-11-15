@@ -142,8 +142,8 @@ function chooseProduct () {
 		
 		if [[ "$PRODUCT_SELECTED" == "b" || "$PRODUCT_SELECTED" == "B" ]]; then
 				deletePostgresDB "$POSTGRES_JON_DB"
-				resetVariableInFile "POSTGRES_JON_DB"
-				resetVariableInFile "NUM_JBOSS_TO_INSTALL"
+				resetVariableInVariableFile "POSTGRES_JON_DB"
+				resetVariableInVariableFile "NUM_JBOSS_TO_INSTALL"
 				INSTALL_BUNDLES=""
 				loadVariables
 				mainMenu
@@ -478,15 +478,29 @@ function updateVariablesFile () {
 	replaceStringInFile "$TMP_REPLACE" "$STRING_REPLACING" "$VARIABLE_FILE"
 	
 	loadVariables
+	}
+
+#function - resetVariableInVariableFile (variableName, [variableValue]) - calls replaceStringInFile but always in SCRIPT_VARIABLES, allowing for simplified use of the function
+function resetVariableInVariableFile () {
+	local VARIABLE_NAME=$1
+	local VARIABLE_VALUE=$2
+	
+	local FILE=${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}
+	resetVariableInFile "$VARIABLE_NAME" "$FILE" "$VARIABLE_VALUE"
 }
 
-#function - resetVariableInFile (variableName, [variableValue]) - calls replaceStringInFile but always in SCRIPT_VARIABLES, allowing for simplified use of the function
+#function - resetVariableInFile (variableName, fileName, [variableValue]) - calls replaceStringInFile but always in SCRIPT_VARIABLES, allowing for simplified use of the function
 function resetVariableInFile () {
 	VARIABLE_NAME=$1
-	VARIABLE_VALUE=$2
+	FILE=$2
+	VARIABLE_VALUE=$3
 	outputLog "resetting variable $VARIABLE_NAME to [$VARIABLE_VALUE]"
 	
-	VARIABLE_FILE=${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}
+	if [[ "$FILE" == "" ]]; then
+		VARIABLE_FILE="${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}"
+	else
+		VARIABLE_FILE="$FILE"
+	fi
 	#outputLog "looking in file $VARIABLE_FILE"
 
 	TMP_FILE=$TMP_LOCATION/replacing
@@ -739,4 +753,39 @@ function contains () {
 	}	
 	echo "n"
 	return 1
+}
+
+#function - insertUniquePortInIncreasingOrder (portToInsert) - insert a port number into the provisioned list in increasing order, allowing only for one of any port number
+function insertUniquePortInIncreasingOrder () {
+	local PORT_TO_INSERT=$1
+	
+	#PORT_LIST="$JBOSS_SERVER_PORTS_PROVISIONED"
+	local PORT_LIST=$2
+	ORDERED_PORT_LIST=""
+	
+	#replace 2 instances of test with JBOSS_SERVER_PORTS_PROVISIONED
+	if [[ "$PORT_LIST" == "" ]]; then
+		ORDERED_PORT_LIST="$PORT_TO_INSERT"
+	else
+		PORT_ARRAY=($( echo $PORT_LIST ))
+		INSERTED="false"
+		for PORT in ${PORT_ARRAY[@]}
+		do			
+			if [[ "$PORT_TO_INSERT" -lt "$PORT" && "$INSERTED" == "false" ]]; then 
+				ORDERED_PORT_LIST="${ORDERED_PORT_LIST} ${PORT_TO_INSERT} ${PORT}"
+				INSERTED=true
+			elif [[ "$PORT_TO_INSERT" -eq "$PORT" ]]; then
+				 outputLog "Ignoring the port to insert ($PORT_TO_INSERT) as it's already in the list" "2"
+			else 
+				ORDERED_PORT_LIST="${ORDERED_PORT_LIST} ${PORT}"
+			fi
+		done
+		
+		if [[ "$INSERTED" == "false" ]]; then
+			ORDERED_PORT_LIST="${ORDERED_PORT_LIST} ${PORT_TO_INSERT}"
+		fi
+		
+	fi
+	
+	outputLog "Order list is: $ORDERED_PORT_LIST" "1"	
 }

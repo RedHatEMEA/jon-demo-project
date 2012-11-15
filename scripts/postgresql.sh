@@ -286,7 +286,7 @@ function findLatestPgRpmVersion () {
 		#If non-numeric or not in the correct number range, then invalid else extract version to add to repo base
 		if [[ "$DETAIL_VERSION_TO_INSTALL" == "b" || "$DETAIL_VERSION_TO_INSTALL" == "B" ]]; then
 			deletePostgresDB "$POSTGRES_JON_DB"
-			resetVariableInFile "POSTGRES_JON_DB"
+			resetVariableInVariableFile "POSTGRES_JON_DB"
 			INSTALL_BUNDLES=""
 			loadVariables
 			mainMenu
@@ -476,7 +476,7 @@ function createPostgresDb () {
 			
 			if [[ "$POSTGRES_DB" == "b" || "$POSTGRES_DB" == "B" ]]; then
 				deletePostgresDB "$POSTGRES_JON_DB"
-				resetVariableInFile "POSTGRES_JON_DB"
+				resetVariableInVariableFile "POSTGRES_JON_DB"
 				loadVariables
 				mainMenu
 			elif [[ "$POSTGRES_DB" == "" ]]; then
@@ -534,11 +534,11 @@ function uninstallPostgres () {
 	
 		deleteFolder $POSTGRES_INSTALL_LOCATION
 		
-		resetVariableInFile "POSTGRES_INSTALLED"
-		resetVariableInFile "POSTGRES_SERVICE_NAME"
-		resetVariableInFile "POSTGRES_MAJOR_VERSION"
-		resetVariableInFile "POSTGRES_MINOR_VERSION"
-		resetVariableInFile "POSTGRES_JON_DB"
+		resetVariableInVariableFile "POSTGRES_INSTALLED"
+		resetVariableInVariableFile "POSTGRES_SERVICE_NAME"
+		resetVariableInVariableFile "POSTGRES_MAJOR_VERSION"
+		resetVariableInVariableFile "POSTGRES_MINOR_VERSION"
+		resetVariableInVariableFile "POSTGRES_JON_DB"
 	else
 		outputLog "Uninstall stopped." "2"
 	fi

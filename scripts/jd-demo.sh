@@ -145,14 +145,14 @@ function jdDeleteDemo () {
 		
 		##Empty out script set variables
 		SERVER_PORT=""
-		resetVariableInFile "JON_DEMO_INSTALLED"
-		resetVariableInFile "JON_MAJOR_VERSION"
-		resetVariableInFile "JON_MINOR_VERSION"
-		resetVariableInFile "JON_REVISION_VERSION"
-		resetVariableInFile "JON_PRODUCT_FULL_PATH"
-		resetVariableInFile "JBOSS_SERVER_PORTS_PROVISIONED"
-		resetVariableInFile "NUM_JBOSS_TO_INSTALL"
-		resetVariableInFile "POSTGRES_JON_DB"
+		resetVariableInVariableFile "JON_DEMO_INSTALLED"
+		resetVariableInVariableFile "JON_MAJOR_VERSION"
+		resetVariableInVariableFile "JON_MINOR_VERSION"
+		resetVariableInVariableFile "JON_REVISION_VERSION"
+		resetVariableInVariableFile "JON_PRODUCT_FULL_PATH"
+		resetVariableInVariableFile "JBOSS_SERVER_PORTS_PROVISIONED"
+		resetVariableInVariableFile "NUM_JBOSS_TO_INSTALL"
+		resetVariableInVariableFile "POSTGRES_JON_DB"
 		
 			
 		newLine
@@ -250,7 +250,7 @@ function jdInstallDemo () {
 			#If non-numeric or not in the correct number range, then invalid else extract version to add to repo base
 			if [[ "$INSTALL_BUNDLES" == "b" || "$INSTALL_BUNDLES" == "B" ]]; then
 				deletePostgresDB "$POSTGRES_JON_DB"
-				resetVariableInFile "POSTGRES_JON_DB"
+				resetVariableInVariableFile "POSTGRES_JON_DB"
 				INSTALL_BUNDLES=""
 				loadVariables
 				mainMenu
@@ -272,7 +272,7 @@ function jdInstallDemo () {
 					#If non-numeric or not in the correct number range, then invalid else extract version to add to repo base
 					if [[ "$NUM_JBOSS_TO_INSTALL" == "b" || "$NUM_JBOSS_TO_INSTALL" == "B" ]]; then
 						deletePostgresDB "$POSTGRES_JON_DB"
-						resetVariableInFile "POSTGRES_JON_DB"
+						resetVariableInVariableFile "POSTGRES_JON_DB"
 						INSTALL_BUNDLES=""
 						loadVariables
 						mainMenu
@@ -429,15 +429,17 @@ function deployJBoss () {
 		
 	if [[ "$JBOSS_SERVER_PORTS_PROVISIONED" == "" ]]; then
 		outputLog "JBOSS_SERVER_PORTS_PROVISIONED is currently empty, adding first port"
-		JBOSS_SERVER_PORTS_PROVISIONED=\"${CURRENT_PORT_BEING_INSTALLED}\"
+		JBOSS_SERVER_PORTS_PROVISIONED="${CURRENT_PORT_BEING_INSTALLED}"
 	else
 		outputLog "JBOSS_SERVER_PORTS_PROVISIONED is currently $JBOSS_SERVER_PORTS_PROVISIONED"
-		JBOSS_SERVER_PORTS_PROVISIONED="\"${JBOSS_SERVER_PORTS_PROVISIONED} ${CURRENT_PORT_BEING_INSTALLED}\""
+		JBOSS_SERVER_PORTS_PROVISIONED="${JBOSS_SERVER_PORTS_PROVISIONED} ${CURRENT_PORT_BEING_INSTALLED}"
 	fi
+	
+	outputLog "JBOSS_SERVER_PORTS_PROVISIONED updated to ${JBOSS_SERVER_PORTS_PROVISIONED}"
+	resetVariableInVariableFile "JBOSS_SERVER_PORTS_PROVISIONED" "\"${JBOSS_SERVER_PORTS_PROVISIONED}\""
+	
 	NUM_JBOSS_TO_INSTALL=$(( NUM_JBOSS_TO_INSTALL + 1 ))
-
-	updateVariablesFile "NUM_JBOSS_TO_INSTALL" "NUM_JBOSS_TO_INSTALL=$NUM_JBOSS_TO_INSTALL"
-	updateVariablesFile "JBOSS_SERVER_PORTS_PROVISIONED" "JBOSS_SERVER_PORTS_PROVISIONED=\"$JBOSS_SERVER_PORTS_PROVISIONED\""
+	resetVariableInVariableFile "NUM_JBOSS_TO_INSTALL" "$NUM_JBOSS_TO_INSTALL"
 }
 
 #function - undeployJBoss () - will undeploy the last deployed JBoss server 
@@ -459,13 +461,20 @@ function undeployJBoss () {
 			JBOSS_SERVER_PORTS_PROVISIONED=""
 		elif [[ "$JBOSS_SERVER_PORTS_PROVISIONED" != "" ]]; then
 			outputLog "JBOSS_SERVER_PORTS_PROVISIONED is $JBOSS_SERVER_PORTS_PROVISIONED, removing $CURRENT_PORT_BEING_UNPROVISIONED"
-			JBOSS_SERVER_PORTS_PROVISIONED="\"${JBOSS_SERVER_PORTS_PROVISIONED%* $CURRENT_PORT_BEING_UNPROVISIONED}\""
+			JBOSS_SERVER_PORTS_PROVISIONED="${JBOSS_SERVER_PORTS_PROVISIONED%* $CURRENT_PORT_BEING_UNPROVISIONED}"
 		else
 			outputLog "We shouldn't be trying to unprovision is JBOSS_SERVER_PORTS_PROVISIONED is already empty... ignoring."
 		fi
-		NUM_JBOSS_TO_INSTALL=$(( NUM_JBOSS_TO_INSTALL - 1 ))
+		
+		if [[ "$UNPROVISIONED" == "true" ]]; then
+			outputLog "IN JD-DEMO: JBOSS_SERVER_PORTS_PROVISIONED is [$JBOSS_SERVER_PORTS_PROVISIONED]"
+			resetVariableInVariableFile "JBOSS_SERVER_PORTS_PROVISIONED" "\"${JBOSS_SERVER_PORTS_PROVISIONED}\""
+			
+			#Doing number after so that we don't reload JBOSS_SERVER_PORTS_PROVISIONED before we store it
+			NUM_JBOSS_TO_INSTALL=$(( NUM_JBOSS_TO_INSTALL - 1 ))
+			outputLog "IN JD-DEMO: NUM_JBOSS_TO_INSTALL is [$NUM_JBOSS_TO_INSTALL]"
 	
-		updateVariablesFile "NUM_JBOSS_TO_INSTALL" "NUM_JBOSS_TO_INSTALL=$NUM_JBOSS_TO_INSTALL"	
-		updateVariablesFile "JBOSS_SERVER_PORTS_PROVISIONED" "JBOSS_SERVER_PORTS_PROVISIONED=\"${JBOSS_SERVER_PORTS_PROVISIONED}\""
+			resetVariableInVariableFile "NUM_JBOSS_TO_INSTALL" "$NUM_JBOSS_TO_INSTALL"
+		fi
 	fi
 }

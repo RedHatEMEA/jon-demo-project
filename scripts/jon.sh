@@ -207,7 +207,7 @@ function deleteJONServer () {
 		#DB_TO_DELETE=`grep "rhq.server.database.db-name=" $JD_INSTALL_LOCATION/$JON_PRODUCT/$BIN/$JON_SILENT_CONFIG_FILE`
 		#DB_TO_DELETE=${DB_TO_DELETE#*=}
 		deletePostgresDB $POSTGRES_JON_DB #$DB_TO_DELETE
-		resetVariableInFile "POSTGRES_JON_DB"
+		resetVariableInVariableFile "POSTGRES_JON_DB"
 		loadVariables
 	fi
 	newLine
@@ -309,11 +309,12 @@ function runCLIScripts () {
 								JBOSS_SERVER_PORTS_PROVISIONED=$CURRENT_PORT_BEING_INSTALLED
 							else
 								outputLog "JBOSS_SERVER_PORTS_PROVISIONED is currently $JBOSS_SERVER_PORTS_PROVISIONED"
+								insertUniquePortInIncreasingOrder "$CURRENT_PORT_BEING_INSTALLED" "$JBOSS_SERVER_PORTS_PROVISIONED"
 								JBOSS_SERVER_PORTS_PROVISIONED="\"$JBOSS_SERVER_PORTS_PROVISIONED $CURRENT_PORT_BEING_INSTALLED\""
 							fi
 							#TODO this line is confusing, is it meant to be here? doesn't it always reset this to empty?
 							#TODO should it be update instead?
-							resetVariableInFile "JBOSS_SERVER_PORTS_PROVISIONED" "$JBOSS_SERVER_PORTS_PROVISIONED"
+							resetVariableInVariableFile "JBOSS_SERVER_PORTS_PROVISIONED" "$JBOSS_SERVER_PORTS_PROVISIONED"
 						fi
 					done
 				else
