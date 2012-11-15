@@ -32,7 +32,6 @@ function manageServersMenu () {
 			echo "  PA. Stop Jon Agent"
 		else
 			echo "  SA. Start Jon Agent"
-			$AGENT_FOLDER/$BIN/rhq-agent-wrapper.sh $COMMAND
 		fi
 		
 		newLine
@@ -57,14 +56,14 @@ function manageServersMenu () {
 			for (( A=1; A <= NUM_JBOSS_TO_INSTALL ; A++ ))
 			do 
 				local PORT=$(( $A * 100 + 8080 ))
-				JB_SERVER_STATUS=`curl http://localhost:${PORT} 2>/dev/null`
+				JB_SERVER_STATUS=`curl http://localhost:${PORT} 2>&1`
 				
-				if [[ "$JB_SERVER_STATUS" == "" ]]; then
+				if [[ "$JB_SERVER_STATUS" == "couldn\'t connect to host" ]]; then
 					echo "  sjb${A}. Start JBoss Server (port: $PORT)"
 				elif [[ "$JB_SERVER_STATUS" =~ "Welcome to JBoss EAP" ]]; then
 					echo "  pjb${A}. Stop JBoss Server (port: $PORT)"
 				else
-					outputLog "JBoss status is not recognised, check server logs." "4"
+					outputLog "JBoss Server (port: $PORT) is not recognised." "4"
 				fi
 			done
 			
