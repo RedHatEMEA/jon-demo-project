@@ -192,7 +192,7 @@ function getTimeTaken () {
 	outputLog "Total time taken was ${TIME_DIFF} seconds or $MINS_SECS_TEXT" "2"
 	
 	if [[ "$UPDATE_VARIABLE" != "" ]]; then
-		updateVariablesFile "TIME_TAKEN_PREVIOUSLY=" "TIME_TAKEN_PREVIOUSLY=${TIME_DIFF}"
+		resetVariableInFile "TIME_TAKEN_PREVIOUSLY" "${TIME_DIFF}"
 	fi
 }
 
@@ -290,7 +290,7 @@ function jdInstallDemo () {
 					fi
 				done			
 				
-				updateVariablesFile "NUM_JBOSS_TO_INSTALL=" "NUM_JBOSS_TO_INSTALL=$NUM_JBOSS_TO_INSTALL"
+				resetVariableInFile "NUM_JBOSS_TO_INSTALL" "$NUM_JBOSS_TO_INSTALL"
 
 			fi
 		fi

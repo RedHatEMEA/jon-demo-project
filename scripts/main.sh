@@ -546,7 +546,7 @@ function changeDemoDirectory () {
 	
 		FOLDER=`getDemoInstallFolder`
 		
-		updateVariablesFile "JD_FOLDER=$FOLDER" "JD_FOLDER=$DEMO_DIR"
+		resetVariableInFile "JD_FOLDER" "$DEMO_DIR"
 		loadScripts
 		
 		outputLog "\nUpdated $SCRIPT_VARIABLES to use JD_FOLDER=$DEMO_DIR"

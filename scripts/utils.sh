@@ -163,7 +163,7 @@ function chooseProduct () {
 	done
 	
 	if [[ "$NAME_PATTERN" == "jon" ]]; then
-		updateVariablesFile "JON_PRODUCT_FULL_PATH=" "JON_PRODUCT_FULL_PATH=$PRODUCT_SELECTED"
+		resetVariableInFile "JON_PRODUCT_FULL_PATH" "$PRODUCT_SELECTED"
 		outputLog "updated the JON_PRODUCT_FULL_PATH variable in the script variables file" "1"
 	fi
 
@@ -195,10 +195,10 @@ function getProductVersionDetails () {
 		PRV=`extractProductRevisionVersion $PV`
 		outputLog "Product Revision Version is: [$PRV]" "1"
 		
-		updateVariablesFile "JON_MAJOR_VERSION=" "JON_MAJOR_VERSION=$PMJV"
-		updateVariablesFile "JON_MINOR_VERSION=" "JON_MINOR_VERSION=$PMNV"
-		updateVariablesFile "JON_REVISION_VERSION=" "JON_REVISION_VERSION=$PRV"
-		updateVariablesFile "JON_DEMO_INSTALLED=" "JON_DEMO_INSTALLED=y"
+		resetVariableInFile "JON_MAJOR_VERSION" "$PMJV"
+		resetVariableInFile "JON_MINOR_VERSION" "$PMNV"
+		resetVariableInFile "JON_REVISION_VERSION" "$PRV"
+		resetVariableInFile "JON_DEMO_INSTALLED" "y"
 		
 		
 }
@@ -467,19 +467,6 @@ function createDemoFsStructure () {
 	chown $LOCAL_USER:$LOCAL_USER -R ${WORKSPACE_WD}/data
 }
 
-#function - updateVariablesFile (stringToReplace, stringReplacing) - calls replaceStringInFile but always in SCRIPT_VARIABLES, allowing for simplified use of the function
-function updateVariablesFile () {
-	STRING_TO_REPLACE=$1
-	STRING_REPLACING=$2	
-	
-	VARIABLE_FILE=${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}
-
-	TMP_REPLACE=`grep $STRING_TO_REPLACE $VARIABLE_FILE`
-	replaceStringInFile "$TMP_REPLACE" "$STRING_REPLACING" "$VARIABLE_FILE"
-	
-	loadVariables
-	}
-
 #function - resetVariableInVariableFile (variableName, [variableValue]) - calls replaceStringInFile but always in SCRIPT_VARIABLES, allowing for simplified use of the function
 function resetVariableInVariableFile () {
 	local VARIABLE_NAME=$1
@@ -737,7 +724,7 @@ function checkBundlesEnabled () {
 		fi
 		BUNDLES_ENABLED=true
 	fi
-	updateVariablesFile "BUNDLES_ENABLED=" "BUNDLES_ENABLED=$BUNDLES_ENABLED"
+	resetVariableInVariableFile "BUNDLES_ENABLED" "$BUNDLES_ENABLED"
 	
 }
 

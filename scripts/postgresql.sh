@@ -30,7 +30,7 @@ function checkForPostgresOnSystem () {
 				outputLog "Postgres is not found in the system check." "1"
 				if [[ "$POSTGRES_INSTALLED" != "y" ]]; then 
 					POSTGRES_INSTALLED="n"
-					updateVariablesFile "POSTGRES_INSTALLED=" "POSTGRES_INSTALLED=$POSTGRES_INSTALLED"
+					resetVariableInFile "POSTGRES_INSTALLED" "$POSTGRES_INSTALLED"
 					loadVariables
 				fi
 			fi
@@ -41,8 +41,8 @@ function checkForPostgresOnSystem () {
 			outputLog "POSTGRES_SERVICE_FILE is $POSTGRES_SERVICE_FILE"
 			outputLog "POSTGRES_SERVICE_NAME is $POSTGRES_SERVICE_NAME"
 			
-			updateVariablesFile "POSTGRES_SERVICE_NAME=" "POSTGRES_SERVICE_NAME=${POSTGRES_SERVICE_NAME}"
-			updateVariablesFile "POSTGRES_INSTALLED=" "POSTGRES_INSTALLED=y"
+			resetVariableInFile "POSTGRES_SERVICE_NAME" "${POSTGRES_SERVICE_NAME}"
+			resetVariableInFile "POSTGRES_INSTALLED" "y"
 			
 			if [[ "$POSTGRES_SERVICE_NAME" != "postgresql" ]]; then 
 				VERSION=${POSTGRES_SERVICE_NAME#*-}
@@ -51,8 +51,8 @@ function checkForPostgresOnSystem () {
 				MINOR_VERSION=${VERSION:2:1}
 				outputLog "MAJOR [$MAJOR_VERSION] -- MINOR [$MINOR_VERSION]"
 				
-				updateVariablesFile "POSTGRES_MAJOR_VERSION=" "POSTGRES_MAJOR_VERSION=${MAJOR_VERSION}"
-				updateVariablesFile "POSTGRES_MINOR_VERSION=" "POSTGRES_MINOR_VERSION=${MINOR_VERSION}"
+				resetVariableInFile "POSTGRES_MAJOR_VERSION" "${MAJOR_VERSION}"
+				resetVariableInFile "POSTGRES_MINOR_VERSION" "${MINOR_VERSION}"
 			else
 				outputLog "Version of postgresql not found in service name, ignoring version numbers"
 			fi
@@ -107,8 +107,8 @@ function getPostgresRepo () {
 		MAJOR_VERSION=${VERSION:0:1}
 		MINOR_VERSION=${VERSION:1:2}
 		
-		updateVariablesFile "POSTGRES_MAJOR_VERSION=" "POSTGRES_MAJOR_VERSION=${MAJOR_VERSION}"
-		updateVariablesFile "POSTGRES_MINOR_VERSION=" "POSTGRES_MINOR_VERSION=${MINOR_VERSION}"
+		resetVariableInFile "POSTGRES_MAJOR_VERSION" "${MAJOR_VERSION}"
+		resetVariableInFile "POSTGRES_MINOR_VERSION" "${MINOR_VERSION}"
 		
 		DOT_VERSION="${MAJOR_VERSION}.${MINOR_VERSION}"
 		
@@ -189,7 +189,7 @@ function installPostgres () {
 	yum -y install $POSTGRESQL_LIB_RPM
 	yum -y install $POSTGRESQL_RPM $POSTGRESQL_SERVER_RPM
 	
-	updateVariablesFile "POSTGRES_SERVICE_NAME=" "POSTGRES_SERVICE_NAME=postgresql-${MAJOR_VERSION}.${MINOR_VERSION}"
+	resetVariableInFile "POSTGRES_SERVICE_NAME" "postgresql-${MAJOR_VERSION}.${MINOR_VERSION}"
 	loadVariables
 	newLine
 
@@ -207,7 +207,7 @@ function installPostgres () {
 		
 		newLine
 		startPostgresService
-		updateVariablesFile "POSTGRES_INSTALLED=" "POSTGRES_INSTALLED=y"
+		resetVariableInFile "POSTGRES_INSTALLED" "y"
 	#elif [ -f "/lib/systemd/system/postgresql-${MAJOR_VERSION}.${MINOR_VERSION}.service" ]; then
 	#	/usr/pgsql-${MAJOR_VERSION}.${MINOR_VERSION}/bin/postgresql${MAJOR_VERSION}${MINOR_VERSION}-setup initdb
 		
@@ -493,7 +493,7 @@ function createPostgresDb () {
 		POSTGRES_DB=$POSTGRES_DB_DEFAULT
 	fi
 	
-	updateVariablesFile "POSTGRES_JON_DB=" "POSTGRES_JON_DB=$POSTGRES_DB"
+	resetVariableInVariableFile "POSTGRES_JON_DB" "$POSTGRES_DB"
 	loadVariables
 	
 	outputLog "Created postgres db $POSTGRES_DB" "2"
