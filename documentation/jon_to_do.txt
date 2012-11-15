@@ -1,3 +1,6 @@
+MAIN BUG:
+- un/provision is NOT updating the list of jboss provisioned servers
+
 POSTGRES BUG: 
 - when i find postgres, check for rhqadmin, if i fail, try to create it, otherwise fail
 - if f16 postgresql-setup initdb on install..
@@ -29,37 +32,39 @@ TESTS:
 -if running ID script first time, without internet access, error thrown
 	sed: can't read repopackages.php: no such file or directory
 	
-- create f16 vm to test
+- create f16/f17 vm to test
 	- update systems deployed to, to cover f16 after:
 	
 - jboss deploy/undeploy functionality -- seems ok?
-	something killed my node100 and node200 folders, clearing them out... 
-	did unprovision remove the wrong thing somehow? check if it happens again
-	had gone up to node400 but with node200 originally not started up, but normal...
+	test from 100-400 at least
+	is undeploy removing correctly from jboss_provisioned_servers? and is the num_of_jboss_servers correct?
+	confirm node200 works, failed previously (ec-default vs default name and check sym link in /etc...
+	check if insertUniquePortInIncreasingOrder stores the numbers properly with the quotes and all
 
 VERIFY:
-- installing node200 via gui (also cli?), fails to start up for some reason, and had default200 instead of ec-default200
+- Event setup:
+	cause an event -- set up during deploy, so should have app/as start up
+
 - nsaadorkspaces/ nsaadWorkspaces/ being created by script??
 - log level 3,4. any more inputs to change to takeInput?
-	to many newLines, how to handle?
-- deployment of patches may not work.  they will get deployed, but not really loaded till next restart of jon server (which is why i used to have two starts)
+	too many newLines, how to handle?
+
 - is jboss user needed?
 - on machine restart does jboss start up? if so demo start fails? or eap managed?
 	none of the servers restart on laptop restart?
 	install jon and agent as services -- is this necessary? do i want to change the chkconfig for jboss to not restart?
+	probably do all/none to be consistent
+	
+- deployment of patches may not work.  they will get deployed, but not really loaded till next restart of jon server (which is why i used to have two starts)
 
 BUGS:
 - if an rhq db exists, and you hit back, it deletes the original rhq, when really it shouldn't.. should only delete the appropriate db after choosing a db..
 - sometimes - JBoss service won't start up from bundle (most likely resolved)
 
 TODO:
+- update all updateVaraiableInFile to resetVariableInVariableFile and modify the second input
+- consolidate replaceInString, updateVariableInFile, resetVariable...
 - Make sure to add any new jboss port number in the correct order in the jboss_provioned var
-
-- Event setup:
-	under connection settings, turn on the event log that is there by default
-	that's it, make sure to save the settings making the change
-
-	cause an event (re-deploy app)
 
 - Modify the metrics schedules for hello-world app to collect response times more regularly for nice graph
 
@@ -88,6 +93,9 @@ TODO:
 	
 - Add PPT specifying all the features installed in the demo
 - upload CLI scripts separately into and pilhuhn's git project
+
+- test suite for script?
+	using something like vagrant
 
 FEATURES TO ADD:
 - add sub-project menu?
