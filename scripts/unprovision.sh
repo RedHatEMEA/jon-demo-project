@@ -56,7 +56,7 @@ function unprovision () {
 		outputLog "Usage: $0 <${NODE_TEXT}-PORT_SET> (ex. 100, 200, etc...)" "4"
 		outputLog "This script will unprovision extra servers using the provided port set" "4"
 	else
-	
+		UNPROVISIONED=false
 		getRHQCLIDetails
 		
 		findServer $PORT_SET
@@ -86,8 +86,13 @@ function unprovision () {
 			else
 				outputLog "Unprovisioning a server other then 100 or the first [$FIRST_SERVER], so keeping the server base..." "2"
 			fi
+			UNPROVISIONED=true
 		else
 			outputLog "The server with port $PORT_SET, was not set and cannot be unprovisioned." "3"
+			outputLog "Cleaning up the list of ports by removing the incorrect port $PORT_SET." "2"
+			
+			JBOSS_SERVER_PORTS_PROVISIONED=${JBOSS_SERVER_PORTS_PROVISIONED% $PORT_SET}
+			resetVariableInVariableFile "JBOSS_SERVER_PORTS_PROVISIONED" "\"${JBOSS_SERVER_PORTS_PROVISIONED}\""
 		fi
 	fi
 }
