@@ -163,7 +163,7 @@ function chooseProduct () {
 	done
 	
 	if [[ "$NAME_PATTERN" == "jon" ]]; then
-		resetVariableInFile "JON_PRODUCT_FULL_PATH" "$PRODUCT_SELECTED"
+		resetVariableInVariableFile "JON_PRODUCT_FULL_PATH" "$PRODUCT_SELECTED"
 		outputLog "updated the JON_PRODUCT_FULL_PATH variable in the script variables file" "1"
 	fi
 
@@ -173,7 +173,8 @@ function chooseProduct () {
 function checkOrCreateJBossUser () {
 	USERADD_STATUS=`grep "${JBOSS_OS_USER}:" /etc/passwd`  
 	if [[ "$USERADD_STATUS" == "" ]]; then
-		useradd ${JBOSS_OS_USER}
+		#Create a system user, so no home directory and hidden from the login screen
+		useradd -r ${JBOSS_OS_USER}
 		echo ${JBOSS_OS_USER} | passwd ${JBOSS_OS_USER} --stdin 2>&1
 		outputLog "Created ${JBOSS_OS_USER} user" "2"
 	else
@@ -195,10 +196,10 @@ function getProductVersionDetails () {
 		PRV=`extractProductRevisionVersion $PV`
 		outputLog "Product Revision Version is: [$PRV]" "1"
 		
-		resetVariableInFile "JON_MAJOR_VERSION" "$PMJV"
-		resetVariableInFile "JON_MINOR_VERSION" "$PMNV"
-		resetVariableInFile "JON_REVISION_VERSION" "$PRV"
-		resetVariableInFile "JON_DEMO_INSTALLED" "y"
+		resetVariableInVariableFile "JON_MAJOR_VERSION" "$PMJV"
+		resetVariableInVariableFile "JON_MINOR_VERSION" "$PMNV"
+		resetVariableInVariableFile "JON_REVISION_VERSION" "$PRV"
+		resetVariableInVariableFile "JON_DEMO_INSTALLED" "y"
 		
 		
 }
@@ -414,6 +415,9 @@ function createDemoConfFile () {
 		echo -e "\n" >> ${WORKSPACE_WD}/data/demo-config.properties
 		echo "#The details of the latest version of JON, for the creation of the default file structure for the demo" >> ${WORKSPACE_WD}/data/demo-config.properties
 		echo "LATEST_JON_VERSION=jon-server-3.1.0.GA" >> ${WORKSPACE_WD}/data/demo-config.properties
+		echo -e "\n" >> ${WORKSPACE_WD}/data/demo-config.properties
+		echo "#The details of the latest supported version of PostgreSQL DB for JON, to ensure the successful install of the demo" >> ${WORKSPACE_WD}/data/demo-config.properties
+		echo "LATEST_SUPPORTED_POSTGREQ=91" >> ${WORKSPACE_WD}/data/demo-config.properties
 		echo -e "\n" >> ${WORKSPACE_WD}/data/demo-config.properties
 		echo "#The demo log level to be used across the project" >> ${WORKSPACE_WD}/data/demo-config.properties
 		echo "DEMO_LOG_LEVEL=2" >> ${WORKSPACE_WD}/data/demo-config.properties
