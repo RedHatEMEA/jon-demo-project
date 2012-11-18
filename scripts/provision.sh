@@ -132,6 +132,61 @@ function installServer () {
 	provisionApp $SERVER_PORT $APPLICATION_DESTINATION_NAME ${BUNDLE_HW_APP_FILE}
 }
 
+#function - handleJBossServerImport () - Invokes the CLI scripts when importing the JBoss server, only if the EAP plugin is provided
+function handleJBossServerImport () {
+	
+#If the jon plugin directory hasn't been defined due to no installation, then update it
+	if [[ "$JON_PLUGINS_DIRECTORY" == "" ]]; then
+		getJONPluginDirectory
+	fi
+	
+	#Check if the plug in exists and that the JBoss server has started up
+	EAP_PLUGIN_FOUND=`find $JON_PLUGINS_DIRECTORY -name "*eap*"`
+
+	if [[ "$EAP_PLUGIN_FOUND" != "" ]]; then 
+		
+		#wait for the server to start up fully before attempting to import to JON - as we have more servers, assume a longer startup
+		ASSUMED_SERVER_NUM=$(( SERVER_PORT / 100 ))
+		SERVER_STARTUP_TIMEOUT=$(( ASSUMED_SERVER_NUM * 50 * 3 / 2 ))  #3/2 because bash doesn't 1.5 as an arithmetic operator 
+		waitFor "Started in" "$JD_INSTALL_LOCATION/${NODE_TEXT}${PORT_SET}/${JBOSS_BASE_CONF}${PORT_SET}/log/server.log" "$SERVER_STARTUP_TIMEOUT" "Waiting for the JBoss server start up"
+		newLine
+	
+		executeAgentCommand discovery
+		waitFor "Discovered [^0] new server" "$AGENT_LOG_FOLDER" "20" "Awaiting server discovery by JON..."
+
+		executeAgentCommand availability
+		newLine
+		
+		importResources
+		#Wait for the import to take effect to ensure new server is seen in JON
+		waitFor "Scanned platform and [^0] server(s)" "$AGENT_LOG_FOLDER" "30" "Awaiting server import into JON..."
+		#waitFor "Detected new Server" "$AGENT_LOG_FOLDER" "20" "Awaiting server import into JON..."
+		#sleep 5
+		
+		findServer $PORT_SET
+		if [[ "$SERVER_ID" != "" ]]; then
+			JNP_PORT=$(( $PORT_SET + 1099 ))
+			eval $CLI_COMMAND $RHQ_OPTS -f "${WORKSPACE_WD}/cli/CLI/configureServer.js ${SERVER_ID} true namingURL=jnp://127.0.0.1:${JNP_PORT} javaHome=${JAVA_HOME} bindAddress=0.0.0.0 startWaitMax=2 stopWaitMax=1"
+			eval $CLI_COMMAND $RHQ_OPTS -f "${WORKSPACE_WD}/cli/CLI/toggleEventLogging.js ${SERVER_ID} on"
+			sleep 7
+			
+			#TODO enable events in the configuration... either new cli script, or the above one..
+			
+			#Once the configuration is update, wait to ensure it takes effect
+			waitFor "RuntimeDiscoveryExecutor)- Scanned platform and" "$AGENT_LOG_FOLDER" "20" "Platform and server being scanned..."
+				newLine
+
+				eval $CLI_COMMAND $RHQ_OPTS -f "${WORKSPACE_WD}/cli/CLI/agentsOperations.js availability"
+		else
+			outputLog "Server with portSet: $PORT_SET not found in JON, not updating config". "3"
+		fi
+	else
+		outputLog "Looked in '$EAP_PLUGIN_FOUND' for a plugin with name *eap*" "1"
+		outputLog "The EAP plugin has not been provided.  The JBoss server was deployed but cannot be imported and properly configured." "3"
+	fi
+			
+}
+
 #function - provision (portSet) - the start function to provision a new server with the passed in portSet
 function provision () {
 	#This is the main part of the script - gets called at startup of the script
@@ -145,7 +200,6 @@ function provision () {
 		
 		STARTING_PORT=$PORT_SET
 		setGroupDetails
-		getRHQCLIDetails
 		
 		#checkForServerWithPort 100
 		#if [[ "$PORT_SET" != "100" ]]; then
@@ -166,55 +220,8 @@ function provision () {
 			installServer "$BASE_NEEDED"
 					
 			waitFor "Bundle \[seam-dvdstore" "$AGENT_LOG_FOLDER" "15" "Awaiting bundle deployment..."
-
-			#wait for the server to start up fully before attempting to import to JON - as we have more servers, assume a longer startup
-			ASSUMED_SERVER_NUM=$(( SERVER_PORT / 100 ))
-			SERVER_STARTUP_TIMEOUT=$(( ASSUMED_SERVER_NUM * 50 * 3 / 2 ))  #3/2 because bash doesn't 1.5 as an arithmetic operator 
-			waitFor "Started in" "$JD_INSTALL_LOCATION/${NODE_TEXT}${PORT_SET}/${JBOSS_BASE_CONF}${PORT_SET}/log/server.log" "$SERVER_STARTUP_TIMEOUT" "Waiting for the JBoss server start up"
-			newLine
 			
-			#If the jon plugin directory hasn't been defined due to no installation, then update it
-			if [[ "$JON_PLUGINS_DIRECTORY" == "" ]]; then
-				getJONPluginDirectory
-			fi
-			
-			#Check if the plug in exists and that the JBoss server has started up
-			EAP_PLUGIN_FOUND=`find $JON_PLUGINS_DIRECTORY -name "*eap*"`
-			if [[ "$EAP_PLUGIN_FOUND" != "" && "$WAIT_FOR_RESULT" != "timedout" ]]; then 
-			
-				executeAgentCommand discovery
-				waitFor "Discovered [^0] new server" "$AGENT_LOG_FOLDER" "20" "Awaiting server discovery by JON..."
-	
-				executeAgentCommand availability
-				newLine
-				
-				importResources
-				#Wait for the import to take effect to ensure new server is seen in JON
-				waitFor "Scanned platform and [^0] server(s)" "$AGENT_LOG_FOLDER" "30" "Awaiting server import into JON..."
-				#waitFor "Detected new Server" "$AGENT_LOG_FOLDER" "20" "Awaiting server import into JON..."
-				#sleep 5
-				
-				findServer $PORT_SET
-				if [[ "$SERVER_ID" != "" ]]; then
-					JNP_PORT=$(( $PORT_SET + 1099 ))
-					eval $CLI_COMMAND $RHQ_OPTS -f "${WORKSPACE_WD}/cli/CLI/configureServer.js ${SERVER_ID} true namingURL=jnp://127.0.0.1:${JNP_PORT} javaHome=${JAVA_HOME} bindAddress=0.0.0.0 startWaitMax=2 stopWaitMax=1"
-					eval $CLI_COMMAND $RHQ_OPTS -f "${WORKSPACE_WD}/cli/CLI/toggleEventLogging.js ${SERVER_ID} on"
-					sleep 7
-					
-					#TODO enable events in the configuration... either new cli script, or the above one..
-					
-					#Once the configuration is update, wait to ensure it takes effect
-					waitFor "RuntimeDiscoveryExecutor)- Scanned platform and" "$AGENT_LOG_FOLDER" "20" "Platform and server being scanned..."
-					newLine
-	
-					eval $CLI_COMMAND $RHQ_OPTS -f "${WORKSPACE_WD}/cli/CLI/agentsOperations.js availability"
-				else
-					outputLog "Server with portSet: $PORT_SET not found in JON, not updating config". "3"
-				fi
-			else
-				outputLog "Looked in '$EAP_PLUGIN_FOUND' for a plugin with name *eap*" "1"
-				outputLog "The EAP plugin has not been provided.  The JBoss server was deployed but cannot be imported and properly configured." "3"
-			fi
+			handleJBossServerImport
 		else
 			#Not installing a server, so change the current port being installed to empty
 			CURRENT_PORT_BEING_INSTALLED=""
