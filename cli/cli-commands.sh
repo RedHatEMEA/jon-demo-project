@@ -87,7 +87,9 @@ function cliCommandsMenu () {
 				newLine
 			
 				#Call the JS script with the appropiate params
-				getRHQCLIDetails
+				if [[ "$CLI_COMMAND" == "" ]]; then
+					getRHQCLIDetails
+				fi
  				$CLI_COMMAND -f ${CLI_CMD_ARRAY[$option]} ${PARAMS_STRING}
 			fi
 		fi
@@ -102,10 +104,11 @@ function getRHQCLIDetails () {
 	export RHQ_CLI_JAVA_HOME=$JAVA_HOME
 	RHQ_OPTS="-s $JON_HOST -u $JON_USER -t $JON_PORT -p $JON_PWD"
 
+	if [[ "$CLI_CLIENT" == "" ]]; then
+		CLI_CLIENT=$JON_TOOLS
+	fi
+
 	if [[ -d $CLI_CLIENT ]]; then
 		CLI_COMMAND=`find $CLI_CLIENT -name "rhq*cli.sh"`
-	else
-		outputLog "JON Tools not installed, giving up." "4"
-		mainMenu
 	fi
 }
