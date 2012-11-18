@@ -1,16 +1,19 @@
-MAIN BUG:
-- un/provision is NOT updating the list of jboss provisioned servers
+ANNOYING BUG:
+Fix splashscreen, shows because postgresql service file name is empty
 
-POSTGRES BUG: 
-- when i find postgres, check for rhqadmin, if i fail, try to create it, otherwise fail
-- if f16 postgresql-setup initdb on install..
-- postgresql install failing... 
-	HARDCODED 9.1-4 (.6 changes everything!)
-	remove TODO fix me (3 of them?)
-- installing postgres v9.2 fails
-	does it not exist for fedora 15?
-		if so, then throw error or don't include it as an option...
-	otherwise, why not
+CREATE BRANCH
+REORGANISE FUNCTIONS
+- re-organise functions logically
+	string utils
+	output / display utils
+	jon server install
+	jon server management
+	jboss server install
+	jboss server management
+	cli specific
+	bundle mgmt
+	postgresql
+	variable utils
 
 TESTS:
 - confirm deploy with/without eap_plugin works during install
@@ -32,8 +35,6 @@ TESTS:
 -if running ID script first time, without internet access, error thrown
 	sed: can't read repopackages.php: no such file or directory
 	
-- create f16/f17 vm to test
-	- update systems deployed to, to cover f16 after:
 	
 - jboss deploy/undeploy functionality -- seems ok?
 	test from 100-400 at least
@@ -62,9 +63,7 @@ BUGS:
 - sometimes - JBoss service won't start up from bundle (most likely resolved)
 
 TODO:
-- update all updateVaraiableInFile to resetVariableInVariableFile and modify the second input
 - consolidate replaceInString, updateVariableInFile, resetVariable...
-- Make sure to add any new jboss port number in the correct order in the jboss_provioned var
 
 - Modify the metrics schedules for hello-world app to collect response times more regularly for nice graph
 
@@ -78,18 +77,6 @@ TODO:
 - offer option to decide if you want demo components installed?
 	yes, then create group, bundles, alerts, drift, etc..
 	no, then just vanilla install
-	
-- re-organise functions logically
-	string utils
-	output / display utils
-	jon server install
-	jon server management
-	jboss server install
-	jboss server management
-	cli specific
-	bundle mgmt
-	postgresql
-	variable utils
 	
 - Add PPT specifying all the features installed in the demo
 - upload CLI scripts separately into and pilhuhn's git project
