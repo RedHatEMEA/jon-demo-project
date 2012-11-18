@@ -96,10 +96,7 @@ function testFunction () {
 	#outputLog "JBOSS_SERVER_PORTS_PROVISIONED updated to $JBOSS_SERVER_PORTS_PROVISIONED"
 	#resetVariableInFile "JBOSS_SERVER_PORTS_PROVISIONED" "\"${JBOSS_SERVER_PORTS_PROVISIONED}\""
 
-	t="navy royal"
-	n="aqua"
-	t="${t} ${n}"
-	resetVariableInFile "blue" "/home/nsaad/test" "\"${t}\""
+	handleJBossServerImport
 
 	#eval $CLI_COMMAND $RHQ_OPTS -f "${WORKSPACE_WD}/cli/CLI/toggleEventLogging.js 11771 on"
 
