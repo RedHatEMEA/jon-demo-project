@@ -1,19 +1,3 @@
-#function - getRHQCLIDetails () - gets the details to connect to the CLI 
-function getRHQCLIDetails () {
-
-	JON_HOST=127.0.0.1
-	JON_USER=rhqadmin
-	JON_PWD=rhqadmin
-	JON_PORT=7080
-
-	RHQ_OPTS="-s $JON_HOST -t $JON_PORT" ## -u $JON_USER -p $JON_PWD
-
-	if [[ "$JON_DEMO_INSTALLED" != "" && "$BUNDLES_ENABLED" == "true" && -d $JON_TOOLS ]]; then
-		CLI_COMMAND=`find $JON_TOOLS -name "rhq*cli.sh"`
-	fi
-	
-}
-
 function getBundleDetails () {
 
 	BUNDLE_FILE=$1
