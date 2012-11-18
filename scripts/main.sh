@@ -297,10 +297,10 @@ function mainMenu () {
 		echo I. Install menu
 		echo D. Delete menu
 
-		if [ -f $POSTGRES_SERVICE_FILE ]; then
+		newLine
+		if [ "$POSTGRES_INSTALLED" == "y" ]; then
 			echo UP. Uninstall Postgres Service
-		else
-			newLine			
+		else	
 			echo IP. Install Postgres Service
 		fi
 		newLine
@@ -312,7 +312,13 @@ function mainMenu () {
 			echo "L. List all functions"
 			echo "F. Invoke function"
 			newLine
-			echo "C.  CLI commands"
+			
+			if [[ "$JON_TOOLS" == "" || ! -d $JON_TOOLS ]]; then
+				outputLog "CLI Commands are not available till the JON demo is installed" "3" "y" "n"
+			else
+				echo "C.  CLI commands"
+			fi
+			newLine
 		fi
 		
 		echo "CL. Change Log Level [Currently: $LOG_LEVEL]"
@@ -374,6 +380,8 @@ function mainMenu () {
 					getPostgresRepo
 					installPostgres
 					deletePostgresTmpFiles
+				else
+					outputLog "Postgres is already installed." "2"
 				fi
 				;;
 
@@ -387,7 +395,7 @@ function mainMenu () {
 				jonDemoOptions $option $JD_INSTALL_LOCATION
 				;;
 				
-			"sp" | "rp" | "sj" | "pj" | "pa" | "sa" | "ra" | "sajb" | "pajb"  ) 
+			"sj" | "pj" | "pa" | "sa" | "ra" | "sajb" | "pajb" | "sp" | "pp"  ) 
 				manageServersOptions $option
 				;;
 				
@@ -546,7 +554,7 @@ function changeDemoDirectory () {
 	
 		FOLDER=`getDemoInstallFolder`
 		
-		resetVariableInFile "JD_FOLDER" "$DEMO_DIR"
+		resetVariableInVariableFile "JD_FOLDER" "$DEMO_DIR"
 		loadScripts
 		
 		outputLog "\nUpdated $SCRIPT_VARIABLES to use JD_FOLDER=$DEMO_DIR"
@@ -603,6 +611,12 @@ function getDemoInstallFolder() {
 
 #function - checkScriptPrereqs () - Checks that all script pre-requisites are met
 function checkScriptPrereqs () {
+		
+	WGET_AVAILABLE=`rpm -qa wget`
+	if [[ "$WGET_AVAILABLE" == "" ]]; then
+		outputLog "Installing wget as it's a required dependency..." "2"
+		yum install wget -y
+	fi
 	
 	#Run checks on the system for the pre-reqs
 	JON_PROVIDED=`find ${WORKSPACE_WD}/data/jon/ -name "jon-server-*.zip"`
@@ -610,7 +624,7 @@ function checkScriptPrereqs () {
 	
 	ERROR=false
 	#If any of the pre-reqs are not met - or it's the first start up - then process them
-	if [[ ! -f ${WORKSPACE_WD}/data/${SCRIPT_VARIABLES} || "$JON_PROVIDED" == "" || "$POSTGRES_INSTALLED" != "y" || "$POSTGRES_SERVICE_FILE" == "" || "$JAVA_HOME" == "" ]]; then
+	if [[ ! -f ${WORKSPACE_WD}/data/${SCRIPT_VARIABLES} || "$JON_PROVIDED" == "" || "$JAVA_HOME" == "" ]]; then
 		splashScreen
 		newLine
 		
@@ -620,63 +634,65 @@ function checkScriptPrereqs () {
 			ERROR="true"
 		fi
 		
-		#If postgres is not installed and not found on the system
-		if [[ "$POSTGRES_INSTALLED" != "y" && "$POSTGRES_SERVICE_FILE" == "" ]]; then
-			
-			#Can we get index.html from google - i.e we have internet
-			wget www.google.com -o output.txt
-
-			#If we don't have internet connectivity, error with message
-			if [[ ! -f index.html ]]; then 
-				outputLog "PostgreSQL is not installed, and no internet connectivity found" "4"
-				ERROR=true
-			else
-				outputLog "PostgreSQL is not installed or on the system, but internet connectivity available."
-			fi
-			
-			#Clean wget files
-			deleteFile index.html
-			deleteFile output.txt
-		
-		#If postgres is not installed by the script but found on the system
-		elif [[ "$POSTGRES_INSTALLED" != "y" && "$POSTGRES_SERVICE_FILE" != "" ]]; then
-			outputLog "PostgreSQL is not installed, but found on the system. Internet is not required"
-		fi 
-		
 		if [[ "$JAVA_HOME" == "" || ! -d $JAVA_HOME ]]; then
 			outputLog "JAVA_HOME has not been set or is set to a non-existent folder [$JAVA_HOME] in [${WORKSPACE_WD}/data/demo-config.properties], please set it first" "4"
 			ERROR=true
-		fi
-		
-		if [[ "$ANT_HOME" == "" || ! -d $ANT_HOME ]]; then
-			outputLog "ANT_HOME has not been set or is set to a non-existent folder [$ANT_HOME] in [${WORKSPACE_WD}/data/demo-config.properties], please set it appropriately.  In the meantime, bundles will not be available" "3"
-		fi	
-		
-		if [[ "$MVN_HOME" == "" || ! -d $MVN_HOME ]]; then
-			outputLog "MVN_HOME has not been set or is set to a non-existent folder [$MVN_HOME] in [${WORKSPACE_WD}/data/demo-config.properties], please set it first.  In the meantime, bundles will not be available" "3"
 		fi
 		
 		if [[ "$INSTALL_LOCATION" == "" || ! -d $INSTALL_LOCATION ]]; then
 			outputLog "INSTALL_LOCATION has not been set or is set to a non-existent folder [$INSTALL_LOCATION] in [${WORKSPACE_WD}/data/demo-config.properties], please set it first" "4"
 			ERROR=true
 		fi
+	fi
+	
+	##The checks that don't cause an error, but just a warning
+	
+	#If postgres is not installed and not found on the system
+	if [[ "$POSTGRES_INSTALLED" != "y" && "$POSTGRES_SERVICE_FILE" == "" ]]; then
 		
-		if [[ "$LOCAL_USER" == "" ]]; then
-			outputLog "Root will be used as the default owner of any new files and folders" "1"
+		#Can we get index.html from google - i.e we have internet
+			wget www.google.com -o output.txt
+
+			#If we don't have internet connectivity, error with message
+		if [[ ! -f index.html ]]; then 
+			outputLog "PostgreSQL is not installed, and no internet connectivity found" "4"
+			ERROR=true
 		else
-			LOCAL_USER_EXISTS=`id $LOCAL_USER`		
-			if [[ "$LOCAL_USER_EXISTS" =~ "No such user" ]]; then
-				outputLog "LOCAL_USER has not been set or is set to a non-existent user [$LOCAL_USER] in [${WORKSPACE_WD}/data/demo-config.properties], root will be used as default" "3"
-				LOCAL_USER="root"
-			fi
+			outputLog "PostgreSQL is not installed or on the system, but internet connectivity available."
 		fi
 		
-		#If any pre-req errored, then exit
-		if [[ "$ERROR" == "true" ]]; then
-			newLine
-			outputLog "Please fix the above error messages and run the script again." "4"
-			exit
+		#Clean wget files
+		deleteFile index.html
+		deleteFile output.txt
+	
+	#If postgres is not installed by the script but found on the system
+	elif [[ "$POSTGRES_INSTALLED" != "y" && "$POSTGRES_SERVICE_FILE" != "" ]]; then
+		outputLog "PostgreSQL is not installed, but found on the system. Internet is not required"
+	fi 
+	
+	if [[ "$ANT_HOME" == "" || ! -d $ANT_HOME ]]; then
+		outputLog "ANT_HOME has not been set or is set to a non-existent folder [$ANT_HOME] in [${WORKSPACE_WD}/data/demo-config.properties], please set it appropriately.  In the meantime, bundles will not be available" "3"
+	fi	
+	
+	if [[ "$MVN_HOME" == "" || ! -d $MVN_HOME ]]; then
+		outputLog "MVN_HOME has not been set or is set to a non-existent folder [$MVN_HOME] in [${WORKSPACE_WD}/data/demo-config.properties], please set it first.  In the meantime, bundles will not be available" "3"
+	fi
+	
+	if [[ "$LOCAL_USER" == "" ]]; then
+		outputLog "Root will be used as the default owner of any new files and folders" "1"
+	else
+		LOCAL_USER_EXISTS=`id $LOCAL_USER`		
+		if [[ "$LOCAL_USER_EXISTS" =~ "No such user" ]]; then
+			outputLog "LOCAL_USER has not been set or is set to a non-existent user [$LOCAL_USER] in [${WORKSPACE_WD}/data/demo-config.properties], root will be used as default" "3"
+			LOCAL_USER="root"
 		fi
+	fi
+		
+	#If any pre-req errored, then exit
+	if [[ "$ERROR" == "true" ]]; then
+		newLine
+		outputLog "Please fix the above error messages and run the script again." "4"
+		exit
 	fi
 
 }
