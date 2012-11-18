@@ -4,11 +4,10 @@ function getJONPluginDirectory () {
 	
 		#Directory for selected product (ex: ./data/jon/jon-server-3.1.0.GA.zip)
 		JON_DIRECTORY=${JON_PRODUCT_FULL_PATH%/*}
-		#outputLog "JON_DIRECTORY: $JON_DIRECTORY"	
+		outputLog "JON_DIRECTORY: $JON_DIRECTORY"	
 	
 		#Directory for plugins for selected JON product (from above - ex: ./data/jon/plugins)
 		JON_PLUGINS_DIRECTORY=$JON_DIRECTORY/$JON_PLUGINS	
-		
 		outputLog "JON_PLUGINS_DIRECTORY: $JON_PLUGINS_DIRECTORY"	
 	else
 		outputLog "The JON_PRODUCT_FULL_PATH hasn't been defined, as such no JON_PLUGIN_DIRECTORY can be defined." "3"
@@ -274,7 +273,6 @@ function manageJBossDemoServers () {
 function runCLIScripts () {
 
 	##FIXME can't have spaces in any of the params passed thru....
-	getRHQCLIDetails
 	setupJonServer
 
 	if [[ "$BUNDLES_ENABLED" == "true" ]]; then
