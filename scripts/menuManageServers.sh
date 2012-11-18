@@ -3,11 +3,10 @@ function manageServersMenu () {
 	
 	newLine
 	echo "***Manage Servers***"
-	newLine
 
 	JON_DIRECTORY=`find /opt -name "jon-server*"`
-	if [[ "$JON_DEMO_INSTALLED" == "y" ]]; then
-		
+	if [[ "$JON_DEMO_INSTALLED" == "y" ]]; then	
+		newLine
 		echo "*JON Server"
 		
 		JON_SCRIPT=$JON_DIRECTORY/$BIN/$JON_STARTUP_SCRIPT
@@ -23,32 +22,19 @@ function manageServersMenu () {
 		esac
 		newLine
 		
-		CHECK_AGENT=`$AGENT_FOLDER/$BIN/rhq-agent-wrapper.sh status`
-		echo "*JON Agent"
-		
-		#If the agent is running, offer shutdown and restart
-		if [[ "$CHECK_AGENT" =~ "is running" ]]; then
-			echo "  RA. Restart Jon Agent"
-			echo "  PA. Stop Jon Agent"
-		else
-			echo "  SA. Start Jon Agent"
+		if [[ -f $AGENT_FOLDER/$BIN/rhq-agent-wrapper.sh ]]; then
+			CHECK_AGENT=`$AGENT_FOLDER/$BIN/rhq-agent-wrapper.sh status`
+			echo "*JON Agent"
+			
+			#If the agent is running, offer shutdown and restart
+			if [[ "$CHECK_AGENT" =~ "is running" ]]; then
+				echo "  RA. Restart Jon Agent"
+				echo "  PA. Stop Jon Agent"
+			else
+				echo "  SA. Start Jon Agent"
+			fi
 		fi
-		
-		newLine
-		echo "*Postgres Server"
-		
-		if [ -f $POSTGRES_SERVICE_FILE ]; then
-			SERVICE_STATUS=`service $POSTGRES_SERVICE_NAME status 2>/dev/null`
-			case "$SERVICE_STATUS" in
-			*inactive*)
-				echo "  SP. Start Postgres Service"
-				;;
-			*active*)
-				echo "  PP. Stop Postgres Service"
-				;;
-			esac
-		fi
-		
+			
 		if [[ "$NUM_JBOSS_TO_INSTALL" -gt "0" && "$JBOSS_SERVER_PORTS_PROVISIONED" != "" ]]; then
 			newLine
 			echo "*JBoss Servers"
@@ -57,19 +43,39 @@ function manageServersMenu () {
 			do 
 				local PORT=$(( $A * 100 + 8080 ))
 				JB_SERVER_STATUS=`curl http://localhost:${PORT} 2>&1`
+				outputLog "JB_SERVER_STATUS is [$JB_SERVER_STATUS]" "1"
 				
-				if [[ "$JB_SERVER_STATUS" == "couldn\'t connect to host" ]]; then
+				if [[ "$JB_SERVER_STATUS" =~ "connect to host" ]]; then
 					echo "  sjb${A}. Start JBoss Server (port: $PORT)"
 				elif [[ "$JB_SERVER_STATUS" =~ "Welcome to JBoss EAP" ]]; then
 					echo "  pjb${A}. Stop JBoss Server (port: $PORT)"
 				else
-					outputLog "JBoss Server (port: $PORT) is not recognised." "4"
+					outputLog "  JBoss Server (port: $PORT) is not recognised." "4" "y" "n"
 				fi
 			done
 			
 			echo "  sajb. Start All JBoss Servers"
 			echo "  pajb. Stop All JBoss Servers"
 		fi
+	else
+		outputLog "JON demo not installed, no servers to manage." "3" "y" "n"
+	fi
+	
+	newLine
+	echo "*Postgres Server"
+	
+	if [ "$POSTGRES_INSTALLED" != "n" ]; then
+		SERVICE_STATUS=`service $POSTGRES_SERVICE_NAME status 2>/dev/null`
+		case "$SERVICE_STATUS" in
+		*inactive*)
+			echo "  SP. Start Postgres Service"
+			;;
+		*active*)
+			echo "  PP. Stop Postgres Service"
+			;;
+		esac
+	else
+		outputLog "No Postgres service installed." "3" "y" "n"
 	fi
 }
 
