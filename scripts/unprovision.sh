@@ -57,7 +57,6 @@ function unprovision () {
 		outputLog "This script will unprovision extra servers using the provided port set" "4"
 	else
 		UNPROVISIONED=false
-		getRHQCLIDetails
 		
 		findServer $PORT_SET
 		if [[ "${SERVER_ID}x" != "x" ]]; then
