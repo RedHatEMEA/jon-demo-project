@@ -26,6 +26,8 @@ This set of scripts is meant to allow you to easily install a new JON demo consi
 - Ensure you do not have any JON servers/agents running on the server you are deploying to
 - Ensure that if you do not have any JBoss servers running, but if necessary, 8080 will not be used by this demo.
 - For bundle creation to be enabled, ensure you have ant and maven installed locally
+- Package requirements:
+	wget (installed from the internet if possible and necessary)
 
 *********************************************************************************
 
