@@ -192,7 +192,7 @@ function getTimeTaken () {
 	outputLog "Total time taken was ${TIME_DIFF} seconds or $MINS_SECS_TEXT" "2"
 	
 	if [[ "$UPDATE_VARIABLE" != "" ]]; then
-		resetVariableInFile "TIME_TAKEN_PREVIOUSLY" "${TIME_DIFF}"
+		resetVariableInVariableFile "TIME_TAKEN_PREVIOUSLY" "${TIME_DIFF}"
 	fi
 }
 
@@ -290,7 +290,7 @@ function jdInstallDemo () {
 					fi
 				done			
 				
-				resetVariableInFile "NUM_JBOSS_TO_INSTALL" "$NUM_JBOSS_TO_INSTALL"
+				resetVariableInVariableFile "NUM_JBOSS_TO_INSTALL" "$NUM_JBOSS_TO_INSTALL"
 
 			fi
 		fi
@@ -394,7 +394,6 @@ function jdStopDemo () {
 				outputLog "The JON Agent is missing, demo deletion will not be 100% smooth" "3"
 			fi
 			
-			getRHQCLIDetails
 			executeAgentCommand discovery
 			executeAgentCommand availability
 			manageJBossDemoServers shutdown
