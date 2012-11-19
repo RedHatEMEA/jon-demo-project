@@ -14,7 +14,8 @@ function deleteBundles () {
 	CURRENT_WD=`pwd`
 	cd ${WORKSPACE_WD}/sub-projects/bundle-creation
 	
-	$ANT clean -Ddist.dir=${WORKSPACE_WD}/data/bundles
+	outputLog "Using ant [$ANT]" "1"
+	${ANT} clean -Ddist.dir=${WORKSPACE_WD}/data/bundles
 	
 	cd $CURRENT_WD
 	
@@ -98,6 +99,7 @@ function createBundles () {
 		CURRENT_WD=`pwd`
 		cd ${WORKSPACE_WD}/sub-projects/bundle-creation
 
+		outputLog "Using ant [$ANT]" "1"
 		#Call ant (forking process) passing in the directory to find the data (under the data folder) required for the bundles
 		if [[ "$SUB_PROJECT_CALL" == "true" ]]; then				
 			$ANT -Ddata.dir=${WORKSPACE_WD}/data -Ddist.dir=${WORKSPACE_WD}/data/bundles -Dcommon.dir=${WORKSPACE_WD}/data/jboss/$JBOSS_PRODUCT/common -Ddefault.dir=${WORKSPACE_WD}/data/jboss/$JBOSS_PRODUCT/default -Ddvdstore.dir=${WORKSPACE_WD}/sub-projects/bundle-creation/src/seam/seam-dvdstore

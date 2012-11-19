@@ -43,7 +43,7 @@ function manageServersMenu () {
 			do 
 				local PORT=$(( $A * 100 + 8080 ))
 				JB_SERVER_STATUS=`curl http://localhost:${PORT} 2>&1`
-				outputLog "JB_SERVER_STATUS is [$JB_SERVER_STATUS]" "1"
+				#outputLog "JB_SERVER_STATUS is [$JB_SERVER_STATUS]" "1"
 				
 				if [[ "$JB_SERVER_STATUS" =~ "connect to host" ]]; then
 					echo "  sjb${A}. Start JBoss Server (port: $PORT)"

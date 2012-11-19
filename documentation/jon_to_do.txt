@@ -1,6 +1,9 @@
 ANNOYING BUG:
 Fix splashscreen, shows because postgresql service file name is empty
 
+test F17
+POSTGRES, choosing maintenance version bug -- doesn't choose the right version.
+
 CREATE BRANCH
 REORGANISE FUNCTIONS
 - re-organise functions logically

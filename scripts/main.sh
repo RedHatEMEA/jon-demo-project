@@ -618,6 +618,19 @@ function checkScriptPrereqs () {
 		yum install wget -y
 	fi
 	
+	UNZIP_AVAILABLE=`rpm -qa unzip`
+	if [[ "$UNZIP_AVAILABLE" == "" ]]; then
+		outputLog "Installing unzip as it's a required dependency..." "2"
+		yum install unzip -y
+	fi
+	
+	#Check for hostname in hosts file
+	HOSTNAME=`hostname`
+	HOSTNAME_IN_HOSTS=`grep $HOSTNAME /etc/hosts`
+	
+	if [[ "$HOSTNAME_IN_HOSTS" == "" ]]; then
+		sed -i '/127.0.0.1/s|$| '${HOSTNAME}'|' /etc/hosts
+	fi
 	#Run checks on the system for the pre-reqs
 	JON_PROVIDED=`find ${WORKSPACE_WD}/data/jon/ -name "jon-server-*.zip"`
 	checkForPostgresOnSystem

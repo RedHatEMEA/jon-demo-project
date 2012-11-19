@@ -20,23 +20,30 @@ function checkForPostgresOnSystem () {
 		
 		if [[ "$POSTGRES_SERVICE_FILE" == "" ]]; then
 			outputLog "Postgres service file is not found on the file system." "1"
-			CHECK_SYSTEM=`systemctl | grep postgres`
-			CHECK_SYSTEM=${CHECK_SYSTEM%% *}	##Remove anything after the space, if there's an error
-
-			local CHECK_INSTALL=`find /etc/systemd/system/multi-user.target.wants -name "$POSTGRES_SERVICE_NAME"`
-
-			if [[ "$CHECK_SYSTEM" != "" && "$CHECK_INSTALL" != "" ]]; then
-				POSTGRES_SERVICE_NAME=${CHECK_SYSTEM%.service*}
-				outputLog "Service name set to $POSTGRES_SERVICE_NAME"
-								
-				#Set the postgres service file 
-				POSTGRES_SERVICE_FILE=$INIT_D/$POSTGRES_SERVICE_NAME
+			
+			SYSTEMCTL_AVAILABLE=`systemctl 2>&1`
+			
+			if [[ "$SYSTEMCTL_AVAILABLE" =~ "command not found" ]]; then
+				outputLog "Working on RHEL with no systemctl, moving on" "1"
 			else
-				outputLog "Postgres is not found in the system check." "1"
-				if [[ "$POSTGRES_INSTALLED" != "y" ]]; then 
-					POSTGRES_INSTALLED="n"
-					resetVariableInVariableFile "POSTGRES_INSTALLED" "$POSTGRES_INSTALLED"
-					loadVariables
+				CHECK_SYSTEM=`systemctl | grep postgres`
+				CHECK_SYSTEM=${CHECK_SYSTEM%% *}	##Remove anything after the space, if there's an error
+	
+				local CHECK_INSTALL=`find /etc/systemd/system/multi-user.target.wants -name "$POSTGRES_SERVICE_NAME"`
+	
+				if [[ "$CHECK_SYSTEM" != "" && "$CHECK_INSTALL" != "" ]]; then
+					POSTGRES_SERVICE_NAME=${CHECK_SYSTEM%.service*}
+					outputLog "Service name set to $POSTGRES_SERVICE_NAME"
+									
+					#Set the postgres service file 
+					POSTGRES_SERVICE_FILE=$INIT_D/$POSTGRES_SERVICE_NAME
+				else
+					outputLog "Postgres is not found in the system check." "1"
+					if [[ "$POSTGRES_INSTALLED" != "y" ]]; then 
+						POSTGRES_INSTALLED="n"
+						resetVariableInVariableFile "POSTGRES_INSTALLED" "$POSTGRES_INSTALLED"
+						loadVariables
+					fi
 				fi
 			fi
 		fi
@@ -227,7 +234,13 @@ function installPostgres () {
 		#Handling install of versions of postgres newer then 9.1-4
 		eval su - postgres -c "/usr/pgsql-${MAJOR_VERSION}.${MINOR_VERSION}/bin/initdb"
 		
-		systemctl enable ${POSTGRES_SERVICE_NAME}.service
+		SYSTEMCTL_AVAILABLE=`systemctl 2>&1`
+		
+		if [[ "$SYSTEMCTL_AVAILABLE" =~ "command not found" ]]; then
+			chkconfig ${POSTGRES_SERVICE_NAME} on
+		else
+			systemctl enable ${POSTGRES_SERVICE_NAME}.service
+		fi
 			
 		newLine
 		startPostgresService
@@ -327,7 +340,7 @@ function choosePostgresVersion () {
 	
 	#Truncate the file to only the available repos
 	local LIST_FILE="${WORKSPACE_WD}/data/list.txt"
-	sed '/Available Repository RPMs/, /EOL/ !d' ${WORKSPACE_WD}/data/repopackages.php > $LIST_FILE
+	sed '/Available Repository RPMs/, /d releases/ !d' ${WORKSPACE_WD}/data/repopackages.php > $LIST_FILE
 	
 	#Get the list of a tags containing the postgres version numbers
 	TEMP=`grep "<a name=" $LIST_FILE`
@@ -357,7 +370,8 @@ function choosePostgresVersion () {
 		fi
 		
 		outputLog "Checking for \"/${T1:0:1}.${T1:1:1}/${DISTRO}/${DISTRO_NICK}-${DISTRO_VERSION}-${ARCH}/\" in $LIST_FILE"
-		DISTRO_PG_OK=`grep "/${T1:0:1}.${T1:1:1}/${DISTRO}/${DISTRO_NICK}-${DISTRO_VERSION}-${ARCH}/" $LIST_FILE`
+		DISTRO_PG_OK=`grep "/${T1:0:1}.${T1:1:1}/${DISTRO}/${DISTRO_NICK}-${DISTRO_VERSION}-${ARCH}/" $LIST_FILE | grep "pgdg-${DISTRO}"`
+		
 		outputLog "distro <-- $DISTRO_PG_OK"
 		if [[ "$DISTRO_PG_OK" == "" ]]; then
 			outputLog "Skipping PostgreSQL v.${T1} as it's not available for the current distro" "1"
@@ -366,11 +380,12 @@ function choosePostgresVersion () {
 			local LINK=""
 			LINK=${DISTRO_PG_OK#*\"}   #Text after first double quote
 			LINK=${LINK%%\"*}   #Text after first double quote, full relative link
+			outputLog "LINK is [${BASE_URL}${LINK}]" "1"
 			
 			#Check if the URL is valid
 			local RESULT=`curl -0 ${BASE_URL}${LINK} 2>/dev/null`
-			if [[ "$RESULT" =~ "404" ]]; then
-				outputLog "This version - ${T1} - is supposedly available for your architecture -throws a 404 on the PostgreSQL website, ignoring..." "3"
+			if [[ "$RESULT" =~ "404 - Not found" ]]; then
+				outputLog "This version [${T1}] - supposedly available for your architecture - throws a 404 on the PostgreSQL website, ignoring..." "3"
 			else	
 		
 				#outputLog "T1 is: $T1" "1"
@@ -402,6 +417,7 @@ function choosePostgresVersion () {
 	#And cannot install the JON demo in this environment
 	if [[ "$VERSION_ARRAY_LENGTH" == "0" ]]; then
 		outputLog "Sorry, there are no supported PostgreSQL versions for your architecture, try with one of the verified configurations found in the README-MORE file" "4"
+		deletePostgresTmpFiles
 		exit
 	else
 
