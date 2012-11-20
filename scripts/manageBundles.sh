@@ -1,11 +1,22 @@
 #function - setAnt () - sets the variable ANT to the result of which ant
 function setAnt () {
-	ANT=`which ant 2>/dev/null`	
+	ANT_FILE="${ANT_HOME}/bin/ant"
+	if [[ -f "$ANT_FILE" ]]; then
+		ANT=$ANT_FILE
+	else
+		ANT=`which ant 2>/dev/null`
+	fi	
 }
 
 #function - setMaven () - sets the variable MAVEN to the result of which mvn
 function setMaven () {
-	MAVEN=`which mvn 2>/dev/null`	
+	
+	MVN_FILE="${MVN_HOME}/bin/mvn"
+	if [[ -f "$MVN_FILE" ]]; then
+		MAVEN=$MVN_FILE
+	else
+		MAVEN=`which mvn 2>/dev/null`
+	fi	
 }
 
 #function - deleteBundles () - Function that deletes the created bundles and bits of EAP moved into the sub project
