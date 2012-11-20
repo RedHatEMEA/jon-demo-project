@@ -220,7 +220,7 @@ Components, there's no way to guarantee functioning with all versions of the req
 Maven 		3.0.3, 3.0.4
 Ant   		1.8.2, 1.8.4
 JDK   		1.6.0_29, 1.7.0_09
-PostgreSQL	8.4, 9.1-4, 9.1-6?? [9.2 is not yet supported in JON]
+PostgreSQL	8.4, 9.1-4, 9.1-6 [9.2 is not yet supported in JON]
 
 Note: I'd be interested in hearing how this runs on OSX or any other setups people might have.
 
