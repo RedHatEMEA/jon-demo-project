@@ -1,7 +1,8 @@
+Add timing around dj/uj
+
 ANNOYING BUG:
 Fix splashscreen, shows because postgresql service file name is empty
 
-test F17
 POSTGRES, choosing maintenance version bug -- doesn't choose the right version.
 
 CREATE BRANCH
@@ -24,6 +25,8 @@ TESTS:
 
 - confirm start/stop postgres
 - confirm install/uninstall postgres
+
+- confirm start up of JBoss from bundle
 
 - plugin and patches folders created in both jon and jon/jon-server-x.x.x
 	utils.sh, line 440, does it ever come up as empty?

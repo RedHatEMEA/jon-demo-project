@@ -171,14 +171,34 @@ function chooseProduct () {
 
 #function - checkOrCreateJBossUser () - checks for jboss user existence, if it exists, do nothing, otherwise create it with passwd jboss
 function checkOrCreateJBossUser () {
-	USERADD_STATUS=`grep "${JBOSS_OS_USER}:" /etc/passwd`  
-	if [[ "$USERADD_STATUS" == "" ]]; then
-		#Create a system user, so no home directory and hidden from the login screen
-		useradd -r ${JBOSS_OS_USER}
-		echo ${JBOSS_OS_USER} | passwd ${JBOSS_OS_USER} --stdin 2>&1
-		outputLog "Created ${JBOSS_OS_USER} user" "2"
+	
+	if [[ -f "${WORKSPACE_WD}/data/demo-config.properties" ]]; then 
+	
+		USERADD_STATUS=`grep "${JBOSS_OS_USER}:" /etc/passwd`  
+		if [[ "$USERADD_STATUS" == "" ]]; then
+	
+			#If a user id is not provided, try 410, otherwise don't modify the user id for jboss
+			if [[ "$UD_ID" == "" ]]; then
+				UD_ID="410"					#Randomly selected ID
+			fi
+			
+			USER_ID_AVAILABLE=`grep "${UD_ID}:${UD_ID}" /etc/passwd`
+			
+			#Create a local user (system user breaks jboss start up)
+			if [[ "${USER_ID_AVAILABLE} == "" ]]; then
+				useradd -u ${UD_ID} ${JBOSS_OS_USER}
+			else
+				#If the UID chosen is in use, the user will have to manually change the jboss user ID if desired
+				useradd ${JBOSS_OS_USER}
+			fi
+			echo ${JBOSS_OS_USER} | passwd ${JBOSS_OS_USER} --stdin 2>&1
+			
+			outputLog "Created ${JBOSS_OS_USER} user" "2"
+		else
+			outputLog "A user called '${JBOSS_OS_USER}' already exists and will be used if needed" "1"
+		fi
 	else
-		outputLog "A user called '${JBOSS_OS_USER}' already exists and will be used if needed" "1"
+		outputLog "Giving the user a chance to set the user-defined ID for the JBoss user" "1"
 	fi
 }
 
@@ -412,6 +432,9 @@ function createDemoConfFile () {
 		echo -e "\n" >> ${WORKSPACE_WD}/data/demo-config.properties
 		echo "#The local user account to use for new files and folders, root if left empty" >> ${WORKSPACE_WD}/data/demo-config.properties
 		echo "LOCAL_USER=" >> ${WORKSPACE_WD}/data/demo-config.properties
+		echo -e "\n" >> ${WORKSPACE_WD}/data/demo-config.properties
+		echo "#The local user-defined id number to use for the jboss user, to hide that user in the log in screen" >> ${WORKSPACE_WD}/data/demo-config.properties
+		echo "UD_ID=" >> ${WORKSPACE_WD}/data/demo-config.properties
 		echo -e "\n" >> ${WORKSPACE_WD}/data/demo-config.properties
 		echo "#The details of the latest version of JON, for the creation of the default file structure for the demo" >> ${WORKSPACE_WD}/data/demo-config.properties
 		echo "LATEST_JON_VERSION=jon-server-3.1.0.GA" >> ${WORKSPACE_WD}/data/demo-config.properties

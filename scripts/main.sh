@@ -221,13 +221,14 @@ function splashScreen () {
 	breakTextLine $WIDTH "  0-- Read the readme, it provides elaborate details of the information below"
 	TEXT_OUTPUT="${TEXT_OUTPUT}\n"
 	breakTextLine $WIDTH "  1-- Update the configurable variables in the \"data\demo-config.properties\" file:"
-	breakTextLine $WIDTH "      a-- INSTALL_LOCATION: If you have a preference, you can modify the default base install location. This location will have the JD_FOLDER variable (configurable via the script) appended to it."
-	breakTextLine $WIDTH "      b-- JAVA_HOME: Update to the appropriate value on your system."
+	breakTextLine $WIDTH "      a-- JAVA_HOME: Update to the appropriate value on your system."
+	breakTextLine $WIDTH "      b-- INSTALL_LOCATION: If you have a preference, you can modify the default base install location. This location will have the JD_FOLDER variable (configurable via the script) appended to it."
 	breakTextLine $WIDTH "      c-- MVN_HOME: Update to the appropriate value on your system."
 	breakTextLine $WIDTH "      d-- ANT_HOME: Update to the appropriate value on your system."
 	breakTextLine $WIDTH "      e-- LOCAL_USER: Set to a local user account that you would like to own any new files or folders, if left empty or invalid, root will be used by default."
-	breakTextLine $WIDTH "      f-- LATEST_JON_VERSION: The latest version of JON for the creation of the default data FS.  Currently set to jon-server-3.1.0."
-	breakTextLine $WIDTH "      g-- DEMO_LOG_LEVEL: The log level to be used across the demo script project"	
+	breakTextLine $WIDTH "      f-- UD_ID: Set the id to be used for the local jboss user account to be created."
+	breakTextLine $WIDTH "      g-- LATEST_JON_VERSION: The latest version of JON for the creation of the default data FS.  Currently set to jon-server-3.1.0."
+	breakTextLine $WIDTH "      h-- DEMO_LOG_LEVEL: The log level to be used across the demo script project"	
 	TEXT_OUTPUT="${TEXT_OUTPUT}\n"
 	breakTextLine $WIDTH "  2-- Add the JON server zip and plugin packages into the appropriate location"
 	TEXT_OUTPUT="${TEXT_OUTPUT}\n"
@@ -734,13 +735,13 @@ function updateLocalUser () {
 function initialise () {
 	loadScripts
 	loadVariables
+	checkOrCreateJBossUser	
 	createDemoDataDir
 	createScriptVariablesFile
 	createDemoConfFile
 	createDemoFsStructure
 	checkScriptPrereqs
 	checkScriptUser
-	checkOrCreateJBossUser	
 	updateLocalUser
 	loadScripts
 	loadVariables

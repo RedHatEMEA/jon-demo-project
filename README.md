@@ -47,10 +47,11 @@ One of the necessary modifications is to the user-defined variables file (./data
 	- JAVA_HOME:			Update to the appropriate value on your system  
 	
 + OPTIONAL
-	- ANT_HOME:				If you want bundle creation to be enabled, provide the ant home location
-	- MVN_HOME:				  If you want bundle creation to be enabled, provide the mvn home location
 	- INSTALL_LOCATION:		If you have a preference, you can modify the base install location (default: /opt/).  This location will have the JD_FOLDER variable (configurable via the script) appended to it.
+	- MVN_HOME:				If you want bundle creation to be enabled, provide the mvn home location
+	- ANT_HOME:				If you want bundle creation to be enabled, provide the ant home location
 	- LOCAL_USER:			Set to a local user account that you would like to own any new files or folders created by the script.  If it's left empty or invalid, root will be used by default.
+	- UD_ID:				Set the id to be used for the local jboss user account to be created.
 	- LATEST_JON_VERSION: 	The latest version of JON for the creation of the default data FS.  Currently set to jon-server-3.1.0.
 	- DEMO_LOG_LEVEL:		The log level to be used across the project, set to INFO (2) by default. (See more about the different log levels at the top of debug.sh)
 	
