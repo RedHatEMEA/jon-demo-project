@@ -172,7 +172,7 @@ function chooseProduct () {
 #function - checkOrCreateJBossUser () - checks for jboss user existence, if it exists, do nothing, otherwise create it with passwd jboss
 function checkOrCreateJBossUser () {
 	
-	if [[ -f "${WORKSPACE_WD}/data/demo-config.properties" ]]; then 
+	if [ -f ${WORKSPACE_WD}/data/demo-config.properties ]; then 
 	
 		USERADD_STATUS=`grep "${JBOSS_OS_USER}:" /etc/passwd`  
 		if [[ "$USERADD_STATUS" == "" ]]; then
@@ -185,11 +185,11 @@ function checkOrCreateJBossUser () {
 			USER_ID_AVAILABLE=`grep "${UD_ID}:${UD_ID}" /etc/passwd`
 			
 			#Create a local user (system user breaks jboss start up)
-			if [[ "${USER_ID_AVAILABLE} == "" ]]; then
-				useradd -u ${UD_ID} ${JBOSS_OS_USER}
+			if [[ "${USER_ID_AVAILABLE}" == "" ]]; then
+				useradd -u ${UD_ID} ${JBOSS_OS_USER} 2>/dev/null
 			else
 				#If the UID chosen is in use, the user will have to manually change the jboss user ID if desired
-				useradd ${JBOSS_OS_USER}
+				useradd ${JBOSS_OS_USER} 2>/dev/null
 			fi
 			echo ${JBOSS_OS_USER} | passwd ${JBOSS_OS_USER} --stdin 2>&1
 			
