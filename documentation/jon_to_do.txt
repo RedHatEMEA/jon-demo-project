@@ -1,3 +1,7 @@
+- jboss deploy/undeploy functionality -- seems ok?
+	test from 100-400 at least
+	is undeploy removing correctly from jboss_provisioned_servers? and is the num_of_jboss_servers correct?
+	
 Add timing around dj/uj
 
 ANNOYING BUG:
@@ -40,13 +44,6 @@ TESTS:
 
 -if running ID script first time, without internet access, error thrown
 	sed: can't read repopackages.php: no such file or directory
-	
-	
-- jboss deploy/undeploy functionality -- seems ok?
-	test from 100-400 at least
-	is undeploy removing correctly from jboss_provisioned_servers? and is the num_of_jboss_servers correct?
-	confirm node200 works, failed previously (ec-default vs default name and check sym link in /etc...
-	check if insertUniquePortInIncreasingOrder stores the numbers properly with the quotes and all
 
 VERIFY:
 - Event setup:
@@ -107,7 +104,8 @@ Moves server to new group
 
 TO GET TO:
 JON FEATURES
-- Setup alerts and notifications via CLI
+XXX- Setup alerts and notifications via CLI
+	Not currently feasible via CLI
 - Setup drift managements as per demo video
 	http://mazz.fedorapeople.org/demos/drift/drift-basics.ogv
 	http://mazz.fedorapeople.org/demos/drift/drift-pinning.ogv

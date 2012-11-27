@@ -179,7 +179,7 @@ function checkOrCreateJBossUser () {
 	
 			#If a user id is not provided, try 410, otherwise don't modify the user id for jboss
 			if [[ "$UD_ID" == "" ]]; then
-				UD_ID="410"					#Randomly selected ID
+				UD_ID="510"					#Randomly selected ID
 			fi
 			
 			USER_ID_AVAILABLE=`grep "${UD_ID}:${UD_ID}" /etc/passwd`

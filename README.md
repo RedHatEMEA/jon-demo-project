@@ -5,6 +5,7 @@ Table of contents:
 - [Getting Started](#getting-started)
 	- [Pre-requisites](#pre-requisites)
 	- [First Steps](#first-steps)
+	- [Manual Steps](#manual-steps)
 - [Known Issues](#known-issues)
 - [More Info](#more-info)
 
@@ -83,6 +84,24 @@ Follow the prompts.
 - Note: JON 2.x required a license, it will need to be manually added and has not been tested with the latest version of the script.
 
 *IT IS BEST NOT TO MODIFY ANY OF THE SCRIPT FILES OR INSTALLED DEMOS BY HAND AND TO USE THE SCRIPT WHERE NECESSARY TO MAKE CHANGES TO THE WHOLE ENVIRONMENT*
+
+*********************************************************************************
+
+## MANUAL STEPS ##
+At the time of writing, the CLI (in JON v3.1.1) does not support the creation of Alert Definitions, as such, you will need to create one manually through the GUI.
+For demo purposes, we will create one that will get invoked so that it shows up during the demo:
+
+- Go to the local JBoss server that was installed with your demo (otherwise, you can set an alert on another resource)
+- Under the Summary tab, get a view of what the JVM Free/Total Memory numbers are looking like (let's say 350/750 MB)
+- Click the Alerts tab -> Definitions -> New
+- Name it "JBoss Memory Alert"
+- Click the Conditions tab -> Add
+- Set the Condition Type to "Measurement Absolute Value Threshold"
+- Set the Metric to "JVM Free Memory"
+- Set the Comparator to "< (Less than)
+- Input a Metric value which is larger then the JVM Free Memory you'd seen (eg 400 MB, from the above number), click OK
+- Add a notification to the rhq system user
+- Save the alert 
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

@@ -132,7 +132,7 @@ function silentlyInstallJon () {
 	runCLIScripts
 		
 	#Set the entire jon demo directory to be owned by the LOCAL_USER
-	chown $LOCAL_USER:$LOCAL_USER -R "$JD_INSTALL_LOCATION"
+	chown $JBOSS_OS_USER:$JBOSS_OS_USER -R "$JD_INSTALL_LOCATION"
 	
 }
 
@@ -420,8 +420,6 @@ function initialSetup () {
 		AGENT_JD_LOG=$AGENT_FOLDER/logs/jd-agent-setup.log
 		touch $AGENT_JD_LOG
 	fi
-
-	chown -R ${JBOSS_OS_USER}:${JBOSS_OS_USER} $AGENT_FOLDER
 	
 	manageJonAgent $AGENT_FOLDER start
 	newLine
