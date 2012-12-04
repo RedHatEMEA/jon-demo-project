@@ -4,7 +4,7 @@ function manageServersMenu () {
 	newLine
 	echo "***Manage Servers***"
 
-	JON_DIRECTORY=`find /opt -name "jon-server*"`
+	JON_DIRECTORY=`find $INSTALL_LOCATION -name "jon-server*"`
 	if [[ "$JON_DEMO_INSTALLED" == "y" ]]; then	
 		newLine
 		echo "*JON Server"
@@ -67,11 +67,14 @@ function manageServersMenu () {
 	if [ "$POSTGRES_INSTALLED" != "n" ]; then
 		SERVICE_STATUS=`service $POSTGRES_SERVICE_NAME status 2>/dev/null`
 		case "$SERVICE_STATUS" in
-		*inactive*)
+		*inactive* | *stopped*)
 			echo "  SP. Start Postgres Service"
 			;;
-		*active*)
+		*active* | *running*)
 			echo "  PP. Stop Postgres Service"
+			;;
+		*)
+			echo "  Postgres status not recognised..."
 			;;
 		esac
 	else
