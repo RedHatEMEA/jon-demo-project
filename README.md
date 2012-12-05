@@ -4,6 +4,7 @@ Table of contents:
 - [Description](#description)
 - [Getting Started](#getting-started)
 	- [Pre-requisites](#pre-requisites)
+	- [Supported Environments](#supported-environments)
 	- [First Steps](#first-steps)
 	- [Manual Steps](#manual-steps)
 - [Known Issues](#known-issues)
@@ -23,12 +24,38 @@ This set of scripts is meant to allow you to easily install a new JON demo consi
 
 ## PRE-REQUISITES ##
 
+- Ensure the installation of the demo/jdk into a location that the "jboss" user can access (/opt should be a functional location)
 - You can have Postgres installed before hand, but it may be better to let the script handle it as it doesn't cover every scenario of Postgres deployments...
 - Ensure you do not have any JON servers/agents running on the server you are deploying to
 - Ensure that if you do not have any JBoss servers running, but if necessary, 8080 will not be used by this demo.
 - For bundle creation to be enabled, ensure you have ant and maven installed locally
 - Package requirements:
 	wget (installed from the internet if possible and necessary)
+	
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	
+	# Supported Environments: #
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Testing at the moment is more of a manual process.  As such, there are no guarantees regarding the full functionality of all the aspects of the script on different environments.  
+
+The following environments have been tried and partly tested:
+Fedora 15 64-bit (code developed on this environment)
+Fedora 16 64-bit
+Fedora 17 64-bit [Not yet supported because only RPMs available are for PostgreSQL 9.2, unless you manually install 9.1]
+RHEL 6.1  64-bit 
+
+Components, there's no way to guarantee functioning with all versions of the required components, but the following work:
+Maven 		3.0.3, 3.0.4
+Ant   		1.8.2, 1.8.4
+JDK   		1.6.0_29 [1.7 JDK does NOT work for EAP 5.x]
+PostgreSQL	8.4, 9.1-4, 9.1-6 [9.2 is not yet supported in JON]
+
+Note: I'd be interested in hearing how this runs on OSX or any other setups people might have.
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	
 
 *********************************************************************************
 
