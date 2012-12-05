@@ -124,7 +124,12 @@ function chooseProduct () {
 
 	PRODUCT_ARRAY=(`find ${WORKSPACE_WD}/data -name "*${NAME_PATTERN}*.zip" | grep -v plugins`)
 	PRODUCT_ARRAY_LENGTH=$((${#PRODUCT_ARRAY[@]}))
-	takeInput "Select the version of $NAME_PATTERN you would like to install/extract:\n\tB. Back to Main Menu."
+	
+	if [[ "$PRODUCT_ARRAY_LENGTH" == "1" ]]; then
+		takeInput "Select the version of $NAME_PATTERN you would like to install/extract: [default 1]\n\tB. Back to Main Menu."
+	else	
+		takeInput "Select the version of $NAME_PATTERN you would like to install/extract:\n\tB. Back to Main Menu."
+	fi
 	#takeInput "\tExisting packages with '$NAME_PATTERN': " "0"
 	
 	newLine
@@ -147,6 +152,9 @@ function chooseProduct () {
 				INSTALL_BUNDLES=""
 				loadVariables
 				mainMenu
+		elif [[ "$PRODUCT_SELECTED" == "" ]]; then
+				PRODUCT_SELECTED=${PRODUCT_ARRAY[0]}
+				break
 		elif [[ "$PRODUCT_SELECTED" != +([0-9]) || "$PRODUCT_SELECTED" -lt "1" || "$PRODUCT_SELECTED" -gt "$PRODUCT_ARRAY_LENGTH" ]]; then
 			outputLog "Invalid input, must be between 1 and $PRODUCT_ARRAY_LENGTH" "4"
 			echo -en "\n\t"
@@ -159,7 +167,7 @@ function chooseProduct () {
 			outputLog "The selected product is [$PRODUCT_SELECTED]" "1"
 			break
 		fi
-		
+			
 	done
 	
 	if [[ "$NAME_PATTERN" == "jon" ]]; then
@@ -174,9 +182,10 @@ function checkOrCreateJBossUser () {
 	
 	if [ -f ${WORKSPACE_WD}/data/demo-config.properties ]; then 
 	
-		USERADD_STATUS=`grep "${JBOSS_OS_USER}:" /etc/passwd`  
-		if [[ "$USERADD_STATUS" == "" ]]; then
-	
+		#USERADD_STATUS=`grep "${JBOSS_OS_USER}:" /etc/passwd`  
+		if id -u ${JBOSS_OS_USER} >/dev/null 2>&1; then
+			outputLog "User ${JBOSS_OS_USER} already exists" "1"
+		else 
 			#If a user id is not provided, try 410, otherwise don't modify the user id for jboss
 			if [[ "$UD_ID" == "" ]]; then
 				UD_ID="510"					#Randomly selected ID
@@ -194,8 +203,6 @@ function checkOrCreateJBossUser () {
 			echo ${JBOSS_OS_USER} | passwd ${JBOSS_OS_USER} --stdin 2>&1
 			
 			outputLog "Created ${JBOSS_OS_USER} user" "2"
-		else
-			outputLog "A user called '${JBOSS_OS_USER}' already exists and will be used if needed" "1"
 		fi
 	else
 		outputLog "Giving the user a chance to set the user-defined ID for the JBoss user" "1"
@@ -500,6 +507,7 @@ function resetVariableInVariableFile () {
 	local VARIABLE_VALUE=$2
 	
 	local FILE=${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}
+	outputLog "calling resetVariableInFile with $VARIABLE_NAME $FILE $VARIABLE_VALUE" "1"
 	resetVariableInFile "$VARIABLE_NAME" "$FILE" "$VARIABLE_VALUE"
 }
 
