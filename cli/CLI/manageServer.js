@@ -63,7 +63,10 @@ function applyOperation (operation) {
 	} else if (availability == "UP" && operation == "start") {
 		println("Server is already running, no need to start it up...");
 		return true;
-	} else {
+	} else if (availability == "undefined") {
+		println("Server is not recognised, check logs and process...");
+		return true;
+	}else {
 		println("Server status [" + availability + "] is not recognised, attempting operation");
 	}
 	OperationManager.scheduleResourceOperation(serverId, operation, 0, 0, 0, 5000, new Configuration(), "CLI Operation");
