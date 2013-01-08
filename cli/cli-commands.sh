@@ -1,5 +1,5 @@
 #Load user set variables
-. $WORKSPACE_WD/cli/cli-user-settings.sh
+. "$WORKSPACE_WD/cli/cli-user-settings.sh"
 
 #function - cliCommandsMenu (cliScriptFolder) - menu to show all CLI scripts
 function cliCommandsMenu () {
@@ -14,10 +14,10 @@ function cliCommandsMenu () {
 		COUNT=1
 		
 		if [[ "$WORKSPACE_WD" != "" ]]; then
-			CLI_DIR=${WORKSPACE_WD}/cli	
+			CLI_DIR="${WORKSPACE_WD}/cli"	
 		else
 			CURRENT_DIR=`pwd`
-			CLI_DIR=${WORKSPACE_WD}/cli
+			CLI_DIR="${WORKSPACE_WD}/cli"
 		fi
 		
 		for f in `find ${CLI_DIR} -name "*.js"`
@@ -56,7 +56,7 @@ function cliCommandsMenu () {
 		if [[ "$option" == "b" || "$option" == "q" ]]; then
 			basicMenuOptions $option
 		else
-			if [[ "$option" != +([0-9]) || "$option" -lt "1" || "$option" -gt "$COUNT" ]]; then
+			if [[ ! "$option" =~ ^[[:digit:]] || "$option" -lt "1" || "$option" -gt "$COUNT" ]]; then
 				echo "Invalid input, please enter a value between 1 and $COUNT"
 			else
 				PARAMS_STRING=

@@ -168,10 +168,15 @@ function jdDeleteDemo () {
 
 #function - getStartTime () - gets the start time, stores it and outputs it
 function getStartTime () {	
-	START_DATE=`date`
-	outputLog "Started at $START_DATE" "2"
-	START_DATE_MS=`date -d "$START_DATE" +"%s"`
-	newLine
+	
+	if [[ "$START_DATE" == "" && "$START_DATE_MS" == "" ]]; then
+		START_DATE=`date`
+		outputLog "Started at $START_DATE" "2"
+		START_DATE_MS=`date -d "$START_DATE" +"%s"`
+		newLine
+	else
+		outputLog "Start timer already commenced, ignored secondary request..." "1"
+	fi
 }
 
 #function - getEndTime () - gets the end time, stores it and outputs it
@@ -194,6 +199,11 @@ function getTimeTaken () {
 	if [[ "$UPDATE_VARIABLE" != "" ]]; then
 		resetVariableInVariableFile "TIME_TAKEN_PREVIOUSLY" "${TIME_DIFF}"
 	fi
+	
+	START_DATE=""
+	START_DATE_MS=""
+	END_DATE=""
+	END_DATE_MS=""
 }
 
 function getTimeInMinsSecs () {
@@ -279,7 +289,7 @@ function jdInstallDemo () {
 					elif [[ "$NUM_JBOSS_TO_INSTALL" == "" ]]; then
 						NUM_JBOSS_TO_INSTALL=0
 						break
-					elif [[ "$NUM_JBOSS_TO_INSTALL" != +([0-9]) || "$NUM_JBOSS_TO_INSTALL" -lt "0" ]]; then
+					elif [[ ! "$NUM_JBOSS_TO_INSTALL" =~ ^[[:digit:]] || "$NUM_JBOSS_TO_INSTALL" -lt "0" ]]; then
 						outputLog "Invalid input, must be between 0 and 10" "4"
 						newLine
 					elif [[ "$NUM_JBOSS_TO_INSTALL" -gt "10" ]]; then
@@ -415,6 +425,7 @@ function jdStopDemo () {
 #function - deployJBoss () - will deploy a JBoss server with the next port number 
 function deployJBoss () {
 	
+	getStartTime
 	NEXT_SERVER=$1
 	
 	outputLog "The next server to be installed will have port set [$NEXT_SERVER]" "2"
@@ -439,6 +450,11 @@ function deployJBoss () {
 	
 	NUM_JBOSS_TO_INSTALL=$(( NUM_JBOSS_TO_INSTALL + 1 ))
 	resetVariableInVariableFile "NUM_JBOSS_TO_INSTALL" "$NUM_JBOSS_TO_INSTALL"
+	
+	newLine
+	
+	getEndTime
+	getTimeTaken "y"
 }
 
 #function - undeployJBoss () - will undeploy the last deployed JBoss server 
@@ -448,6 +464,8 @@ function undeployJBoss () {
 	
 	#Avoid attempting to undeploy if no servers are available 
 	if [[ "$LAST_SERVER" != "" ]]; then
+	
+		getStartTime
 	
 		outputLog "The last server to be installed had port set [$LAST_SERVER]" "2"
 		#TODO this is copied from jon.sh runCliscripts, should split it out to a separate function
@@ -475,5 +493,10 @@ function undeployJBoss () {
 	
 			resetVariableInVariableFile "NUM_JBOSS_TO_INSTALL" "$NUM_JBOSS_TO_INSTALL"
 		fi
+		
+		newLine
+		
+		getEndTime
+		getTimeTaken "y"
 	fi
 }

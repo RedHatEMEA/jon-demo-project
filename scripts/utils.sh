@@ -9,7 +9,7 @@ function quit () {
 
 #function - displayFunctions () - display the list of all functions 
 function displayFunctions () {
-	for f in `find ${WORKSPACE_WD} -name "*.sh"`
+	for f in `find "${WORKSPACE_WD}" -name "*.sh"`
 	do
 		outputLog "From $f" "1" "y" "n"
 		grep "#function" $f  | grep -v 'find'
@@ -122,7 +122,7 @@ function chooseProduct () {
 	
 	NAME_PATTERN=$1
 
-	PRODUCT_ARRAY=(`find ${WORKSPACE_WD}/data -name "*${NAME_PATTERN}*.zip" | grep -v plugins`)
+	PRODUCT_ARRAY=(`find "${WORKSPACE_WD}/data" -name "*${NAME_PATTERN}*.zip" | grep -v plugins`)
 	PRODUCT_ARRAY_LENGTH=$((${#PRODUCT_ARRAY[@]}))
 	
 	if [[ "$PRODUCT_ARRAY_LENGTH" == "1" ]]; then
@@ -155,7 +155,7 @@ function chooseProduct () {
 		elif [[ "$PRODUCT_SELECTED" == "" ]]; then
 				PRODUCT_SELECTED=${PRODUCT_ARRAY[0]}
 				break
-		elif [[ "$PRODUCT_SELECTED" != +([0-9]) || "$PRODUCT_SELECTED" -lt "1" || "$PRODUCT_SELECTED" -gt "$PRODUCT_ARRAY_LENGTH" ]]; then
+		elif [[ ! "$PRODUCT_SELECTED" =~ ^[[:digit:]] || "$PRODUCT_SELECTED" -lt "1" || "$PRODUCT_SELECTED" -gt "$PRODUCT_ARRAY_LENGTH" ]]; then
 			outputLog "Invalid input, must be between 1 and $PRODUCT_ARRAY_LENGTH" "4"
 			echo -en "\n\t"
 		else
@@ -180,7 +180,7 @@ function chooseProduct () {
 #function - checkOrCreateJBossUser () - checks for jboss user existence, if it exists, do nothing, otherwise create it with passwd jboss
 function checkOrCreateJBossUser () {
 	
-	if [ -f ${WORKSPACE_WD}/data/demo-config.properties ]; then 
+	if [ -f "${WORKSPACE_WD}/data/demo-config.properties" ]; then 
 	
 		#USERADD_STATUS=`grep "${JBOSS_OS_USER}:" /etc/passwd`  
 		if id -u ${JBOSS_OS_USER} >/dev/null 2>&1; then
@@ -388,25 +388,25 @@ function replaceStringInFile () {
 #function - createScriptVariablesFile () - will create the dynamic variables file used by the script - not to be checked in
 function createScriptVariablesFile () {
 	
-	if [[ -f ${WORKSPACE_WD}/data/${SCRIPT_VARIABLES} ]]; then
+	if [[ -f "${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}" ]]; then
 		outputLog "Script variables file already exists, using set values" "1"
 	else
-		touch ${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}
-		echo -e "JON_MAJOR_VERSION=" >> ${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}
-		echo -e "JON_MINOR_VERSION=" >> ${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}
-		echo -e "JON_REVISION_VERSION=" >> ${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}
-		echo -e "JON_PRODUCT_FULL_PATH=" >> ${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}
-		echo -e "JBOSS_SERVER_PORTS_PROVISIONED=" >> ${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}
-		echo -e "NUM_JBOSS_TO_INSTALL=" >> ${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}
-		echo -e "JON_DEMO_INSTALLED=" >> ${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}
-		echo -e "POSTGRES_INSTALLED=" >> ${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}
-		echo -e "POSTGRES_MAJOR_VERSION=" >> ${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}
-		echo -e "POSTGRES_MINOR_VERSION=" >> ${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}
-		echo -e "POSTGRES_SERVICE_NAME=" >> ${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}
-		echo -e "POSTGRES_JON_DB=" >> ${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}
-		echo -e "TIME_TAKEN_PREVIOUSLY=" >> ${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}
-		echo -e "JD_FOLDER=jon-demo" >> ${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}
-		echo -e "BUNDLES_ENABLED=false" >> ${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}
+		touch "${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}"
+		echo -e "JON_MAJOR_VERSION=" >> "${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}"
+		echo -e "JON_MINOR_VERSION=" >> "${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}"
+		echo -e "JON_REVISION_VERSION=" >> "${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}"
+		echo -e "JON_PRODUCT_FULL_PATH=" >> "${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}"
+		echo -e "JBOSS_SERVER_PORTS_PROVISIONED=" >> "${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}"
+		echo -e "NUM_JBOSS_TO_INSTALL=" >> "${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}"
+		echo -e "JON_DEMO_INSTALLED=" >> "${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}"
+		echo -e "POSTGRES_INSTALLED=" >> "${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}"
+		echo -e "POSTGRES_MAJOR_VERSION=" >> "${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}"
+		echo -e "POSTGRES_MINOR_VERSION=" >> "${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}"
+		echo -e "POSTGRES_SERVICE_NAME=" >> "${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}"
+		echo -e "POSTGRES_JON_DB=" >> "${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}"
+		echo -e "TIME_TAKEN_PREVIOUSLY=" >> "${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}"
+		echo -e "JD_FOLDER=jon-demo" >> "${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}"
+		echo -e "BUNDLES_ENABLED=false" >> "${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}"
 		outputLog "Script variables file created..." "1"
 		
 		chown $LOCAL_USER:$LOCAL_USER "${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}"
@@ -419,39 +419,39 @@ function createScriptVariablesFile () {
 function createDemoConfFile () {
 
 	#Create the demo-config.properties file
-	if [[ -f ${WORKSPACE_WD}/data/demo-config.properties ]]; then
+	if [[ -f "${WORKSPACE_WD}/data/demo-config.properties" ]]; then
 		outputLog "demo-config.properties file already exists, using set values" "1"
 	else
-		touch ${WORKSPACE_WD}/data/demo-config.properties
-		echo "#USER DEFINABLE VARIABLES" >> ${WORKSPACE_WD}/data/demo-config.properties
-		echo "#########################" >> ${WORKSPACE_WD}/data/demo-config.properties
-		echo "#The location where any/all installs will be placed using this menu" >> ${WORKSPACE_WD}/data/demo-config.properties
-		echo "INSTALL_LOCATION=/opt" >> ${WORKSPACE_WD}/data/demo-config.properties
-		echo -e "\n" >> ${WORKSPACE_WD}/data/demo-config.properties
-		echo "#The location of the system's JAVA install" >> ${WORKSPACE_WD}/data/demo-config.properties
-		echo "JAVA_HOME=" >> ${WORKSPACE_WD}/data/demo-config.properties
-		echo -e "\n" >> ${WORKSPACE_WD}/data/demo-config.properties
-		echo "#The location of the system's ANT install" >> ${WORKSPACE_WD}/data/demo-config.properties
-		echo "ANT_HOME=" >> ${WORKSPACE_WD}/data/demo-config.properties
-		echo -e "\n" >> ${WORKSPACE_WD}/data/demo-config.properties
-		echo "#The location of the system's MAVEN install" >> ${WORKSPACE_WD}/data/demo-config.properties
-		echo "MVN_HOME=" >> ${WORKSPACE_WD}/data/demo-config.properties
-		echo -e "\n" >> ${WORKSPACE_WD}/data/demo-config.properties
-		echo "#The local user account to use for new files and folders, root if left empty" >> ${WORKSPACE_WD}/data/demo-config.properties
-		echo "LOCAL_USER=" >> ${WORKSPACE_WD}/data/demo-config.properties
-		echo -e "\n" >> ${WORKSPACE_WD}/data/demo-config.properties
-		echo "#The local user-defined id number to use for the jboss user, to hide that user in the log in screen" >> ${WORKSPACE_WD}/data/demo-config.properties
-		echo "UD_ID=" >> ${WORKSPACE_WD}/data/demo-config.properties
-		echo -e "\n" >> ${WORKSPACE_WD}/data/demo-config.properties
-		echo "#The details of the latest version of JON, for the creation of the default file structure for the demo" >> ${WORKSPACE_WD}/data/demo-config.properties
-		echo "LATEST_JON_VERSION=jon-server-3.1.0.GA" >> ${WORKSPACE_WD}/data/demo-config.properties
-		echo -e "\n" >> ${WORKSPACE_WD}/data/demo-config.properties
-		echo "#The details of the latest supported version of PostgreSQL DB for JON, to ensure the successful install of the demo" >> ${WORKSPACE_WD}/data/demo-config.properties
-		echo "LATEST_SUPPORTED_POSTGREQ=91" >> ${WORKSPACE_WD}/data/demo-config.properties
-		echo -e "\n" >> ${WORKSPACE_WD}/data/demo-config.properties
-		echo "#The demo log level to be used across the project" >> ${WORKSPACE_WD}/data/demo-config.properties
-		echo "DEMO_LOG_LEVEL=2" >> ${WORKSPACE_WD}/data/demo-config.properties
-		echo "#########################" >> ${WORKSPACE_WD}/data/demo-config.properties
+		touch "${WORKSPACE_WD}/data/demo-config.properties"
+		echo "#USER DEFINABLE VARIABLES" >> "${WORKSPACE_WD}/data/demo-config.properties"
+		echo "#########################" >> "${WORKSPACE_WD}/data/demo-config.properties"
+		echo "#The location where any/all installs will be placed using this menu" >> "${WORKSPACE_WD}/data/demo-config.properties"
+		echo "INSTALL_LOCATION=/opt" >> "${WORKSPACE_WD}/data/demo-config.properties"
+		echo -e "\n" >> "${WORKSPACE_WD}/data/demo-config.properties"
+		echo "#The location of the system's JAVA install" >> "${WORKSPACE_WD}/data/demo-config.properties"
+		echo "JAVA_HOME=" >> "${WORKSPACE_WD}/data/demo-config.properties"
+		echo -e "\n" >> "${WORKSPACE_WD}/data/demo-config.properties"
+		echo "#The location of the system's ANT install" >> "${WORKSPACE_WD}/data/demo-config.properties"
+		echo "ANT_HOME=" >> "${WORKSPACE_WD}/data/demo-config.properties"
+		echo -e "\n" >> "${WORKSPACE_WD}/data/demo-config.properties"
+		echo "#The location of the system's MAVEN install" >> "${WORKSPACE_WD}/data/demo-config.properties"
+		echo "MVN_HOME=" >> "${WORKSPACE_WD}/data/demo-config.properties"
+		echo -e "\n" >> "${WORKSPACE_WD}/data/demo-config.properties"
+		echo "#The local user account to use for new files and folders, root if left empty" >> "${WORKSPACE_WD}/data/demo-config.properties"
+		echo "LOCAL_USER=" >> "${WORKSPACE_WD}/data/demo-config.properties"
+		echo -e "\n" >> "${WORKSPACE_WD}/data/demo-config.properties"
+		echo "#The local user-defined id number to use for the jboss user, to hide that user in the log in screen" >> "${WORKSPACE_WD}/data/demo-config.properties"
+		echo "UD_ID=" >> "${WORKSPACE_WD}/data/demo-config.properties"
+		echo -e "\n" >> "${WORKSPACE_WD}/data/demo-config.properties"
+		echo "#The details of the latest version of JON, for the creation of the default file structure for the demo" >> "${WORKSPACE_WD}/data/demo-config.properties"
+		echo "LATEST_JON_VERSION=jon-server-3.1.0.GA" >> "${WORKSPACE_WD}/data/demo-config.properties"
+		echo -e "\n" >> "${WORKSPACE_WD}/data/demo-config.properties"
+		echo "#The details of the latest supported version of PostgreSQL DB for JON, to ensure the successful install of the demo" >> "${WORKSPACE_WD}/data/demo-config.properties"
+		echo "LATEST_SUPPORTED_POSTGREQ=91" >> "${WORKSPACE_WD}/data/demo-config.properties"
+		echo -e "\n" >> "${WORKSPACE_WD}/data/demo-config.properties"
+		echo "#The demo log level to be used across the project" >> "${WORKSPACE_WD}/data/demo-config.properties"
+		echo "DEMO_LOG_LEVEL=2" >> "${WORKSPACE_WD}/data/demo-config.properties"
+		echo "#########################" >> "${WORKSPACE_WD}/data/demo-config.properties"
 		outputLog "demo-config.properties file created..." "1"
 		
 		chown $LOCAL_USER:$LOCAL_USER "${WORKSPACE_WD}/data/demo-config.properties"
@@ -464,8 +464,8 @@ function createDemoConfFile () {
 #function - createDemoDataDir () - create the data directory to prep for all the other file/folder creations
 function createDemoDataDir () {
 	#Create the data folder only	
-	if [[ ! -d ${WORKSPACE_WD}/data ]]; then
-		mkdir ${WORKSPACE_WD}/data
+	if [[ ! "-d ${WORKSPACE_WD}/data" ]]; then
+		mkdir "${WORKSPACE_WD}/data"
 	fi
 }
 
@@ -483,22 +483,22 @@ function createDemoFsStructure () {
 	outputLog "JON VERSION is set to $JON_VERSION"
 
 	#Create the data folder and it's subdirectory	
-	if [[ ! -d ${WORKSPACE_WD}/data/jon/$JON_VERSION ]]; then
-		mkdir -p ${WORKSPACE_WD}/data/jon/$JON_VERSION
+	if [[ ! -d "${WORKSPACE_WD}/data/jon/$JON_VERSION" ]]; then
+		mkdir -p "${WORKSPACE_WD}/data/jon/$JON_VERSION"
 		
 		#Currently conf is not used for anything, could add it back if necessary
 		#mkdir ${WORKSPACE_WD}/data/jon/$JON_VERSION/conf
 
-		mkdir ${WORKSPACE_WD}/data/jon/$JON_VERSION/patches
-		mkdir ${WORKSPACE_WD}/data/jon/$JON_VERSION/plugins
+		mkdir "${WORKSPACE_WD}/data/jon/$JON_VERSION/patches"
+		mkdir "${WORKSPACE_WD}/data/jon/$JON_VERSION/plugins"
 		
 	fi	
 	
-	if [[ ! -d ${WORKSPACE_WD}/data/jboss ]]; then
-		mkdir ${WORKSPACE_WD}/data/jboss
+	if [[ ! -d "${WORKSPACE_WD}/data/jboss" ]]; then
+		mkdir "${WORKSPACE_WD}/data/jboss"
 	fi
 	
-	chown $LOCAL_USER:$LOCAL_USER -R ${WORKSPACE_WD}/data
+	chown $LOCAL_USER:$LOCAL_USER -R "${WORKSPACE_WD}/data"
 }
 
 #function - resetVariableInVariableFile (variableName, [variableValue]) - calls replaceStringInFile but always in SCRIPT_VARIABLES, allowing for simplified use of the function
@@ -506,7 +506,7 @@ function resetVariableInVariableFile () {
 	local VARIABLE_NAME=$1
 	local VARIABLE_VALUE=$2
 	
-	local FILE=${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}
+	local FILE="${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}"
 	outputLog "calling resetVariableInFile with $VARIABLE_NAME $FILE $VARIABLE_VALUE" "1"
 	resetVariableInFile "$VARIABLE_NAME" "$FILE" "$VARIABLE_VALUE"
 }
@@ -724,7 +724,7 @@ function waitFor () {
 
 #function - checkBundlesEnabled () - check if bundles are enabled by checking jboss and ant being provided
 function checkBundlesEnabled () {
-	JBOSS_PROVIDED=`find ${WORKSPACE_WD}/data/jboss -name "jboss-eap-*.zip"`
+	JBOSS_PROVIDED=`find "${WORKSPACE_WD}/data/jboss" -name "jboss-eap-*.zip"`
 
 	if [[ "$ANT_HOME" != "" ]]; then
 		ANT_PROVIDED="found"
@@ -753,7 +753,7 @@ function checkBundlesEnabled () {
 		
 		echo ***Bundle options***
 		echo "CB. Create bundles"
-		BUNDLES_CREATED=`find ${WORKSPACE_WD}/data -name "bundles"`
+		BUNDLES_CREATED=`find "${WORKSPACE_WD}/data" -name "bundles"`
 		if [[ "$BUNDLES_CREATED" != "" ]]; then
 			echo "DB. Delete bundles"
 		fi

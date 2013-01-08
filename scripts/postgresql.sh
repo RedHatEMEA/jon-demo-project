@@ -113,7 +113,7 @@ function getPostgresRepo () {
 	BASE_URL="http://yum.postgresql.org/"
 	WGET_TMP_FILE="${WORKSPACE_WD}/data/wget.tmp"
 	
-	wget --quiet ${BASE_URL}${REPO_PACKAGES_FILE} -O ${WORKSPACE_WD}/data/$REPO_PACKAGES_FILE > $WGET_TMP_FILE
+	wget --quiet ${BASE_URL}${REPO_PACKAGES_FILE} -O "${WORKSPACE_WD}/data/$REPO_PACKAGES_FILE" > $WGET_TMP_FILE
 	
 	if [[ -f "${WORKSPACE_WD}/data/$REPO_PACKAGES_FILE" ]]; then
 		choosePostgresVersion			#sets VERSION
@@ -134,7 +134,7 @@ function getPostgresRepo () {
 		REPO_WO_RPM="/${DOT_VERSION}/${DISTRO}/${DISTRO_NICK}-${DISTRO_VERSION}-${ARCH}/"
 		
 		outputLog "Link used to get build number: ${REPO_WO_RPM}${RPM}" "1"
-		LINK=`grep ${REPO_WO_RPM}${RPM} ${WORKSPACE_WD}/data/$REPO_PACKAGES_FILE`
+		LINK=`grep ${REPO_WO_RPM}${RPM} "${WORKSPACE_WD}/data/$REPO_PACKAGES_FILE"`
 		outputLog "Link from file is $LINK" "1"
 		INDEX=`awk -v a="$LINK" -v b=".noarch" 'BEGIN{print index(a,b)}'`
 		outputLog "Index found at $INDEX" "1"
@@ -172,9 +172,9 @@ function installPostgres () {
 
 	outputLog "Getting postgreSQL pgdg RPM from $REPO\n" "2"
 		
-	curl -0 $REPO -o ${WORKSPACE_WD}/data/$RPM 2>/dev/null
+	curl -0 $REPO -o "${WORKSPACE_WD}/data/$RPM" 2>/dev/null
 	
-	rpm -ivh ${WORKSPACE_WD}/data/$RPM
+	rpm -ivh "${WORKSPACE_WD}/data/$RPM"
 	newLine
 	
 	BUILD_VERSION=
@@ -218,7 +218,7 @@ function installPostgres () {
 			service $POSTGRES_SERVICE_NAME initdb
 			
 			outputLog "Copying postgres config file to $POSTGRES_INSTALL_LOCATION/${MAJOR_VERSION}.${MINOR_VERSION}/data/pg_hba.conf" "2"
-			cp ${WORKSPACE_WD}/conf/postgres/pg_hba.conf $POSTGRES_INSTALL_LOCATION/${MAJOR_VERSION}.${MINOR_VERSION}/data/pg_hba.conf
+			cp "${WORKSPACE_WD}/conf/postgres/pg_hba.conf" $POSTGRES_INSTALL_LOCATION/${MAJOR_VERSION}.${MINOR_VERSION}/data/pg_hba.conf
 	
 			outputLog "Setting $POSTGRES_SERVICE_NAME to default to on after a machine restart..." "2"
 			chkconfig $POSTGRES_SERVICE_NAME on
@@ -251,9 +251,9 @@ function installPostgres () {
 #function - deletePostgresTmpFiles () - will delete all temp files created in the process of install postgresql
 function deletePostgresTmpFiles () {	
 	deleteFile $WGET_TMP_FILE
-	deleteFile ${WORKSPACE_WD}/data/$REPO_PACKAGES_FILE
-	deleteFile ${WORKSPACE_WD}/data/$RPM	
-	deleteFile ${WORKSPACE_WD}/data/list.txt
+	deleteFile "${WORKSPACE_WD}/data/$REPO_PACKAGES_FILE"
+	deleteFile "${WORKSPACE_WD}/data/$RPM"
+	deleteFile "${WORKSPACE_WD}/data/list.txt"
 }
 
 #function - findLatestPgRpmVersion (rpmArray) - find the version with the highest minor/build numbers and choose that
@@ -315,7 +315,7 @@ function findLatestPgRpmVersion () {
 		elif [[ "$DETAIL_VERSION_TO_INSTALL" == "" ]]; then
 			DETAIL_VERSION_TO_INSTALL=$TOP_CHOICE
 			break
-		elif [[ "$DETAIL_VERSION_TO_INSTALL" != +([0-9]) || "$DETAIL_VERSION_TO_INSTALL" -le "0" || "$DETAIL_VERSION_TO_INSTALL" -gt "$COUNT" ]]; then
+		elif [[ ! "$DETAIL_VERSION_TO_INSTALL" =~ ^[[:digit:]] || "$DETAIL_VERSION_TO_INSTALL" -le "0" || "$DETAIL_VERSION_TO_INSTALL" -gt "$COUNT" ]]; then
 			outputLog "Invalid input, must be between 1 and $COUNT" "4"
 			newLine
 		else
@@ -340,7 +340,7 @@ function choosePostgresVersion () {
 	
 	#Truncate the file to only the available repos
 	local LIST_FILE="${WORKSPACE_WD}/data/list.txt"
-	sed '/Available Repository RPMs/, /d releases/ !d' ${WORKSPACE_WD}/data/repopackages.php > $LIST_FILE
+	sed '/Available Repository RPMs/, /d releases/ !d' "${WORKSPACE_WD}/data/repopackages.php" > $LIST_FILE
 	
 	#Get the list of a tags containing the postgres version numbers
 	TEMP=`grep "<a name=" $LIST_FILE`
@@ -447,7 +447,7 @@ function choosePostgresVersion () {
 			if [[ "$VERSION" == "b" || "$VERSION" == "B" ]]; then
 				deletePostgresTmpFiles
 				mainMenu
-			elif [[ "$VERSION" != +([0-9]) || "$VERSION" -lt "1" || "$VERSION" -gt "$VERSION_ARRAY_LENGTH" ]]; then
+			elif [[ ! "$VERSION" =~ ^[[:digit:]] || "$VERSION" -lt "1" || "$VERSION" -gt "$VERSION_ARRAY_LENGTH" ]]; then
 				outputLog "Invalid input, must be between 1 and $VERSION_ARRAY_LENGTH" "4"
 				newLine
 			else

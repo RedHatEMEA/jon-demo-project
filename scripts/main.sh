@@ -65,36 +65,36 @@ function setWorkingDirectory () {
 function loadScripts () {
 	
 	#Include necessary shell scripts
-	. ${WORKSPACE_WD}/scripts/debug.sh
+	. "${WORKSPACE_WD}/scripts/debug.sh"
 
-	. ${WORKSPACE_WD}/scripts/utils.sh
-	. ${WORKSPACE_WD}/scripts/variables.sh
-	. ${WORKSPACE_WD}/scripts/ecUtils.sh
-	. ${WORKSPACE_WD}/scripts/postgresql.sh
-	. ${WORKSPACE_WD}/scripts/jon.sh
-	. ${WORKSPACE_WD}/scripts/setupServerBundles.sh
-	. ${WORKSPACE_WD}/scripts/provision.sh
-	. ${WORKSPACE_WD}/scripts/unprovision.sh
-	. ${WORKSPACE_WD}/scripts/jd-demo.sh
-	. ${WORKSPACE_WD}/scripts/menuFunctions.sh
-	. ${WORKSPACE_WD}/scripts/menuManageServers.sh
-	. ${WORKSPACE_WD}/scripts/manageBundles.sh
+	. "${WORKSPACE_WD}/scripts/utils.sh"
+	. "${WORKSPACE_WD}/scripts/variables.sh"
+	. "${WORKSPACE_WD}/scripts/ecUtils.sh"
+	. "${WORKSPACE_WD}/scripts/postgresql.sh"
+	. "${WORKSPACE_WD}/scripts/jon.sh"
+	. "${WORKSPACE_WD}/scripts/setupServerBundles.sh"
+	. "${WORKSPACE_WD}/scripts/provision.sh"
+	. "${WORKSPACE_WD}/scripts/unprovision.sh"
+	. "${WORKSPACE_WD}/scripts/jd-demo.sh"
+	. "${WORKSPACE_WD}/scripts/menuFunctions.sh"
+	. "${WORKSPACE_WD}/scripts/menuManageServers.sh"
+	. "${WORKSPACE_WD}/scripts/manageBundles.sh"
 	
-	. ${WORKSPACE_WD}/cli/cli-commands.sh
+	. "${WORKSPACE_WD}/cli/cli-commands.sh"
 
 }
 
 function loadVariables () {
 	
 	if [[ -f "${WORKSPACE_WD}/data/script_variables.sh" ]]; then
-		. ${WORKSPACE_WD}/data/script_variables.sh
+		. "${WORKSPACE_WD}/data/script_variables.sh"
 	fi
 	
 	if [[ -f "${WORKSPACE_WD}/data/demo-config.properties" ]]; then
-		. ${WORKSPACE_WD}/data/demo-config.properties
+		. "${WORKSPACE_WD}/data/demo-config.properties"
 	fi 
 	
-	. ${WORKSPACE_WD}/scripts/variables.sh
+	. "${WORKSPACE_WD}/scripts/variables.sh"
 	getAgentFolder
 	getRHQCLIDetails
 	
@@ -480,7 +480,7 @@ function deleteMenu () {
 						outputLog "Only deleting the data, as the demo is not installed..."
 					fi
 					
-					deleteFolder ${WORKSPACE_WD}/data
+					deleteFolder "${WORKSPACE_WD}/data"
 					initialise
 				fi
 				newLine
@@ -500,19 +500,19 @@ function deleteMenu () {
 					deleteFolder "${WORKSPACE_WD}/data/bundles"
 					
 					#Delete any expanded JBoss ZIP directories
-					JBOSS_DIR=`ls -d ${WORKSPACE_WD}/data/jboss/*/ 2>&1`
+					JBOSS_DIR=`ls -d "${WORKSPACE_WD}/"data/jboss/*/ 2>&1`
 					
 					if [[ "$JBOSS_DIR" =~ "cannot access" ]]; then
 						outputLog "No JBoss was provided, so nothing to delete."
 					else
-						for d in `ls -d ${WORKSPACE_WD}/data/jboss/*/`
+						for d in `ls -d "${WORKSPACE_WD}/"data/jboss/*/`
 						do
 							deleteFolder $d
 						done
 					fi
 					
 					#Delete the script_variables
-					deleteFile ${WORKSPACE_WD}/data/$SCRIPT_VARIABLES
+					deleteFile "${WORKSPACE_WD}/data/$SCRIPT_VARIABLES"
 					outputLog "All script data files deleted, re-initialsing..." "2"
 					initialise
 				fi
@@ -589,7 +589,7 @@ function changeLogLevel () {
 			outputLog "The log level cannot be empty, please input it again." "4"
 		elif [[ "$LOG_CHANGE" == "b" || "$LOG_CHANGE" == "B" ]]; then
 			mainMenu
-		elif [[ "$LOG_CHANGE" != +([1-4]) ]]; then
+		elif [[ "$LOG_CHANGE" != "+([1-4])" ]]; then
 			outputLog "The chosen log level [$LOG_CHANGE] is not an appropriate option, select a number between 1 and 4 relating to the appropriate log level." "4"
 			LOG_CHANGE=""
 		else
@@ -605,7 +605,7 @@ function changeLogLevel () {
 #function - getDemoInstallFolder() - gets the folder used to install the demo into, from SCRIPT_VARIABLES, outputs/returns the name
 function getDemoInstallFolder() {
 
-	GET_FOLDER=`grep "JD_FOLDER=" ${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}`
+	GET_FOLDER=`grep "JD_FOLDER=" "${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}"`
 	FOLDER=${GET_FOLDER#*JD_FOLDER=}
 	echo $FOLDER
 }
@@ -633,12 +633,12 @@ function checkScriptPrereqs () {
 		sed -i '/127.0.0.1/s|$| '${HOSTNAME}'|' /etc/hosts
 	fi
 	#Run checks on the system for the pre-reqs
-	JON_PROVIDED=`find ${WORKSPACE_WD}/data/jon/ -name "jon-server-*.zip"`
+	JON_PROVIDED=`find "${WORKSPACE_WD}/data/jon/" -name "jon-server-*.zip"`
 	checkForPostgresOnSystem
 	
 	ERROR=false
 	#If any of the pre-reqs are not met - or it's the first start up - then process them
-	if [[ ! -f ${WORKSPACE_WD}/data/${SCRIPT_VARIABLES} || "$JON_PROVIDED" == "" || "$JAVA_HOME" == "" ]]; then
+	if [[ ! -f "${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}" || "$JON_PROVIDED" == "" || "$JAVA_HOME" == "" ]]; then
 		splashScreen
 		newLine
 		
@@ -714,11 +714,11 @@ function checkScriptPrereqs () {
 #function - updateLocalUser () - updates the owner of the data and jon demo install location to the local user
 function updateLocalUser () {
 	if [[ "$LOCAL_USER" != "" ]]; then
-		if [[ -d ${WORKSPACE_WD}/data ]]; then
-			DATA_OWNER=`stat -c %U ${WORKSPACE_WD}/data`
+		if [[ -d "${WORKSPACE_WD}/data" ]]; then
+			DATA_OWNER=`stat -c %U "${WORKSPACE_WD}/data"`
 			
 			if [[ "$DATA_OWNER" != "$LOCAL_USER" ]]; then
-				chown $LOCAL_USER:$LOCAL_USER -R ${WORKSPACE_WD}/data
+				chown $LOCAL_USER:$LOCAL_USER -R "${WORKSPACE_WD}/data"
 			fi
 		fi
 		
