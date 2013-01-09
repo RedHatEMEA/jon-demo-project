@@ -69,7 +69,9 @@ function checkForPostgresOnSystem () {
 				outputLog "Version of postgresql not found in service name, ignoring version numbers"
 			fi
 			loadVariables
-		fi			
+		fi	
+	else
+		outputLog "POSTGRES_INSTALLED is set to 'y'"		
 	fi
 }
 

@@ -212,11 +212,11 @@ function getTimeInMinsSecs () {
 	MINS=`expr ${TIME_DIFF} / 60`
 	SECS=`expr ${TIME_DIFF} % 60`
 	
-	if [ $SECS -lt 10 ]; then
+	if [[ "$SECS" -lt "10" ]]; then
 		SECS="0${SECS}"
 	fi
 	 
-	if [ $MINS -lt 10 ]; then
+	if [[ "$MINS" -lt "10" ]]; then
 		MINS="0${MINS}"
 	elif [[ $MINS == 0 ]]; then
 		MINS="00"
@@ -246,7 +246,7 @@ function jdInstallDemo () {
 		
 		checkForPostgresOnSystem
 		checkPostgresInstall	
-		if [[ "$POSTGRES_INSTALLED" == "n" ]]; then 
+		if [[ "$POSTGRES_INSTALLED" == "n" || "$POSTGRES_INSTALLED" == "" ]]; then
 			getPostgresRepo
 		fi
 		
@@ -308,9 +308,11 @@ function jdInstallDemo () {
 		newLine
 		chooseProduct "jon"
 	
-		if [[ "$POSTGRES_INSTALLED" == "n" ]]; then 
+		if [[ "$POSTGRES_INSTALLED" == "n" || "$POSTGRES_INSTALLED" == "" ]]; then 
 			installPostgres
 			deletePostgresTmpFiles
+		else
+			outputLog "Postgres is installed, moving on..."
 		fi
 		
 		newLine

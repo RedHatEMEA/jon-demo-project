@@ -589,7 +589,7 @@ function changeLogLevel () {
 			outputLog "The log level cannot be empty, please input it again." "4"
 		elif [[ "$LOG_CHANGE" == "b" || "$LOG_CHANGE" == "B" ]]; then
 			mainMenu
-		elif [[ "$LOG_CHANGE" != "+([1-4])" ]]; then
+		elif [[ ! "$LOG_CHANGE" =~ ^[[:digit:]] || "$LOG_CHANGE" -lt 1 || "$LOG_CHANGE" -gt 4 ]]; then
 			outputLog "The chosen log level [$LOG_CHANGE] is not an appropriate option, select a number between 1 and 4 relating to the appropriate log level." "4"
 			LOG_CHANGE=""
 		else
