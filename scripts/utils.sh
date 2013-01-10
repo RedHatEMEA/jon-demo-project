@@ -464,7 +464,7 @@ function createDemoConfFile () {
 #function - createDemoDataDir () - create the data directory to prep for all the other file/folder creations
 function createDemoDataDir () {
 	#Create the data folder only	
-	if [[ ! "-d ${WORKSPACE_WD}/data" ]]; then
+	if [[ ! -d "${WORKSPACE_WD}/data" ]]; then
 		mkdir "${WORKSPACE_WD}/data"
 	fi
 }
