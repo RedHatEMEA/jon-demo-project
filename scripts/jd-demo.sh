@@ -323,6 +323,7 @@ function jdInstallDemo () {
 		while true;
 		do	
 			if [[ "$POSTGRES_SERVICE_STATUS" =~ "is running" ]]; then
+				outputLog "Postgres service already started, moving onto creating the user..." "2"
 				createPostgresUser
 				break
 			else
