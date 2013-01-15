@@ -494,8 +494,11 @@ function getDistroDetails () {
 #function - createPostgresUser ()- create a user for postgres, by default using rhqadmin, otherwise request input displaying current users
 function createPostgresUser () {
 
-	createuser -h 127.0.0.1 -p 5432 -U postgres -S -D -R $POSTGRES_USER 2>&1
-	if [[ "$?" == "1" ]]; then
+	DB_CREATE_USER=`createuser -h 127.0.0.1 -p 5432 -U postgres -S -D -R $POSTGRES_USER 2>&1`
+	if [[ "$DB_CREATE_USER" =~ "could not connect" ]]; then 
+		outputLog "Could not connect to postgres to create user [$POSTGRES_USER]!" "4"
+		mainMenu
+	elif [[ "$?" == "1" ]]; then
 		outputLog "postgres user [$POSTGRES_USER] already exists, progressing using this user." "2" 
 		newLine
 	else
