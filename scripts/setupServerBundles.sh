@@ -12,7 +12,7 @@ function setupJonServer () {
 	newLine
 
 	executeAgentCommand discovery
-	waitFor "RuntimeDiscoveryExecutor)- Scanned platform and" "$AGENT_LOG_FOLDER" "20" "Awaiting server detection in JON..."
+	waitFor "RuntimeDiscoveryExecutor)- Scanned platform and" "$AGENT_LOG_FOLDER" "40" "Awaiting server detection in JON..."
 	
 	newLine
 	importResources
