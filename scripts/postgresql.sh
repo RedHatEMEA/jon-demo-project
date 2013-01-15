@@ -303,6 +303,7 @@ function findLatestPgRpmVersion () {
 	
 	while true;
 	do
+		newLine
 		takeInput "Choose the build/maintenance version you desire, it's recommended to use the default for 9.1: (${TOP_BUILD_NUMBER}-${TOP_MAINTENANCE_NUMBER})"
 		read DETAIL_VERSION_TO_INSTALL
 		
