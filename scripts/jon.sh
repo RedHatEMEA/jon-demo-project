@@ -120,16 +120,19 @@ function silentlyInstallJon () {
 	#Check which agent is used and wait for it to connect to the server, necessary to use the CLI to deploy, etc...
 	checkEmbeddedAgent
 	
-	if [[ "$EMBEDDED_AGENT_ACTIVE" == "true" ]]; then
-		waitFor "Embedded RHQ Agent has been started!" "$JD_INSTALL_LOCATION/$JON_PRODUCT/logs/rhq-server-log4j.log" "180" "Waiting for embedded agent to start"
-	else
-		outputLog "Embedded agent not enabled, not waiting for it..."
-		waitFor "has connected to this server at" "$JD_INSTALL_LOCATION/$JON_PRODUCT/logs/rhq-server-log4j.log" "180" "Waiting for stand-alone agent to connect to server"
-		
-		waitFor "Discovered new platform with" "$AGENT_LOG_FOLDER" "45" "Waiting for availability report to be sent to server from agent"
+	if [[ "$AGENT_INSTALLED" == "y" ]]; then
+	
+		if [[ "$EMBEDDED_AGENT_ACTIVE" == "true" ]]; then
+			waitFor "Embedded RHQ Agent has been started!" "$JD_INSTALL_LOCATION/$JON_PRODUCT/logs/rhq-server-log4j.log" "180" "Waiting for embedded agent to start"
+		else
+			outputLog "Embedded agent not enabled, not waiting for it..."
+			waitFor "has connected to this server at" "$JD_INSTALL_LOCATION/$JON_PRODUCT/logs/rhq-server-log4j.log" "180" "Waiting for stand-alone agent to connect to server"
+			
+			waitFor "Discovered new platform with" "$AGENT_LOG_FOLDER" "45" "Waiting for availability report to be sent to server from agent"
+		fi
+	
+		runCLIScripts
 	fi
-
-	runCLIScripts
 		
 	#Set the entire jon demo directory to be owned by the LOCAL_USER
 	chown $JBOSS_OS_USER:$JBOSS_OS_USER -R "$JD_INSTALL_LOCATION"
@@ -365,15 +368,23 @@ function deployAgent () {
 	
 	outputLog "Creating JON Agent in $JON_TOOLS" "2"
 	newLine
-	cp $JON_DIRECTORY/$JON_RHQ_EAR/rhq-downloads/rhq-agent/rhq*agent*.jar $JON_TOOLS
+	
+	if [[ -f $JON_DIRECTORY/$JON_RHQ_EAR/rhq-downloads/rhq-agent/rhq*agent*.jar ]]; then
+		cp $JON_DIRECTORY/$JON_RHQ_EAR/rhq-downloads/rhq-agent/rhq*agent*.jar $JON_TOOLS
 		
-	AGENT_JAR_NAME=`find $JON_TOOLS/ -name "rhq*agent*.jar"`
-	java -jar $AGENT_JAR_NAME --install=$JON_TOOLS/
+		AGENT_JAR_NAME=`find $JON_TOOLS/ -name "rhq*agent*.jar"`
+		java -jar $AGENT_JAR_NAME --install=$JON_TOOLS/
+		
+		initialSetup
+		
+		deleteFile $JON_TOOLS/rhq*agent*.jar
+		mv rhq-agent-update.log $JON_TOOLS/rhq-agent
+		resetVariableInVariableFile "AGENT_INSTALLED" "y"
 	
-	initialSetup
-	
-	deleteFile $JON_TOOLS/rhq*agent*.jar
-	mv rhq-agent-update.log $JON_TOOLS/rhq-agent
+	else
+		resetVariableInVariableFile "AGENT_INSTALLED" "n"
+		outputLog "The agent was not found and will not be installed." "4"
+	fi
 }
 
 #function - getAgentFolder () - creates variables for AGENT_FOLDER and AGENT_LOG_FOLDER
