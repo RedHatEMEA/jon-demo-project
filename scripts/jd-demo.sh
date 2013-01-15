@@ -153,6 +153,7 @@ function jdDeleteDemo () {
 		resetVariableInVariableFile "JBOSS_SERVER_PORTS_PROVISIONED"
 		resetVariableInVariableFile "NUM_JBOSS_TO_INSTALL"
 		resetVariableInVariableFile "POSTGRES_JON_DB"
+		resetVariableInVariableFile "AGENT_INSTALLED"
 		
 			
 		newLine
@@ -316,8 +317,18 @@ function jdInstallDemo () {
 		fi
 		
 		newLine
-				
-		createPostgresUser
+		
+		POSTGRES_SERVICE_STATUS=`service $POSTGRES_SERVICE_NAME status`
+		
+		while true;
+		do	
+			if [[ "$POSTGRES_SERVICE_STATUS" =~ "is running" ]]; then
+				createPostgresUser
+				break
+			else
+				outputLog "Waiting for postgres service to be up and running..." "2"
+			fi
+		done	
 		
 		#Create the bundles if enabled
 		if [[ "$INSTALL_BUNDLES" == "yes" ]]; then
