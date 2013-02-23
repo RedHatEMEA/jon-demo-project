@@ -201,12 +201,7 @@ function checkOrCreateJBossUser () {
 			fi
 			echo ${JBOSS_OS_USER} | passwd ${JBOSS_OS_USER} --stdin 2>&1
 
-			if [ $? -ne 0 ]; then
-					outputLog "Failed to set password for jboss user: ${JBOSS_OS_USER}. Are you root?" "4"
-					exit
-			else			
-					outputLog "Created jboss user: ${JBOSS_OS_USER}" "2"
-			fi
+			outputLog "Created jboss user: ${JBOSS_OS_USER}" "2"
 		fi
 	else
 		outputLog "Giving the user a chance to set the user-defined ID for the JBoss user" "1"

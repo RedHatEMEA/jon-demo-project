@@ -735,13 +735,13 @@ function updateLocalUser () {
 function initialise () {
 	loadScripts
 	loadVariables
+	checkScriptUser
 	checkOrCreateJBossUser	
 	createDemoDataDir
 	createScriptVariablesFile
 	createDemoConfFile
 	createDemoFsStructure
 	checkScriptPrereqs
-	checkScriptUser
 	updateLocalUser
 	loadScripts
 	loadVariables
