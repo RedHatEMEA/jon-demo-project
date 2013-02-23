@@ -318,11 +318,12 @@ function jdInstallDemo () {
 		
 		newLine
 		
-		POSTGRES_SERVICE_STATUS=`service $POSTGRES_SERVICE_NAME status`
 		
 		while true;
 		do	
-			if [[ "$POSTGRES_SERVICE_STATUS" =~ "is running" ]]; then
+			POSTGRES_SERVICE_STATUS=`systemctl is-active $POSTGRES_SERVICE_NAME`
+
+			if [[ "$POSTGRES_SERVICE_STATUS" =~ "active" ]]; then
 				outputLog "Postgres service already started, moving onto creating the user..." "2"
 				createPostgresUser
 				break
