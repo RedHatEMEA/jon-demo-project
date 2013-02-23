@@ -328,6 +328,7 @@ function jdInstallDemo () {
 				break
 			else
 				outputLog "Waiting for postgres service to be up and running..." "2"
+				sleep 1
 			fi
 		done	
 		
