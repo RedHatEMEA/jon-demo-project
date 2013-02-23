@@ -19,17 +19,19 @@ function checkForPostgresOnSystem () {
 		POSTGRES_SERVICE_NAME=${POSTGRES_SERVICE_FILE#*$INIT_D/}
 		
 		if [[ "$POSTGRES_SERVICE_FILE" == "" ]]; then
-			outputLog "Postgres service file is not found on the file system." "1"
+			outputLog "Postgres init.d/ file is not found on the file system." "1"
 			
 			SYSTEMCTL_AVAILABLE=`systemctl 2>&1`
 			
 			if [[ "$SYSTEMCTL_AVAILABLE" =~ "command not found" ]]; then
 				outputLog "Working on RHEL with no systemctl, moving on" "1"
 			else
+				outputLog "Found systemd. Looking for postgres as a systemd service." "1"
+
 				CHECK_SYSTEM=`systemctl | grep postgres`
 				CHECK_SYSTEM=${CHECK_SYSTEM%% *}	##Remove anything after the space, if there's an error
-	
-				local CHECK_INSTALL=`find /etc/systemd/system/multi-user.target.wants -name "$POSTGRES_SERVICE_NAME"`
+
+				local CHECK_INSTALL=`find /usr/lib/systemd/system/ -name "$CHECK_SYSTEM"`
 	
 				if [[ "$CHECK_SYSTEM" != "" && "$CHECK_INSTALL" != "" ]]; then
 					POSTGRES_SERVICE_NAME=${CHECK_SYSTEM%.service*}
