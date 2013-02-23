@@ -181,7 +181,6 @@ function chooseProduct () {
 function checkOrCreateJBossUser () {
 	
 	if [ -f "${WORKSPACE_WD}/data/demo-config.properties" ]; then 
-	
 		#USERADD_STATUS=`grep "${JBOSS_OS_USER}:" /etc/passwd`  
 		if id -u ${JBOSS_OS_USER} >/dev/null 2>&1; then
 			outputLog "User ${JBOSS_OS_USER} already exists" "1"
@@ -192,7 +191,7 @@ function checkOrCreateJBossUser () {
 			fi
 			
 			USER_ID_AVAILABLE=`grep "${UD_ID}:${UD_ID}" /etc/passwd`
-			
+		
 			#Create a local user (system user breaks jboss start up)
 			if [[ "${USER_ID_AVAILABLE}" == "" ]]; then
 				useradd -u ${UD_ID} ${JBOSS_OS_USER} 2>/dev/null
@@ -201,8 +200,13 @@ function checkOrCreateJBossUser () {
 				useradd ${JBOSS_OS_USER} 2>/dev/null
 			fi
 			echo ${JBOSS_OS_USER} | passwd ${JBOSS_OS_USER} --stdin 2>&1
-			
-			outputLog "Created ${JBOSS_OS_USER} user" "2"
+
+			if [ $? -ne 0 ]; then
+					outputLog "Failed to set password for jboss user: ${JBOSS_OS_USER}. Are you root?" "4"
+					exit
+			else			
+					outputLog "Created jboss user: ${JBOSS_OS_USER}" "2"
+			fi
 		fi
 	else
 		outputLog "Giving the user a chance to set the user-defined ID for the JBoss user" "1"
