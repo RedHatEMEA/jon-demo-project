@@ -41,11 +41,12 @@ This set of scripts is meant to allow you to easily install a new JON demo consi
 Testing at the moment is more of a manual process.  As such, there are no guarantees regarding the full functionality of all the aspects of the script on different environments.  
 
 The following environments have been tried and partly tested with the following results:
-SUCCESS:	Fedora 15 64-bit (code developed on this environment)
+SUCCESS:	Fedora 15 64-bit (original code development environment)
 SUCCESS:	Fedora 16 64-bit
-SUCCESS:	RHEL 6.1  64-bit
+CONFIRMED on 2013.04.13:	RHEL 6.1  64-bit (current code development environment)
+CONFIRMED on 2013.04.13:	Fedora 17 64-bit 
 
-FAILURE:	Fedora 17 64-bit [Not yet supported because only RPMs available are for PostgreSQL 9.2, unless you manually install 9.1]
+FAILURE:   on 2013.04.13: Fedora 18 64-bit [Not yet supported because only RPMs available are for PostgreSQL 9.2, unless you manually install 9.1]
 FAILURE:	MAC OSX 10.8 [Non-transferable linux commands such as useradd, wget, etc...]   
 
 Components, there's no way to guarantee functioning with all versions of the required components, but the following work:
