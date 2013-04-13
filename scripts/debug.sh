@@ -7,6 +7,7 @@
 ##4 == ERROR
 ##*/0 == ALL
 
+
 #Pick up the log level from the demo-config.properties file or else set it to 2 by default
 if [[ "$DEMO_LOG_LEVEL" == "" ]]; then 
 	LOG_LEVEL=2
