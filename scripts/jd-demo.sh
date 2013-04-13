@@ -362,6 +362,8 @@ function jdInstallDemo () {
 		extractJONPlugins
 		silentlyInstallJon
 		
+		resetVariableInVariableFile "JON_DEMO_INSTALLED" "y"
+		
 		newLine
 		
 		getEndTime

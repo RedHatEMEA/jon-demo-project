@@ -161,20 +161,21 @@ function chooseProduct () {
 		else
 			#Decrement PRODUCT_SELECTED by one to match the array indices
 			PRODUCT_SELECTED=$((PRODUCT_SELECTED - 1))
-			
-			#Get the correct PRODUCT_SELECTED from the array
-			JON_PRODUCT_INSTALLER_FULL_PATH=${PRODUCT_ARRAY[$PRODUCT_SELECTED]}
-			outputLog "The selected product is [$JON_PRODUCT_INSTALLER_FULL_PATH]" "1"
-			
-			JON_PRODUCT=`extractProductName $JON_PRODUCT_INSTALLER_FULL_PATH`
-			outputLog "JON_PRODUCT: $JON_PRODUCT"
+			PRODUCT_SELECTED=${PRODUCT_ARRAY[$PRODUCT_SELECTED]}
 			break
 		fi
 			
 	done
 	
 	if [[ "$NAME_PATTERN" == "jon" ]]; then
+		
+		#Get the correct PRODUCT_SELECTED from the array
+		JON_PRODUCT_INSTALLER_FULL_PATH=$PRODUCT_SELECTED
+		outputLog "The selected product is [$JON_PRODUCT_INSTALLER_FULL_PATH]" "1"
 		resetVariableInVariableFile "JON_PRODUCT_INSTALLER_FULL_PATH" "$JON_PRODUCT_INSTALLER_FULL_PATH"
+		
+		JON_PRODUCT=`extractProductName $JON_PRODUCT_INSTALLER_FULL_PATH`
+		outputLog "JON_PRODUCT: $JON_PRODUCT"
 		resetVariableInVariableFile "JON_PRODUCT" "$JON_PRODUCT"
 		outputLog "updated the JON_PRODUCT_INSTALLER_FULL_PATH variable in the script variables file" "1"
 	fi
@@ -229,8 +230,6 @@ function getProductVersionDetails () {
 		resetVariableInVariableFile "JON_MAJOR_VERSION" "$PMJV"
 		resetVariableInVariableFile "JON_MINOR_VERSION" "$PMNV"
 		resetVariableInVariableFile "JON_REVISION_VERSION" "$PRV"
-		resetVariableInVariableFile "JON_DEMO_INSTALLED" "y"
-		
 		
 }
 
