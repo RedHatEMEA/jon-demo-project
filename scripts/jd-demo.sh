@@ -109,6 +109,11 @@ function jdDeleteDemo () {
 	if [[ "$JON_DEMO_INSTALLED" == "" ]]; then
 		outputLog "JON demo not installed, but checking if anythign needs to be deleted/reset..." "3"
 	fi
+	
+		if [[ "${TIME_TAKEN_DELETE}" != "" ]]; then
+			MINS_SECS_TEXT=`getTimeInMinsSecs $TIME_TAKEN_DELETE`
+			outputLog "Installing has previously taken ${TIME_TAKEN_DELETE} second(s) or $MINS_SECS_TEXT" "2"
+		fi
 		
 		getStartTime
 	
@@ -160,7 +165,7 @@ function jdDeleteDemo () {
 		newLine
 		
 		getEndTime
-		getTimeTaken
+		getTimeTaken "TIME_TAKEN_DELETE"
 
 	
 }
@@ -195,10 +200,8 @@ function getTimeTaken () {
 	MINS_SECS_TEXT=`getTimeInMinsSecs $TIME_DIFF`
 	
 	outputLog "Total time taken was ${TIME_DIFF} seconds or $MINS_SECS_TEXT" "2"
-	
-	if [[ "$UPDATE_VARIABLE" != "" ]]; then
-		resetVariableInVariableFile "TIME_TAKEN_PREVIOUSLY" "${TIME_DIFF}"
-	fi
+
+	resetVariableInVariableFile "$UPDATE_VARIABLE" "${TIME_DIFF}"
 	
 	START_DATE=""
 	START_DATE_MS=""
@@ -237,9 +240,9 @@ function jdInstallDemo () {
 		newLine
 		outputLog "Installing jon server demo..." "2"
 		
-		if [[ "${TIME_TAKEN_PREVIOUSLY}" != "" ]]; then
-			MINS_SECS_TEXT=`getTimeInMinsSecs $TIME_TAKEN_PREVIOUSLY`
-			outputLog "Installing has previously taken ${TIME_TAKEN_PREVIOUSLY} second(s) or $MINS_SECS_TEXT" "2"
+		if [[ "${TIME_TAKEN_INSTALL}" != "" ]]; then
+			MINS_SECS_TEXT=`getTimeInMinsSecs $TIME_TAKEN_INSTALL`
+			outputLog "Installing has previously taken ${TIME_TAKEN_INSTALL} second(s) or $MINS_SECS_TEXT" "2"
 		fi
 		
 		getStartTime
@@ -365,7 +368,7 @@ function jdInstallDemo () {
 		newLine
 		
 		getEndTime
-		getTimeTaken "y"
+		getTimeTaken "TIME_TAKEN_INSTALL"
 		
 		newLine
 		
