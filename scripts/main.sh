@@ -281,7 +281,7 @@ function mainMenu () {
 		newLine
 		
 		echo ***JON Demo options***
-		jonDemoMenu $INSTALL_LOCATION
+		jonDemoMenu
 		
 		checkBundlesEnabled
 		
