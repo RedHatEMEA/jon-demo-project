@@ -1,9 +1,7 @@
 #function - jonDemoMenu (installLocation) - the menu options for the Jon Demo
 function jonDemoMenu () {
-	INSTALL_LOCATION=$1
 	
-	JD_BASE=`find $INSTALL_LOCATION -name "$JD_FOLDER" 2>&1`
-	if [[ -d $JD_BASE && "$JON_DEMO_INSTALLED" == "y" ]]; then
+	if [[ -d $JD_INSTALL_LOCATION && "$JON_DEMO_INSTALLED" == "y" ]]; then
 		#If the demo base folder is found and the jon demo installed successfully, then check for the JON script
 		JON_SCRIPT=$JON_DEPLOYED_DIR/$BIN/$JON_STARTUP_SCRIPT
 		
@@ -52,8 +50,8 @@ function jonDemoMenu () {
 		echo DD. Delete Jon Demo
 	else
 		echo ID. Install Jon Demo
-		if [[ -d $JD_BASE && ( "$JON_DEMO_INSTALLED" == "n" || "$JON_DEMO_INSTALLED" == "" ) ]]; then
-			outputLog "[$JD_BASE] already exists, you might want to check it's contents..." "3"
+		if [[ -d $JD_INSTALL_LOCATION && ( "$JON_DEMO_INSTALLED" == "n" || "$JON_DEMO_INSTALLED" == "" ) ]]; then
+			outputLog "[$JD_INSTALL_LOCATION] already exists, you might want to check it's contents..." "3"
 		fi
 	fi
 	newLine
@@ -191,6 +189,7 @@ function getEndTime () {
 function getTimeTaken () {
 	UPDATE_VARIABLE=$1
 	
+	outputLog "${END_DATE_MS} - ${START_DATE_MS}" "1"
 	TIME_DIFF=`expr ${END_DATE_MS} - ${START_DATE_MS}`
 	
 	MINS_SECS_TEXT=`getTimeInMinsSecs $TIME_DIFF`
@@ -385,7 +384,14 @@ function jdStartDemo () {
 			
 		newLine
 		outputLog "Starting up jon server demo..." "2"
-		getStartTime
+		
+		#Only start timer, if it's not already started
+		if [[ "$START_DATE" == "" && "$START_DATE_MS" == "" ]]; then
+			getStartTime
+		else
+			IGNORE_STOP="y"
+			outputLog "Ignoring timer start" "1"
+		fi
 		
 		newLine
 		manageJonAgent $AGENT_FOLDER start
@@ -398,8 +404,14 @@ function jdStartDemo () {
 		
 		newLine
 		
-		getEndTime
-		getTimeTaken "y"
+		#If timer is set to ignore, don't stop it here
+		if [[ "$IGNORE_STOP" != "y" ]]; then
+			getEndTime
+			getTimeTaken "y"
+		else
+			IGNORE_STOP="" 
+			outputLog "Ignoring timer stop" "1"
+		fi
 	
 	fi
 
@@ -416,7 +428,14 @@ function jdStopDemo () {
 	
 		newLine
 		outputLog "Stopping jon server demo..." "2"
-		getStartTime
+		
+		#Only start timer, if it's not already started
+		if [[ "$START_DATE" == "" && "$START_DATE_MS" == "" ]]; then
+			getStartTime
+		else
+			IGNORE_STOP="y"
+			outputLog "Ignoring timer start" "1"
+		fi
 				
 		if [[ "${JBOSS_SERVER_PORTS_PROVISIONED}" != "" ]]; then
 			#If the agent is stopped, start it up to be able to manage any deployed JBoss servers
@@ -442,9 +461,15 @@ function jdStopDemo () {
 		manageJonAgent $AGENT_FOLDER stop
 		
 		newLine
-		
-		getEndTime
-		getTimeTaken "y"
+
+		#If timer is set to ignore, don't stop it here
+		if [[ "$IGNORE_STOP" != "y" ]]; then
+			getEndTime
+			getTimeTaken "y"
+		else
+			IGNORE_STOP="" 
+			outputLog "Ignoring timer stop" "1"
+		fi
 }
 
 #function - deployJBoss () - will deploy a JBoss server with the next port number 
