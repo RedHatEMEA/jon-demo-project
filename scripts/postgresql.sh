@@ -146,16 +146,23 @@ function getPostgresRepo () {
 		RPM="pgdg-${DISTRO}${VERSION}-${DOT_VERSION}-"
 		REPO_WO_RPM="/${DOT_VERSION}/${DISTRO}/${DISTRO_NICK}-${DISTRO_VERSION}-${ARCH}/"
 		
-		outputLog "Link used to get build number: ${REPO_WO_RPM}${RPM}" "1"
-		LINK=`grep ${REPO_WO_RPM}${RPM} "${WORKSPACE_WD}/data/$REPO_PACKAGES_FILE"`
-		outputLog "Link from file is $LINK" "1"
-		INDEX=`awk -v a="$LINK" -v b=".noarch" 'BEGIN{print index(a,b)}'`
-		outputLog "Index found at $INDEX" "1"
-		INDEX=$((INDEX - 2))
-		outputLog "Index corrected to $INDEX" "1"
-		
-		BUILD_VERSION=${LINK:INDEX:1}
-		outputLog "Build number is: ${BUILD_VERSION}"
+		##HACK - Fix for F17 not showing Postgres 9.1 on the postgres website
+		if [[ $DISTRO == "fedora" && $DISTRO_VERSION == "17" ]]; then
+			#Hardcoded from http://yum.postgresql.org/9.1/fedora/fedora-17-x86_64/
+			outputLog "Applying F17 hack to BUILD_VERSION"
+			BUILD_VERSION=4
+		else		
+			outputLog "Link used to get build number: ${REPO_WO_RPM}${RPM}" "1"
+			LINK=`grep ${REPO_WO_RPM}${RPM} "${WORKSPACE_WD}/data/$REPO_PACKAGES_FILE"`
+			outputLog "Link from file is $LINK" "1"
+			INDEX=`awk -v a="$LINK" -v b=".noarch" 'BEGIN{print index(a,b)}'`
+			outputLog "Index found at $INDEX" "1"
+			INDEX=$((INDEX - 2))
+			outputLog "Index corrected to $INDEX" "1"
+			
+			BUILD_VERSION=${LINK:INDEX:1}
+			outputLog "Build number is: ${BUILD_VERSION}"
+		fi
 		
 		RPM="${RPM}${BUILD_VERSION}.noarch.rpm"
 		REPO="${REPO_BASE}${REPO_WO_RPM}${RPM}"	
