@@ -16,6 +16,9 @@ INIT_D=/etc/init.d
 TMP_LOCATION=/tmp
 if [[ ! -d $TMP_LOCATION ]]; then
 	mkdir $TMP_LOCATION
+	
+	#It's the temp directory, make it writable by everyone - postgres needs it
+	chmod a+w $TMP_LOCATION
 fi
 
 YUM_REPOS=/etc/yum.repos.d
