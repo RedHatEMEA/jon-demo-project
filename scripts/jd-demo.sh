@@ -109,8 +109,8 @@ function jdDeleteDemo () {
 	JD_INSTALL_LOCATION=$1
 	
 	if [[ "$JON_DEMO_INSTALLED" == "" ]]; then
-		outputLog "JON demo not installed, deleting is not an option..." "3"
-	else
+		outputLog "JON demo not installed, but checking if anythign needs to be deleted/reset..." "3"
+	fi
 		
 		getStartTime
 	
@@ -163,8 +163,7 @@ function jdDeleteDemo () {
 		
 		getEndTime
 		getTimeTaken
-		
-	fi
+
 	
 }
 
@@ -410,8 +409,8 @@ function jdStartDemo () {
 function jdStopDemo () {
 	
 	if [[ "$JON_DEMO_INSTALLED" == "" ]]; then
-		outputLog "JON demo not installed, stopping is not an option..." "3"
-	else
+		outputLog "JON demo not installed, checking to see if anything needs to be stopped..." "3"
+	fi
 			
 		JD_INSTALL_LOCATION=$1
 	
@@ -446,8 +445,6 @@ function jdStopDemo () {
 		
 		getEndTime
 		getTimeTaken "y"
-		
-	fi
 }
 
 #function - deployJBoss () - will deploy a JBoss server with the next port number 
