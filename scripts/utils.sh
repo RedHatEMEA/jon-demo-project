@@ -453,7 +453,7 @@ function createDemoConfFile () {
 		echo "LATEST_JON_VERSION=jon-server-3.1.0.GA" >> "${WORKSPACE_WD}/data/demo-config.properties"
 		echo -e "\n" >> "${WORKSPACE_WD}/data/demo-config.properties"
 		echo "#The details of the latest supported version of PostgreSQL DB for JON, to ensure the successful install of the demo" >> "${WORKSPACE_WD}/data/demo-config.properties"
-		echo "LATEST_SUPPORTED_POSTGREQ=91" >> "${WORKSPACE_WD}/data/demo-config.properties"
+		echo "LATEST_SUPPORTED_POSTGRES=91" >> "${WORKSPACE_WD}/data/demo-config.properties"
 		echo -e "\n" >> "${WORKSPACE_WD}/data/demo-config.properties"
 		echo "#The demo log level to be used across the project" >> "${WORKSPACE_WD}/data/demo-config.properties"
 		echo "DEMO_LOG_LEVEL=2" >> "${WORKSPACE_WD}/data/demo-config.properties"

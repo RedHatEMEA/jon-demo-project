@@ -1,3 +1,12 @@
+#function - postgresMenu () - Displays the appropriate menu option
+function postgresMenu () {
+		if [ "$POSTGRES_INSTALLED" == "y" ]; then
+			echo UP. Uninstall Postgres Service
+		else	
+			echo IP. Install Postgres Service
+		fi
+}
+
 #function - startPostgresService () -  used to start postgreSQL service
 function startPostgresService () {
 	outputLog "Starting service..." "2"
@@ -396,7 +405,7 @@ function choosePostgresVersion () {
 				#outputLog "T1 is: $T1" "1"
 				#outputLog "v array is: ${VERSION_ARRAY[@]}" "1"
 
-				if [[ "$T1" -le "$LATEST_SUPPORTED_POSTGREQ" ]]; then
+				if [[ "$T1" -le "$LATEST_SUPPORTED_POSTGRES" ]]; then
 				
 					MATCH=$(echo "${VERSION_ARRAY[@]}" | grep -o $T1)  
 					if [[ "$MATCH" == "" ]]; then
@@ -414,6 +423,15 @@ function choosePostgresVersion () {
 		
 	done <<< "$TEMP"
 	outputLog "\n" "1"
+	
+	##HACK - Fix for F17 not showing Postgres 9.1 on the postgres website
+	if [[ $DISTRO == "fedora" && $DISTRO_VERSION == "17" ]]; then
+		outputLog "Hacking Postgres list to have 9.1 for F17" "1"
+		 VERSION_ARRAY+=("91")
+		 COUNT=$((COUNT + 1))
+	else
+		outputLog "Skipping hack as not dealing with F17 machine" "1"
+	fi
 
 	VERSION_ARRAY_LENGTH=$((${#VERSION_ARRAY[@]}))
 	outputLog "Array length is: $VERSION_ARRAY_LENGTH" "1"

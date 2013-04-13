@@ -295,11 +295,7 @@ function mainMenu () {
 		echo D. Delete menu
 
 		newLine
-		if [ "$POSTGRES_INSTALLED" == "y" ]; then
-			echo UP. Uninstall Postgres Service
-		else	
-			echo IP. Install Postgres Service
-		fi
+		postgresMenu
 		newLine
 		
 		if [[ "$LOG_LEVEL" == "1" ]]; then
@@ -373,7 +369,7 @@ function mainMenu () {
 
 			"ip") 
 				checkPostgresInstall	
-				if [[ "$POSTGRES_INSTALLED" == "n" ]]; then 
+				if [[ "$POSTGRES_INSTALLED" != "y" ]]; then 
 					getPostgresRepo
 					installPostgres
 					deletePostgresTmpFiles
