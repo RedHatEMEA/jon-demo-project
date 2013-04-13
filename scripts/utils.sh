@@ -163,16 +163,20 @@ function chooseProduct () {
 			PRODUCT_SELECTED=$((PRODUCT_SELECTED - 1))
 			
 			#Get the correct PRODUCT_SELECTED from the array
-			PRODUCT_SELECTED=${PRODUCT_ARRAY[$PRODUCT_SELECTED]}
-			outputLog "The selected product is [$PRODUCT_SELECTED]" "1"
+			JON_PRODUCT_INSTALLER_FULL_PATH=${PRODUCT_ARRAY[$PRODUCT_SELECTED]}
+			outputLog "The selected product is [$JON_PRODUCT_INSTALLER_FULL_PATH]" "1"
+			
+			JON_PRODUCT=`extractProductName $JON_PRODUCT_INSTALLER_FULL_PATH`
+			outputLog "JON_PRODUCT: $JON_PRODUCT"
 			break
 		fi
 			
 	done
 	
 	if [[ "$NAME_PATTERN" == "jon" ]]; then
-		resetVariableInVariableFile "JON_PRODUCT_FULL_PATH" "$PRODUCT_SELECTED"
-		outputLog "updated the JON_PRODUCT_FULL_PATH variable in the script variables file" "1"
+		resetVariableInVariableFile "JON_PRODUCT_INSTALLER_FULL_PATH" "$JON_PRODUCT_INSTALLER_FULL_PATH"
+		resetVariableInVariableFile "JON_PRODUCT" "$JON_PRODUCT"
+		outputLog "updated the JON_PRODUCT_INSTALLER_FULL_PATH variable in the script variables file" "1"
 	fi
 
 }
@@ -210,7 +214,7 @@ function checkOrCreateJBossUser () {
 
 function getProductVersionDetails () {
 	
-		PN=`extractProductName ${JON_PRODUCT_FULL_PATH}`
+		PN=`extractProductName ${JON_PRODUCT_INSTALLER_FULL_PATH}`
 		outputLog "Product Name is: [$PN]" "1"
 		PV=`extractProductVersion ${PN}`
 		outputLog "Product Version is: [$PV]" "1"
@@ -394,10 +398,13 @@ function createScriptVariablesFile () {
 		echo -e "JON_MAJOR_VERSION=" >> "${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}"
 		echo -e "JON_MINOR_VERSION=" >> "${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}"
 		echo -e "JON_REVISION_VERSION=" >> "${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}"
-		echo -e "JON_PRODUCT_FULL_PATH=" >> "${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}"
+		echo -e "JON_PRODUCT_INSTALLER_FULL_PATH=" >> "${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}"
+		echo -e "JON_PRODUCT=" >> "${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}"
+		echo -e "JON_DEPLOYED_DIR=" >> "${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}"
 		echo -e "JBOSS_SERVER_PORTS_PROVISIONED=" >> "${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}"
 		echo -e "NUM_JBOSS_TO_INSTALL=" >> "${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}"
 		echo -e "JON_DEMO_INSTALLED=" >> "${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}"
+		echo -e "AGENT_INSTALLED=" >> "${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}"
 		echo -e "POSTGRES_INSTALLED=" >> "${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}"
 		echo -e "POSTGRES_MAJOR_VERSION=" >> "${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}"
 		echo -e "POSTGRES_MINOR_VERSION=" >> "${WORKSPACE_WD}/data/${SCRIPT_VARIABLES}"
