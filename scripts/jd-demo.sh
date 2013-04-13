@@ -326,10 +326,11 @@ function jdInstallDemo () {
 			SYSTEMCTL_AVAILABLE=`systemctl 2>&1`
 			
 			if [[ "$SYSTEMCTL_AVAILABLE" =~ "command not found" ]]; then
-				outputLog "Working on RHEL with no systemctl, using service" "1"
 				POSTGRES_SERVICE_STATUS=`service $POSTGRES_SERVICE_NAME status`
+				outputLog "Working on RHEL with no systemctl, using service and status is [$POSTGRES_SERVICE_STATUS]" "1"
 			else
 				POSTGRES_SERVICE_STATUS=`systemctl is-active $POSTGRES_SERVICE_NAME`
+				outputLog "Working on Fedora using systemctl and status is [$POSTGRES_SERVICE_STATUS]" "1"
 			fi
 
 			if [[ "$POSTGRES_SERVICE_STATUS" =~ "active" || "$POSTGRES_SERVICE_STATUS" =~ "is running" ]]; then
