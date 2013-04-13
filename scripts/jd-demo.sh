@@ -4,9 +4,8 @@ function jonDemoMenu () {
 	
 	JD_BASE=`find $INSTALL_LOCATION -name "$JD_FOLDER" 2>&1`
 	if [[ -d $JD_BASE && "$JON_DEMO_INSTALLED" == "y" ]]; then
-		JD_JON_DIRECTORY=`find $JD_INSTALL_LOCATION -name "jon-server*"`
-		#outputLog JD_JON_DIRECTORY $JD_JON_DIRECTORY -- INSTALL_LOCATION $JD_INSTALL_LOCATION -- JD_FOLDER $JD_FOLDER
-		JON_SCRIPT=$JD_JON_DIRECTORY/$BIN/$JON_STARTUP_SCRIPT
+		#If the demo base folder is found and the jon demo installed successfully, then check for the JON script
+		JON_SCRIPT=$JON_DEPLOYED_DIR/$BIN/$JON_STARTUP_SCRIPT
 		
 		SERVER_STATUS=`checkServerStatus $JON_SCRIPT`
 		
@@ -149,7 +148,9 @@ function jdDeleteDemo () {
 		resetVariableInVariableFile "JON_MAJOR_VERSION"
 		resetVariableInVariableFile "JON_MINOR_VERSION"
 		resetVariableInVariableFile "JON_REVISION_VERSION"
-		resetVariableInVariableFile "JON_PRODUCT_FULL_PATH"
+		resetVariableInVariableFile "JON_PRODUCT_INSTALLER_FULL_PATH"
+		resetVariableInVariableFile "JON_PRODUCT"
+		resetVariableInVariableFile "JON_DEPLOYED_DIR"
 		resetVariableInVariableFile "JBOSS_SERVER_PORTS_PROVISIONED"
 		resetVariableInVariableFile "NUM_JBOSS_TO_INSTALL"
 		resetVariableInVariableFile "POSTGRES_JON_DB"
@@ -321,9 +322,16 @@ function jdInstallDemo () {
 		
 		while true;
 		do	
-			POSTGRES_SERVICE_STATUS=`systemctl is-active $POSTGRES_SERVICE_NAME`
+			SYSTEMCTL_AVAILABLE=`systemctl 2>&1`
+			
+			if [[ "$SYSTEMCTL_AVAILABLE" =~ "command not found" ]]; then
+				outputLog "Working on RHEL with no systemctl, using service" "1"
+				POSTGRES_SERVICE_STATUS=`service $POSTGRES_SERVICE_NAME status`
+			else
+				POSTGRES_SERVICE_STATUS=`systemctl is-active $POSTGRES_SERVICE_NAME`
+			fi
 
-			if [[ "$POSTGRES_SERVICE_STATUS" =~ "active" ]]; then
+			if [[ "$POSTGRES_SERVICE_STATUS" =~ "active" || "$POSTGRES_SERVICE_STATUS" =~ "is running" ]]; then
 				outputLog "Postgres service already started, moving onto creating the user..." "2"
 				createPostgresUser
 				break
@@ -345,7 +353,9 @@ function jdInstallDemo () {
 				outputLog "The bundles already existing, not rebuilding them..." "2"
 			fi
 		fi
-		extractPackage $JON_PRODUCT_FULL_PATH $JD_INSTALL_LOCATION
+		
+		outputLog "calling extract package with $JON_PRODUCT_INSTALLER_FULL_PATH $JD_INSTALL_LOCATION" "1"
+		extractPackage $JON_PRODUCT_INSTALLER_FULL_PATH $JD_INSTALL_LOCATION
 		
 		getProductVersionDetails
 	
