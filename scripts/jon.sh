@@ -4,7 +4,7 @@ function getJONPluginDirectory () {
 	if [[ "$JON_PRODUCT_INSTALLER_FULL_PATH" != "" ]]; then
 	
 		#Directory for plugins for selected JON product (from above - ex: ./data/jon/plugins)
-		JON_PLUGINS_DIRECTORY=$JON_PRODUCT_INSTALLER_FULL_PATH/$JON_PLUGINS	
+		JON_PLUGINS_DIRECTORY=${JON_PRODUCT_INSTALLER_FULL_PATH%/*}/$JON_PLUGINS	
 		outputLog "JON_PLUGINS_DIRECTORY: $JON_PLUGINS_DIRECTORY"	
 	else
 		outputLog "The JON_PRODUCT_INSTALLER_FULL_PATH hasn't been defined, as such no JON_PLUGIN_DIRECTORY can be defined." "3"
@@ -50,7 +50,7 @@ function silentlyInstallJon () {
 	outputLog "You can change the server end point, http and https ports, amongst other properties if need be..." "2"
 
 	newLine
-
+	
 	JON_DEPLOYED_DIR=$JD_INSTALL_LOCATION/$JON_PRODUCT
 	JON_CONFIG_FILE=$JON_DEPLOYED_DIR/$BIN/$JON_SILENT_CONFIG_FILE
 	
