@@ -1,16 +1,13 @@
 function getJONPluginDirectory () {
 
-	if [[ "$JON_PRODUCT_FULL_PATH" != "" ]]; then
-	
-		#Directory for selected product (ex: ./data/jon/jon-server-3.1.0.GA.zip)
-		JON_DIRECTORY=${JON_PRODUCT_FULL_PATH%/*}
-		outputLog "JON_DIRECTORY: $JON_DIRECTORY"	
+	#Directory for selected product (ex: ./data/jon/jon-server-3.1.0.GA.zip)
+	if [[ "$JON_PRODUCT_INSTALLER_FULL_PATH" != "" ]]; then
 	
 		#Directory for plugins for selected JON product (from above - ex: ./data/jon/plugins)
-		JON_PLUGINS_DIRECTORY=$JON_DIRECTORY/$JON_PLUGINS	
+		JON_PLUGINS_DIRECTORY=$JON_PRODUCT_INSTALLER_FULL_PATH/$JON_PLUGINS	
 		outputLog "JON_PLUGINS_DIRECTORY: $JON_PLUGINS_DIRECTORY"	
 	else
-		outputLog "The JON_PRODUCT_FULL_PATH hasn't been defined, as such no JON_PLUGIN_DIRECTORY can be defined." "3"
+		outputLog "The JON_PRODUCT_INSTALLER_FULL_PATH hasn't been defined, as such no JON_PLUGIN_DIRECTORY can be defined." "3"
 	fi
 }
 
@@ -19,12 +16,8 @@ function extractJONPlugins () {
 
 	newLine
 	outputLog "JON product selected, extracting plugins..." "2"
-		
 	#Get the JON Plugin directory...
 	getJONPluginDirectory
-
-	JON_PRODUCT=`extractProductName $JON_PRODUCT_FULL_PATH`
-	outputLog "JON_PRODUCT: $JON_PRODUCT"
 
 	#Remove any existing jon extracted plugins in the tmp directory
 	deleteFolder $TMP_LOCATION/$JON_PRODUCT
@@ -58,7 +51,8 @@ function silentlyInstallJon () {
 
 	newLine
 
-	JON_CONFIG_FILE=$JD_INSTALL_LOCATION/$JON_PRODUCT/$BIN/$JON_SILENT_CONFIG_FILE
+	JON_DEPLOYED_DIR=$JD_INSTALL_LOCATION/$JON_PRODUCT
+	JON_CONFIG_FILE=$JON_DEPLOYED_DIR/$BIN/$JON_SILENT_CONFIG_FILE
 	
 	outputLog "Backing up $JON_SILENT_CONFIG_FILE to ${JON_CONFIG_FILE}_bak" "2"
 	cp $JON_CONFIG_FILE ${JON_CONFIG_FILE}_bak
@@ -86,7 +80,7 @@ function silentlyInstallJon () {
 			fi
 			
 			#copy the latest postgresql driver into jon
-			cp =$JON_CONF_DIR/$JON_PRODUCT/$POSTGRESQL_DRIVER ${JD_INSTALL_LOCATION}/$JON_PRODUCT/jbossas/server/default/lib
+			cp $JON_CONF_DIR/$JON_PRODUCT/$POSTGRESQL_DRIVER ${JD_INSTALL_LOCATION}/$JON_PRODUCT/jbossas/server/default/lib
 			deleteFile ${JD_INSTALL_LOCATION}/$JON_PRODUCT/jbossas/server/default/lib/postgresql-8.4*.jar
 		fi
 	fi
@@ -94,6 +88,7 @@ function silentlyInstallJon () {
 	newLine
 	#Start the jon server
 	${JD_INSTALL_LOCATION}/$JON_PRODUCT/$BIN/$JON_STARTUP_SCRIPT start
+	resetVariableInVariableFile "JON_DEPLOYED_DIR" "$JON_DEPLOYED_DIR"
 
 	newLine
 
@@ -132,6 +127,8 @@ function silentlyInstallJon () {
 		fi
 	
 		runCLIScripts
+	else
+		outputLog "Agent was not installed, skipping bundle/jboss deployments if chosen." "3"
 	fi
 		
 	#Set the entire jon demo directory to be owned by the LOCAL_USER
@@ -146,10 +143,10 @@ function handleJonAccessoriesSetup () {
 	outputLog "Setting up JON accessories..." "2"
 	newLine
 	
-	deployAgent "$JD_INSTALL_LOCATION/$JON_PRODUCT"
+	deployAgent
 
-	deployCLI "$JD_INSTALL_LOCATION/$JON_PRODUCT"
-	deployCLIAntTestTool "$JD_INSTALL_LOCATION/$JON_PRODUCT"
+	deployCLI
+	deployCLIAntTestTool
 }
 
 #function - handleJonFirstStartup () - handles the tasks to undertake on first start up of JON, license, postgres driver, patches, etc...
@@ -343,9 +340,9 @@ function deployCLI () {
 	outputLog "Deploying CLI tool" "2"
 	newLine
 
-	JON_DIRECTORY=$1
+	outputLog "Looking for CLI tool at $JON_DEPLOYED_DIR" "1"
 
-	CLI_ZIP_ARRAY=(`find $JON_DIRECTORY/$JON_RHQ_EAR/rhq-downloads/rhq-client/ -name "rhq*cli*.zip"`)
+	CLI_ZIP_ARRAY=(`find $JON_DEPLOYED_DIR/$JON_RHQ_EAR/rhq-downloads/rhq-client/ -name "rhq*cli*.zip"`)
 	CLI_ZIP=${CLI_ZIP_ARRAY[0]}
 	
 	CLI_TOP_FOLDER=`getZipTopFolder ${CLI_ZIP}`
@@ -360,8 +357,6 @@ function deployCLI () {
 
 #function - deployAgent (jonDirectory) - deploy the JON agent
 function deployAgent () {
-
-	JON_DIRECTORY=$1
 	
 	newLine
 	mkdir -p $JON_TOOLS
@@ -369,8 +364,9 @@ function deployAgent () {
 	outputLog "Creating JON Agent in $JON_TOOLS" "2"
 	newLine
 	
-	if [[ -f $JON_DIRECTORY/$JON_RHQ_EAR/rhq-downloads/rhq-agent/rhq*agent*.jar ]]; then
-		cp $JON_DIRECTORY/$JON_RHQ_EAR/rhq-downloads/rhq-agent/rhq*agent*.jar $JON_TOOLS
+	outputLog "Looking for $JON_DEPLOYED_DIR/$JON_RHQ_EAR/rhq-downloads/rhq-agent" "1"
+	if [[ -d $JON_DEPLOYED_DIR/$JON_RHQ_EAR/rhq-downloads/rhq-agent ]]; then
+		cp $JON_DEPLOYED_DIR/$JON_RHQ_EAR/rhq-downloads/rhq-agent/rhq*agent*.jar $JON_TOOLS
 		
 		AGENT_JAR_NAME=`find $JON_TOOLS/ -name "rhq*agent*.jar"`
 		java -jar $AGENT_JAR_NAME --install=$JON_TOOLS/
@@ -458,11 +454,10 @@ function manageJonAgent () {
 }
 
 function deployCLIAntTestTool () {
-	JON_DIRECTORY=$1
 	mkdir -p $JON_TOOLS
 	
-	CLI_TOP_FOLDER=`getZipTopFolder $JON_DIRECTORY/$JON_RHQ_EAR/rhq-downloads/bundle-deployer/rhq*bundle*deployer*.zip`
-	unzip -qo $JON_DIRECTORY/$JON_RHQ_EAR/rhq-downloads/bundle-deployer/rhq*bundle*deployer*.zip -d $JON_TOOLS
+	CLI_TOP_FOLDER=`getZipTopFolder $JON_DEPLOYED_DIR/$JON_RHQ_EAR/rhq-downloads/bundle-deployer/rhq*bundle*deployer*.zip`
+	unzip -qo $JON_DEPLOYED_DIR/$JON_RHQ_EAR/rhq-downloads/bundle-deployer/rhq*bundle*deployer*.zip -d $JON_TOOLS
 	
 }
 #function - checkEmbeddedAgent () - checks if the embedded agent is set to true or false 
