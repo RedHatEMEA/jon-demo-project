@@ -4,12 +4,11 @@ function manageServersMenu () {
 	newLine
 	echo "***Manage Servers***"
 
-	JON_DIRECTORY=`find $INSTALL_LOCATION -name "jon-server*"`
 	if [[ "$JON_DEMO_INSTALLED" == "y" ]]; then	
 		newLine
 		echo "*JON Server"
 		
-		JON_SCRIPT=$JON_DIRECTORY/$BIN/$JON_STARTUP_SCRIPT
+		JON_SCRIPT=$JON_DEPLOYED_DIR/$BIN/$JON_STARTUP_SCRIPT
 		SERVER_STATUS=`checkServerStatus $JON_SCRIPT`
 		newLine
 		case "$SERVER_STATUS" in
