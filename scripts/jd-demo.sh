@@ -329,7 +329,7 @@ function jdInstallDemo () {
 				POSTGRES_SERVICE_STATUS=`service $POSTGRES_SERVICE_NAME status`
 				outputLog "Working on RHEL with no systemctl, using service and status is [$POSTGRES_SERVICE_STATUS]" "1"
 			else
-				POSTGRES_SERVICE_STATUS=`systemctl is-active $POSTGRES_SERVICE_NAME`
+				POSTGRES_SERVICE_STATUS=`systemctl is-active ${POSTGRES_SERVICE_NAME}.service`
 				outputLog "Working on Fedora using systemctl and status is [$POSTGRES_SERVICE_STATUS]" "1"
 			fi
 
