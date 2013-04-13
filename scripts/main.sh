@@ -97,10 +97,6 @@ function loadVariables () {
 	. "${WORKSPACE_WD}/scripts/variables.sh"
 	getAgentFolder
 	getRHQCLIDetails
-	
-	if [[ "${JON_MAJOR_VERSION}" != "" && "${JON_MINOR_VERSION}" != "" && "${JON_REVISION_VERSION}" != "" ]]; then
-		JON_PRODUCT="jon-server-${JON_MAJOR_VERSION}.${JON_MINOR_VERSION}.${JON_REVISION_VERSION}"
-	fi
 }
 
 #function - repeatChar(width, character) - Output a character for as many times as defined by the width
