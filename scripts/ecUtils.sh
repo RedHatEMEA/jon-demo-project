@@ -9,10 +9,10 @@ function getBundleDetails () {
 	BUNDLE_TEXT=${BUNDLE_TEXT#*name=\"}
 	#Text before the rest of the line, after the first double quote
 	BUNDLE_NAME=${BUNDLE_TEXT%%\"*}
-	outputLog Dealing with bundle named $BUNDLE_NAME "2"
+	outputLog "Dealing with bundle named $BUNDLE_NAME" "2"
 	BUNDLE_TEXT=${BUNDLE_TEXT#*version=\"}
 	BUNDLE_VERSION=${BUNDLE_TEXT%%\"*}
-	outputLog Dealing with bundle with version $BUNDLE_VERSION "2"
+	outputLog "Dealing with bundle with version $BUNDLE_VERSION" "2"
 	newLine
 	deleteFile deploy.xml
 
