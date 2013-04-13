@@ -455,6 +455,7 @@ function choosePostgresVersion () {
 			elif [[ ! "$VERSION" =~ ^[[:digit:]] || "$VERSION" -lt "1" || "$VERSION" -gt "$VERSION_ARRAY_LENGTH" ]]; then
 				outputLog "Invalid input, must be between 1 and $VERSION_ARRAY_LENGTH" "4"
 				newLine
+				takeInput "Select the version of postgres you would like to install: [1 ... x]\n\tB. Back to Main Menu.\n"
 			else
 				#Decrement version by one to match the array indices
 				VERSION=$((VERSION - 1))
