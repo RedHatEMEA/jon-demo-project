@@ -657,7 +657,7 @@ function checkScriptPrereqs () {
 	if [[ "$POSTGRES_INSTALLED" != "y" && "$POSTGRES_SERVICE_FILE" == "" ]]; then
 		
 		#Can we get index.html from google - i.e we have internet
-			wget www.google.com -o output.txt
+			wget www.google.com -o output.txt -O index.html
 
 			#If we don't have internet connectivity, error with message
 		if [[ ! -f index.html ]]; then 
