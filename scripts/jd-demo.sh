@@ -107,7 +107,7 @@ function jdDeleteDemo () {
 	JD_INSTALL_LOCATION=$1
 	
 	if [[ "$JON_DEMO_INSTALLED" == "" ]]; then
-		outputLog "JON demo not installed, but checking if anythign needs to be deleted/reset..." "3"
+		outputLog "JON demo not installed, but checking if anything needs to be deleted/reset..." "3"
 	fi
 	
 		if [[ "${TIME_TAKEN_DELETE}" != "" ]]; then
@@ -201,7 +201,11 @@ function getTimeTaken () {
 	
 	outputLog "Total time taken was ${TIME_DIFF} seconds or $MINS_SECS_TEXT" "2"
 
-	resetVariableInVariableFile "$UPDATE_VARIABLE" "${TIME_DIFF}"
+	if [[ -z "$1" ]]
+		outputLog "Variable not set, not writing time taken"
+	else
+		resetVariableInVariableFile "$UPDATE_VARIABLE" "${TIME_DIFF}"
+	fi
 	
 	START_DATE=""
 	START_DATE_MS=""
@@ -411,7 +415,7 @@ function jdStartDemo () {
 		#If timer is set to ignore, don't stop it here
 		if [[ "$IGNORE_STOP" != "y" ]]; then
 			getEndTime
-			getTimeTaken "y"
+			getTimeTaken
 		else
 			IGNORE_STOP="" 
 			outputLog "Ignoring timer stop" "1"
@@ -469,7 +473,7 @@ function jdStopDemo () {
 		#If timer is set to ignore, don't stop it here
 		if [[ "$IGNORE_STOP" != "y" ]]; then
 			getEndTime
-			getTimeTaken "y"
+			getTimeTaken
 		else
 			IGNORE_STOP="" 
 			outputLog "Ignoring timer stop" "1"
@@ -508,7 +512,7 @@ function deployJBoss () {
 	newLine
 	
 	getEndTime
-	getTimeTaken "y"
+	getTimeTaken
 }
 
 #function - undeployJBoss () - will undeploy the last deployed JBoss server 
@@ -551,6 +555,6 @@ function undeployJBoss () {
 		newLine
 		
 		getEndTime
-		getTimeTaken "y"
+		getTimeTaken
 	fi
 }
